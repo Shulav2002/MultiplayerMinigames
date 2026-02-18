@@ -133,10 +133,12 @@ namespace HotDynamite
                 Vector2 center = (settings.arenaMin + settings.arenaMax) * 0.5f;
                 Vector2 centerPull = (center - owner.Position);
                 centerPull = centerPull.sqrMagnitude > 0.0001f ? centerPull.normalized : Vector2.zero;
-                float centerWeight = centerBias * Mathf.Lerp(1.0f, 0.3f, urgencyBiasedDanger);
 
                 Vector2 edgePatrol = CalculateEdgePatrolDirection(center);
                 float edgeFactor = GetEdgeFactor(owner.Position);
+                float centerWeight = centerBias
+                    * Mathf.Lerp(1.0f, 0.3f, urgencyBiasedDanger)
+                    * Mathf.Lerp(1.0f, 0.12f, edgeFactor);
                 float edgePatrolWeight = edgePatrolBias * Mathf.Lerp(0.4f, 1.2f, edgeFactor);
 
                 Vector2 cohesionPull = Vector2.zero;
@@ -263,23 +265,24 @@ namespace HotDynamite
 
         private float GetEdgeFactor(Vector2 pos)
         {
-            float distLeft = Mathf.Abs(pos.x - settings.arenaMin.x);
-            float distRight = Mathf.Abs(settings.arenaMax.x - pos.x);
-            float distBottom = Mathf.Abs(pos.y - settings.arenaMin.y);
-            float distTop = Mathf.Abs(settings.arenaMax.y - pos.y);
-            float minEdgeDistance = Mathf.Min(Mathf.Min(distLeft, distRight), Mathf.Min(distBottom, distTop));
+            Vector2 center = (settings.arenaMin + settings.arenaMax) * 0.5f;
+            float halfWidth = Mathf.Max(0.1f, (settings.arenaMax.x - settings.arenaMin.x) * 0.5f);
+            float halfHeight = Mathf.Max(0.1f, (settings.arenaMax.y - settings.arenaMin.y) * 0.5f);
+            float arenaRadius = Mathf.Min(halfWidth, halfHeight);
+            float distanceToCenter = Vector2.Distance(pos, center);
+            float distanceToEdge = Mathf.Max(0f, arenaRadius - distanceToCenter);
 
             float edgeRange = Mathf.Max(0.1f, settings.botAvoidanceDistance * 2.2f);
-            return Mathf.Clamp01(1f - (minEdgeDistance / edgeRange));
+            return Mathf.Clamp01(1f - (distanceToEdge / edgeRange));
         }
 
         private Vector2 CalculateArenaAvoidance(Vector2 position)
         {
             Vector2 avoid = Vector2.zero;
-            if (position.x < settings.arenaMin.x + settings.botAvoidanceDistance) { avoid.x += 1f; }
-            if (position.x > settings.arenaMax.x - settings.botAvoidanceDistance) { avoid.x -= 1f; }
-            if (position.y < settings.arenaMin.y + settings.botAvoidanceDistance) { avoid.y += 1f; }
-            if (position.y > settings.arenaMax.y - settings.botAvoidanceDistance) { avoid.y -= 1f; }
+            if (position.x < settings.arenaMin.x) { avoid.x += 1f; }
+            if (position.x > settings.arenaMax.x) { avoid.x -= 1f; }
+            if (position.y < settings.arenaMin.y) { avoid.y += 1f; }
+            if (position.y > settings.arenaMax.y) { avoid.y -= 1f; }
             return avoid.sqrMagnitude > 1f ? avoid.normalized : avoid;
         }
 

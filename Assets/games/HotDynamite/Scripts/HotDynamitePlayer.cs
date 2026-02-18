@@ -20,6 +20,8 @@ namespace HotDynamite
         [SerializeField] private Animator runAnimator;
         [SerializeField] private float runAnimationThreshold = 0.05f;
         [SerializeField] private float runAnimationSpeed = 1f;
+        [Header("Appearance")]
+        [SerializeField] private AnimationClip[] runAnimationVariants;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
@@ -30,6 +32,8 @@ namespace HotDynamite
         private GameObject bombInstance;
         private float temporarySpeedMultiplier = 1f;
         private float temporarySpeedUntil = -1f;
+        private int appearanceIndex;
+        private AnimatorOverrideController runAnimatorOverride;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
@@ -72,6 +76,8 @@ namespace HotDynamite
                 runAnimator = GetComponent<Animator>();
             }
 
+            ApplyAppearanceVariant();
+
             if (humanInput != null)
             {
                 humanInput.enabled = isHuman;
@@ -112,8 +118,6 @@ namespace HotDynamite
             UpdateRunAnimation(input);
             UpdateFacing(input);
             Vector2 next = body.position + input * speed * Time.fixedDeltaTime;
-            next.x = Mathf.Clamp(next.x, settings.arenaMin.x, settings.arenaMax.x);
-            next.y = Mathf.Clamp(next.y, settings.arenaMin.y, settings.arenaMax.y);
             body.MovePosition(next);
         }
 
@@ -168,6 +172,12 @@ namespace HotDynamite
 
             temporarySpeedMultiplier = Mathf.Max(0.01f, multiplier);
             temporarySpeedUntil = Time.time + Mathf.Max(0f, durationSeconds);
+        }
+
+        public void SetAppearanceIndex(int index)
+        {
+            appearanceIndex = Mathf.Max(0, index);
+            ApplyAppearanceVariant();
         }
 
         public void Eliminate()
@@ -281,6 +291,40 @@ namespace HotDynamite
 
             bool isMoving = movementInput.sqrMagnitude >= runAnimationThreshold * runAnimationThreshold;
             runAnimator.speed = isMoving ? runAnimationSpeed : 0f;
+        }
+
+        private void ApplyAppearanceVariant()
+        {
+            if (runAnimator == null || runAnimationVariants == null || runAnimationVariants.Length == 0)
+            {
+                return;
+            }
+
+            AnimationClip selectedClip = runAnimationVariants[appearanceIndex % runAnimationVariants.Length];
+            if (selectedClip == null)
+            {
+                return;
+            }
+
+            RuntimeAnimatorController controller = runAnimator.runtimeAnimatorController;
+            if (controller == null)
+            {
+                return;
+            }
+
+            RuntimeAnimatorController baseController = controller;
+            if (controller is AnimatorOverrideController existingOverride)
+            {
+                baseController = existingOverride.runtimeAnimatorController;
+            }
+
+            if (runAnimatorOverride == null || runAnimatorOverride.runtimeAnimatorController != baseController)
+            {
+                runAnimatorOverride = new AnimatorOverrideController(baseController);
+            }
+
+            runAnimatorOverride["Run"] = selectedClip;
+            runAnimator.runtimeAnimatorController = runAnimatorOverride;
         }
     }
 }

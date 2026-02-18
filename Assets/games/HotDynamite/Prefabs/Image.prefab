@@ -33,14 +33,14 @@ RectTransform:
   m_GameObject: {fileID: 3595157825266331713}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10530}
-  m_LocalScale: {x: 2, y: 1.8, z: 2}
+  m_LocalScale: {x: 1.4, y: 1.2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -681.8397, y: -90.9675}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4981463029550117862
@@ -90,7 +90,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.8, y: 0.65}
-    newSize: {x: 64, y: 64}
+    newSize: {x: 90, y: 90}
     adaptiveTilingThreshold: 0.5
     drawMode: 1
     adaptiveTiling: 0
@@ -140,15 +140,20 @@ MonoBehaviour:
   botInput: {fileID: 6886270607401937245}
   body: {fileID: 2157814970713621843}
   hitCollider: {fileID: 4066073017605356984}
-  bombPrefab: {fileID: 100000000000000000, guid: 8b3e3ab6d2904d34be329e2a3df7ecf4, type: 3}
+  bombPrefab: {fileID: 8966863573198633481, guid: 5242a1a6076ab5045828a7c43c9faf55, type: 3}
   bombLocalOffset: {x: 0, y: 28, z: 0}
-  facingRenderer: {fileID: 0}
-  facingTransform: {fileID: 0}
+  facingRenderer: {fileID: 1177248033119752847}
+  facingTransform: {fileID: 650339452477489071}
   facingInputThreshold: 0.05
   facingAngleOffset: 0
-  runAnimator: {fileID: 0}
+  runAnimator: {fileID: 8556690934117707606}
   runAnimationThreshold: 0.05
   runAnimationSpeed: 1
+  runAnimationVariants:
+  - {fileID: 7400000, guid: 33d04c02bba8eb1408f05e99263568b2, type: 2}
+  - {fileID: 7400000, guid: cdd9cb8e6cbb44f9978af07ff85dec04, type: 2}
+  - {fileID: 7400000, guid: 061771c79e7e4b0db5663901442a445e, type: 2}
+  - {fileID: 7400000, guid: bd9749dd5283401e9a2f072c44213d04, type: 2}
 --- !u!114 &6886270607401937245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,12 +243,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 2af7fe229caf20c41a95d1f000a6a41e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab0c1d5d1683fd841aa3a1fb7f208583, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 64, y: 64}
+  m_Size: {x: 90, y: 90}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

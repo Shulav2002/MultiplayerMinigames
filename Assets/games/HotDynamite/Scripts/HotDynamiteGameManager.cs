@@ -99,6 +99,7 @@ namespace HotDynamite
                 HotDynamitePlayer player = Instantiate(playerPrefab, position, Quaternion.identity, parent);
                 bool isHuman = i < humans;
                 player.Initialize(this, settings, isHuman);
+                player.SetAppearanceIndex(i);
                 alivePlayers.Add(player);
             }
         }

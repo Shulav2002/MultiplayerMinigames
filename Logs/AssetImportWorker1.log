@@ -1,11 +1,11 @@
 [Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co" at "2026-02-18T04:16:40.2322293Z"
 Built from '6000.3/respin/6000.3.5f1-a1ec4b2f2d19' branch; Version is '6000.3.5f2 (3fa8bc678cb0) revision 4171964'; Using compiler version '194234433'; Build Type 'Release'
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co" at "2026-02-17T05:49:12.047603Z"
 OS: 'Windows 10  (10.0.19045) 64bit Professional' Language: 'en' Physical Memory: 32693 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
 System  architecture: x64
 Process architecture: x64
-Date: 2026-02-17T05:49:12Z
+Date: 2026-02-18T04:16:40Z
 
 COMMAND LINE ARGUMENTS:
 D:\UnityVersions\6000.3.5f2\Editor\Unity.exe
@@ -19,7 +19,7 @@ D:/Unity/MultiplayerMiniGames
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-53855
+51047
 -licensingIpc
 LicenseClient-Kunyo.co
 -job-worker-count
@@ -67,12 +67,12 @@ D:/Unity/MultiplayerMiniGames
     "memorysetup-job-temp-allocator-block-size-background=1048576"
     "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
     "memorysetup-temp-allocator-size-cloud-worker=32768"
-Player connection [23396]  Target information:
+Player connection [17084]  Target information:
 
-Player connection [23396]  * "[IP] 10.0.15.128 [Port] 0 [Flags] 2 [Guid] 570141159 [EditorId] 570141159 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-79VUBI4) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [17084]  * "[IP] 10.0.15.128 [Port] 0 [Flags] 2 [Guid] 3615601482 [EditorId] 3615601482 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-79VUBI4) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [23396] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [23396] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [17084] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [17084] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 5
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
@@ -84,7 +84,7 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 2.97 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 3.58 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 6000.3.5f2 (3fa8bc678cb0)
 [Subsystems] Discovering subsystems at path D:/UnityVersions/6000.3.5f2/Editor/Data/Resources/UnitySubsystems
@@ -100,7 +100,7 @@ Initialize mono
 Mono path[0] = 'D:/UnityVersions/6000.3.5f2/Editor/Data/Managed'
 Mono path[1] = 'D:/UnityVersions/6000.3.5f2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'D:/UnityVersions/6000.3.5f2/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56676
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56656
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: D:/UnityVersions/6000.3.5f2/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
@@ -111,66 +111,83 @@ Register platform support module: D:/UnityVersions/6000.3.5f2/Editor/Data/Playba
 	ResponseStatus: Unsupported protocol version '1.17.4'.
 [Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-Kunyo.co"
 [Licensing::IpcConnector] LicenseClient-Kunyo.co channel disconnected successfully.
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co-6000.3.5" at "2026-02-17T05:49:12.826773Z"
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co-6000.3.5" at "2026-02-18T04:16:41.0713122Z"
 [Licensing::Client] Handshaking with LicensingClient:
   Version:                 1.17.4+4293ba1
-  Session Id:              418b914af08d4f59928c9577b3fa898c
-  Correlation Id:          7e3bda4e54631b7357e0327244fed4e5
-  External correlation Id: 1092307038619836491
+  Session Id:              ca01788ef41249d19d6375af04047ed0
+  Correlation Id:          28e4f7c98a2fe269ab3b1f8b5e0c5c27
+  External correlation Id: 4881115321884874802
   Machine Id:              a5kLfI22r755TtyEM+K29HCC+lc=
-[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-Kunyo.co-6000.3.5" (connect: 0.00s, validation: 0.00s, handshake: 0.66s)
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co-6000.3.5-notifications" at "2026-02-17T05:49:13.4836645Z"
-[Licensing::Module] Licensing Background thread has ended after 1.44s
-[Licensing::Module] Licensing is initialized (took 0.71s).
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-Kunyo.co-6000.3.5" (connect: 0.00s, validation: 0.00s, handshake: 0.67s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Kunyo.co-6000.3.5-notifications" at "2026-02-18T04:16:41.7385313Z"
+[Licensing::Module] Licensing Background thread has ended after 1.51s
+[Licensing::Module] Licensing is initialized (took 0.70s).
 [Licensing::Client] Successfully resolved entitlement details
 [Licensing::Module] License group:
   Id: F4-K45T-KVUZ-DH5Y-SYZ8-XXXX
   Product: Unity Personal
   Type: ULF
-  Expiration: 2026-03-26T06:48:57Z
+  Expiration: 2026-03-27T05:12:57Z
 [Licensing::Module] License group:
   Id: 1375506726934-UnityPersXXXX
   Product: Unity Personal
   Type: Assigned
   Expiration: Unlimited
 Register platform support module: D:/UnityVersions/6000.3.5f2/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
-Registered in 0.712310 seconds.
-- Loaded All Assemblies, in  1.158 seconds
+Registered in 0.917177 seconds.
+- Loaded All Assemblies, in  1.822 seconds
 Native extension for Android target not found
-Android Extension - Scanning For ADB Devices 221 ms
+CommandWithNoStdoutInvokationFailure: Unable to start ADB server. Please make sure the Android SDK is installed and is properly configured in the Editor. See the Console for more details.
+  at UnityEditor.Android.Command.RunWithShellExecute (System.String command, System.String args, System.String workingdir, System.String errorMsg) [0x0005a] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:148 
+  at UnityEditor.Android.ADB.StartServer () [0x00008] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:193 
+  at UnityEditor.Android.ADB.Run (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x0000b] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:231 
+  at UnityEditor.Android.AndroidDeploymentTargetsExtension.GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext context, UnityEditor.ProgressHandler progressHandler) [0x0029d] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:393 
+  at UnityEditor.Android.TargetScanWorker.ScanSync () [0x00049] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:164 
+  at UnityEditor.Android.TargetExtension.OnUsbDevicesChanged (UnityEditor.Hardware.UsbDevice[] usbDevices) [0x00087] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:114 
+  at UnityEditor.Android.TargetExtension.OnLoad () [0x000af] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:75 
+  at UnityEditor.Modules.ModuleManager.InitializePlatformSupportModules () [0x000ba] in <b95741d8534d46b7b21ea8475977e676>:0 
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception)
+UnityEditor.Modules.ModuleManager:InitializePlatformSupportModules()
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs Line: 148)
+
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
 ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.652 seconds
-Domain Reload Profiling: 1810ms
-	BeginReloadAssembly (183ms)
+- Finished resetting the current domain, in  5.284 seconds
+Domain Reload Profiling: 7106ms
+	BeginReloadAssembly (184ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (38ms)
-	RebuildNativeTypeToScriptingClass (16ms)
-	initialDomainReloadingComplete (755ms)
-	LoadAllAssembliesAndSetupDomain (165ms)
-		LoadAssemblies (182ms)
+	RebuildCommonClasses (43ms)
+	RebuildNativeTypeToScriptingClass (18ms)
+	initialDomainReloadingComplete (960ms)
+	LoadAllAssembliesAndSetupDomain (617ms)
+		LoadAssemblies (192ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (161ms)
-			TypeCache.Refresh (159ms)
-				TypeCache.ScanAssembly (146ms)
+		AnalyzeDomain (604ms)
+			TypeCache.Refresh (602ms)
+				TypeCache.ScanAssembly (590ms)
 			BuildScriptInfoCaches (0ms)
 			ResolveRequiredComponents (0ms)
-	FinalizeReload (652ms)
+	FinalizeReload (5285ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (616ms)
+		SetupLoadedEditorAssemblies (5251ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (314ms)
-			SetLoadedEditorAssemblies (4ms)
-			BeforeProcessingInitializeOnLoad (91ms)
-			ProcessInitializeOnLoadAttributes (144ms)
-			ProcessInitializeOnLoadMethodAttributes (63ms)
+			InitializePlatformSupportModulesInManaged (4951ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (97ms)
+			ProcessInitializeOnLoadAttributes (138ms)
+			ProcessInitializeOnLoadMethodAttributes (61ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -184,14 +201,14 @@ Begin MonoManager ReloadAssembly
   Id: F4-K45T-KVUZ-DH5Y-SYZ8-XXXX
   Product: Unity Personal
   Type: ULF
-  Expiration: 2026-03-26T06:48:57Z
+  Expiration: 2026-03-27T05:12:57Z
 [Licensing::Module] License group:
   Id: 1375506726934-UnityPersXXXX
   Product: Unity Personal
   Type: Assigned
   Expiration: Unlimited
-- Loaded All Assemblies, in  0.782 seconds
-Refreshing native plugins compatible for Editor in 1.34 ms, found 4 plugins.
+- Loaded All Assemblies, in  0.753 seconds
+Refreshing native plugins compatible for Editor in 1.18 ms, found 4 plugins.
 Native extension for Android target not found
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
@@ -201,64 +218,308 @@ Package Manager log level set to [2]
 [Package Manager] Cannot connect to Unity Package Manager local server
 ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.781 seconds
-Domain Reload Profiling: 1563ms
-	BeginReloadAssembly (207ms)
+- Finished resetting the current domain, in  0.721 seconds
+Domain Reload Profiling: 1473ms
+	BeginReloadAssembly (199ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (7ms)
+		DisableScriptedObjects (8ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (37ms)
-	RebuildCommonClasses (32ms)
-	RebuildNativeTypeToScriptingClass (10ms)
-	initialDomainReloadingComplete (34ms)
-	LoadAllAssembliesAndSetupDomain (497ms)
-		LoadAssemblies (341ms)
+		CreateAndSetChildDomain (35ms)
+	RebuildCommonClasses (36ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (470ms)
+		LoadAssemblies (316ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (282ms)
-			TypeCache.Refresh (202ms)
-				TypeCache.ScanAssembly (185ms)
-			BuildScriptInfoCaches (68ms)
-			ResolveRequiredComponents (9ms)
-	FinalizeReload (782ms)
+		AnalyzeDomain (269ms)
+			TypeCache.Refresh (177ms)
+				TypeCache.ScanAssembly (163ms)
+			BuildScriptInfoCaches (76ms)
+			ResolveRequiredComponents (12ms)
+	FinalizeReload (722ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (638ms)
+		SetupLoadedEditorAssemblies (570ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (11ms)
-			SetLoadedEditorAssemblies (4ms)
-			BeforeProcessingInitializeOnLoad (146ms)
-			ProcessInitializeOnLoadAttributes (350ms)
-			ProcessInitializeOnLoadMethodAttributes (126ms)
+			InitializePlatformSupportModulesInManaged (9ms)
+			SetLoadedEditorAssemblies (5ms)
+			BeforeProcessingInitializeOnLoad (134ms)
+			ProcessInitializeOnLoadAttributes (311ms)
+			ProcessInitializeOnLoadMethodAttributes (110ms)
 			AfterProcessingInitializeOnLoad (2ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (4ms)
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
-Refreshing native plugins compatible for Editor in 1.54 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 1.27 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 16 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 6915 unused Assets / (4.2 MB). Loaded Objects now: 7737.
-Memory consumption went from 154.5 MB to 150.3 MB.
-Total: 9.771600 ms (FindLiveObjects: 0.804100 ms CreateObjectMapping: 0.523900 ms MarkObjects: 6.236500 ms  DeleteObjects: 2.206300 ms)
+Unloading 6916 unused Assets / (4.0 MB). Loaded Objects now: 7738.
+Memory consumption went from 154.6 MB to 150.6 MB.
+Total: 7.958700 ms (FindLiveObjects: 0.683200 ms CreateObjectMapping: 0.339600 ms MarkObjects: 5.201800 ms  DeleteObjects: 1.733200 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 8798.381658 seconds.
-  path: Assets/games/HotDynamite/Shaders/M_UI_ToonWater.mat
-  artifactKey: Guid(e2b100f1f532e22419298618396cb494) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/games/HotDynamite/Shaders/M_UI_ToonWater.mat using Guid(e2b100f1f532e22419298618396cb494) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '098ade84c3aad4f6c14cbebe08e49a02') in 0.0907691 seconds
+  Time since last request: 8750.236994 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png
+  artifactKey: Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png using Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter)[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-K45T-KVUZ-DH5Y-SYZ8-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-03-27T06:49:02Z
+[Licensing::Module] License group:
+  Id: 1375506726934-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+ -> (artifact id: '2e7968f51991d03604560c28ba39007e') in 0.1412845 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman
+  artifactKey: Guid(4e5d23dc9f32a5f498046b07107b6953) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman using Guid(4e5d23dc9f32a5f498046b07107b6953) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '7bd84258d5629bd9d63348f2e88b8c63') in 0.0126387 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png
+  artifactKey: Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png using Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '7e72675b035f3240315c6a119b59ad3d') in 0.0179929 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
 
 ========================================================================
 Received Import Request.
   Time since last request: 0.000015 seconds.
-  path: Assets/games/HotDynamite/Shaders/UIToonWaterURP.shader
-  artifactKey: Guid(9152fc3427b7d5b4f9313735dd0637e6) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/games/HotDynamite/Shaders/UIToonWaterURP.shader using Guid(9152fc3427b7d5b4f9313735dd0637e6) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'def70ab24de4cfe3db78237b1a8d8f4a') in 0.0161846 seconds
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman
+  artifactKey: Guid(887dc3ee14c337c4f95eeb749bb98eb5) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman using Guid(887dc3ee14c337c4f95eeb749bb98eb5) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '9b9f80f8c95acc717b9dd6376689014f') in 0.0109389 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00011.png
+  artifactKey: Guid(cf9b2567a4a3d3a48a3c92890dd30322) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00011.png using Guid(cf9b2567a4a3d3a48a3c92890dd30322) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '114712ffe5057c5452156d34fa4701e1') in 0.0179732 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png
+  artifactKey: Guid(27917f772edd34c45a5c00e954a0fc87) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png using Guid(27917f772edd34c45a5c00e954a0fc87) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '6b736f801fbeaf02ff396d652c557027') in 0.0228049 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png
+  artifactKey: Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png using Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '15aa437c3c313073a03c2cf95a32675a') in 0.0187065 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 4.574676 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00001.png
+  artifactKey: Guid(486203ab7a7b7af47af0ed3ca928c952) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00001.png using Guid(486203ab7a7b7af47af0ed3ca928c952) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'cbf86c645d847b7d734463e7448e68d4') in 0.0789061 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png
+  artifactKey: Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png using Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'acb10ab33a5ab08757ec65bcb87dec6d') in 0.0560585 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png
+  artifactKey: Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png using Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '1f6fc66ce18404256785f94133be8456') in 0.0287794 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00007.png
+  artifactKey: Guid(7109934b895cd374bbadf46269cabb6a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00007.png using Guid(7109934b895cd374bbadf46269cabb6a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'c5e4fd8ca52b27c3b1032a478ab82e53') in 0.0164998 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png
+  artifactKey: Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png using Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '25569aed103a6435040524fc2c15af50') in 0.0154302 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 7.391377 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png
+  artifactKey: Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png using Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '1209d7f9fff555d8df120b8ef5db299a') in 0.0362888 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png
+  artifactKey: Guid(27917f772edd34c45a5c00e954a0fc87) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png using Guid(27917f772edd34c45a5c00e954a0fc87) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2924d75bb354e4b3aa56ff6380369008') in 0.0696534 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00003.png
+  artifactKey: Guid(724e97d0237e33141ab6697d6fecce0c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00003.png using Guid(724e97d0237e33141ab6697d6fecce0c) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'aef877305df46ecb9395a61d6bbc524a') in 0.0165048 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00010.png
+  artifactKey: Guid(1a53976b56e5ed84c896fd964ed7227a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00010.png using Guid(1a53976b56e5ed84c896fd964ed7227a) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '682c91a5e4ac6357054a0ac6cea3b1d5') in 0.0149874 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png
+  artifactKey: Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png using Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'ec7687567d943e50ef98506ff15ac9d1') in 0.0138484 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.666626 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png
+  artifactKey: Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png using Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '06a6e4307cb36bd0429ea00acf8dbe45') in 0.0149828 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00012.png
+  artifactKey: Guid(92f2459b620ba78428cd80a749ff9542) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00012.png using Guid(92f2459b620ba78428cd80a749ff9542) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '372bbc6f541dad70e6da555b9b3c707f') in 0.0164474 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png
+  artifactKey: Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00004.png using Guid(57ae25255c5246f42b58ba978f1e1e9f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '3e7744b225e7759d935b3d834d0f6476') in 0.0280766 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00011.png
+  artifactKey: Guid(cf9b2567a4a3d3a48a3c92890dd30322) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00011.png using Guid(cf9b2567a4a3d3a48a3c92890dd30322) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '19629e670391198dfe8d599c17dc98f7') in 0.0130506 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png
+  artifactKey: Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png using Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'a353d128c0288a81cfef1ccb5e7512d8') in 0.0158461 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 6.333923 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png
+  artifactKey: Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00000.png using Guid(2af7fe229caf20c41a95d1f000a6a41e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '524fff299e6ddb1299bdb2994298b9d4') in 0.1037732 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png
+  artifactKey: Guid(27917f772edd34c45a5c00e954a0fc87) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png using Guid(27917f772edd34c45a5c00e954a0fc87) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '90dbc00c7e82760f8faf1b27991d37a0') in 0.0170551 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000025 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00008.png
+  artifactKey: Guid(32b95b23fda742943a6de327537bd513) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00008.png using Guid(32b95b23fda742943a6de327537bd513) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd578082eac9785453c52d57c0be91cd4') in 0.042871 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png
+  artifactKey: Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00013.png using Guid(093a878ad1411754c87f6ea933d5dfeb) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a484863bde4d27bd5fdef3dabd4d3f38') in 0.0289024 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00009.png
+  artifactKey: Guid(feaaf86682343194f9a3f1e944593eee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00009.png using Guid(feaaf86682343194f9a3f1e944593eee) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'ca098803e9de7d15f814537b85584e02') in 0.0253317 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.597775 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png
+  artifactKey: Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00006.png using Guid(a8728c5fb0c15e240a9ae8b47b53481a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'e00a33dc6e248e1fee0dab5cd3c22972') in 0.0281895 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00003.png
+  artifactKey: Guid(724e97d0237e33141ab6697d6fecce0c) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00003.png using Guid(724e97d0237e33141ab6697d6fecce0c) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'c8a30e9c7bc12ce6c370b9ab6f319bb8') in 0.0164484 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00009.png
+  artifactKey: Guid(feaaf86682343194f9a3f1e944593eee) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00009.png using Guid(feaaf86682343194f9a3f1e944593eee) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'b82f42e95e35412d8012b5b78ffbd220') in 0.0164461 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000013 seconds.
+  path: Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png
+  artifactKey: Guid(27917f772edd34c45a5c00e954a0fc87) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/games/HotDynamite/Sprites/Stickman/Stickman/Stickman 2_00005.png using Guid(27917f772edd34c45a5c00e954a0fc87) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '52ebc2efc7b1c0872bec22ce0f32619b') in 0.0141298 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
+
 Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
 AssetImportWorker is now disconnected from the server
 Process exiting
 Exiting without the bug reporter. Application will terminate with return code 0
