@@ -13,8 +13,13 @@ namespace HotDynamite
         [SerializeField] private Vector3 bombLocalOffset = new Vector3(0f, 0.9f, 0f);
         [Header("Facing")]
         [SerializeField] private SpriteRenderer facingRenderer;
+        [SerializeField] private Transform facingTransform;
         [SerializeField] private float facingInputThreshold = 0.05f;
-        [SerializeField] private bool spriteFacesRightByDefault = true;
+        [SerializeField] private float facingAngleOffset = 0f;
+        [Header("Animation")]
+        [SerializeField] private Animator runAnimator;
+        [SerializeField] private float runAnimationThreshold = 0.05f;
+        [SerializeField] private float runAnimationSpeed = 1f;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
@@ -57,6 +62,16 @@ namespace HotDynamite
                 facingRenderer = GetComponent<SpriteRenderer>();
             }
 
+            if (facingTransform == null)
+            {
+                facingTransform = facingRenderer != null ? facingRenderer.transform : transform;
+            }
+
+            if (runAnimator == null)
+            {
+                runAnimator = GetComponent<Animator>();
+            }
+
             if (humanInput != null)
             {
                 humanInput.enabled = isHuman;
@@ -94,6 +109,7 @@ namespace HotDynamite
                 * (hasBomb ? settings.bombHolderSpeedMultiplier : 1f)
                 * GetTemporarySpeedMultiplier();
             estimatedVelocity = input * speed;
+            UpdateRunAnimation(input);
             UpdateFacing(input);
             Vector2 next = body.position + input * speed * Time.fixedDeltaTime;
             next.x = Mathf.Clamp(next.x, settings.arenaMin.x, settings.arenaMax.x);
@@ -177,6 +193,7 @@ namespace HotDynamite
             estimatedVelocity = Vector2.zero;
             temporarySpeedMultiplier = 1f;
             temporarySpeedUntil = -1f;
+            UpdateRunAnimation(Vector2.zero);
 
             gameObject.SetActive(false);
         }
@@ -246,14 +263,24 @@ namespace HotDynamite
 
         private void UpdateFacing(Vector2 movementInput)
         {
-            if (Mathf.Abs(movementInput.x) < facingInputThreshold || facingRenderer == null)
+            if (facingTransform == null || movementInput.sqrMagnitude < facingInputThreshold * facingInputThreshold)
             {
                 return;
             }
 
-            bool movingRight = movementInput.x > 0f;
-            bool shouldFlipX = spriteFacesRightByDefault ? !movingRight : movingRight;
-            facingRenderer.flipX = shouldFlipX;
+            float facingAngle = Mathf.Atan2(movementInput.y, movementInput.x) * Mathf.Rad2Deg + facingAngleOffset;
+            facingTransform.localRotation = Quaternion.Euler(0f, 0f, facingAngle);
+        }
+
+        private void UpdateRunAnimation(Vector2 movementInput)
+        {
+            if (runAnimator == null)
+            {
+                return;
+            }
+
+            bool isMoving = movementInput.sqrMagnitude >= runAnimationThreshold * runAnimationThreshold;
+            runAnimator.speed = isMoving ? runAnimationSpeed : 0f;
         }
     }
 }
