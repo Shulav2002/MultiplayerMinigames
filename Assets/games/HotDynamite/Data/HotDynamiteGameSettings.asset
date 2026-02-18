@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 823c34a43c43129448efb7c009921700, type: 3}
+  m_Name: HotDynamiteGameSettings
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.HotDynamiteGameSettings
+  totalPlayers: 4
+  humanPlayers: 1
+  moveSpeed: 3
+  bombHolderSpeedMultiplier: 1.1
+  bombTimerSeconds: 10
+  passCooldownSeconds: 0.5
+  arenaMin: {x: -8, y: -4.5}
+  arenaMax: {x: 8, y: 4.5}
+  botDecisionInterval: 0.1
+  botWanderStrength: 0.2
+  botAvoidanceDistance: 1.5
+  botAvoidanceStrength: 2
