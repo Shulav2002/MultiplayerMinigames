@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c112c55e4d8464e8274b9ce50c9fe86, type: 3}
   m_Name: HotDynamitePlayerSettings
   m_EditorClassIdentifier: HotDynamite::HotDynamite.HotDynamitePlayerSettings
-  totalPlayers: 6
+  totalPlayers: 4
   humanPlayers: 1
   moveSpeed: 3
   bombHolderSpeedMultiplier: 1.1
