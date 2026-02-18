@@ -3,7 +3,7 @@
 ## Core Loop
 - `HotDynamiteGameManager` spawns players from fixed `spawnPoints`.
 - One alive player is chosen as bomber.
-- Bomb fuse is fixed to `10` seconds per round.
+- Bomb fuse defaults to `10` seconds per round (from bomb settings asset).
 - Bomb can be passed on collision, but pass does **not** reset the fuse.
 - When fuse reaches zero, current bomber is eliminated and a new round starts (until one player remains).
 
@@ -28,6 +28,16 @@ Use `HotDynamiteGameSettings` to tune:
   - `bombPasserSpeedMultiplier`
   - `bombReceiverSpeedMultiplier`
 - Bot steering/avoidance behavior.
+
+## Split ScriptableObjects
+`HotDynamiteGameSettings` now supports split config assets:
+- `Data/HotDynamitePlayerSettings.asset`
+- `Data/HotDynamiteBombSettings.asset`
+- `Data/HotDynamiteArenaSettings.asset`
+- `Data/HotDynamiteBotSettings.asset`
+
+`Data/HotDynamiteGameSettings.asset` references these assets, and falls back to legacy inline values if a split asset reference is missing.
+You can keep values synced with `keepSettingsSynced` and choose sync direction using `syncMode`.
 
 ## Recent Refactor Notes
 - Removed unused manager state to reduce redundancy.

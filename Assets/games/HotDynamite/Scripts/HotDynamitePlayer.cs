@@ -20,8 +20,15 @@ namespace HotDynamite
         [SerializeField] private Animator runAnimator;
         [SerializeField] private float runAnimationThreshold = 0.05f;
         [SerializeField] private float runAnimationSpeed = 1f;
+        [SerializeField] private float bombAnimationCountdownSeconds = 3f;
         [Header("Appearance")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
+        [Header("Collision")]
+        [SerializeField] private float playerBounceSpeed = 4.8f;
+        [SerializeField] private float playerBounceMaxSpeed = 6.5f;
+        [SerializeField] private float playerBounceDecay = 8f;
+        [SerializeField] private float playerBounceCooldownSeconds = 0.16f;
+        [SerializeField] private float playerBounceInputSuppressionSeconds = 0.08f;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
@@ -34,6 +41,10 @@ namespace HotDynamite
         private float temporarySpeedUntil = -1f;
         private int appearanceIndex;
         private AnimatorOverrideController runAnimatorOverride;
+        private Animator bombAnimator;
+        private Vector2 bounceVelocity;
+        private float bounceCooldownUntil = -1f;
+        private float bounceInputSuppressionUntil = -1f;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
@@ -93,6 +104,9 @@ namespace HotDynamite
             hasBomb = false;
             temporarySpeedMultiplier = 1f;
             temporarySpeedUntil = -1f;
+            bounceVelocity = Vector2.zero;
+            bounceCooldownUntil = -1f;
+            bounceInputSuppressionUntil = -1f;
             UpdateBombVisual();
         }
 
@@ -111,14 +125,32 @@ namespace HotDynamite
                 input.Normalize();
             }
 
-            float speed = settings.moveSpeed
-                * (hasBomb ? settings.bombHolderSpeedMultiplier : 1f)
+            float speed = settings.MoveSpeed
+                * (hasBomb ? settings.BombHolderSpeedMultiplier : 1f)
                 * GetTemporarySpeedMultiplier();
-            estimatedVelocity = input * speed;
+            Vector2 baseVelocity = Time.time < bounceInputSuppressionUntil ? Vector2.zero : input * speed;
+            estimatedVelocity = baseVelocity + bounceVelocity;
             UpdateRunAnimation(input);
             UpdateFacing(input);
-            Vector2 next = body.position + input * speed * Time.fixedDeltaTime;
+            Vector2 next = body.position + estimatedVelocity * Time.fixedDeltaTime;
             body.MovePosition(next);
+
+            if (bounceVelocity.sqrMagnitude > 0.0001f)
+            {
+                bounceVelocity = Vector2.MoveTowards(
+                    bounceVelocity,
+                    Vector2.zero,
+                    Mathf.Max(0f, playerBounceDecay) * Time.fixedDeltaTime);
+            }
+            else
+            {
+                bounceVelocity = Vector2.zero;
+            }
+        }
+
+        private void Update()
+        {
+            UpdateBombAnimationState();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -134,6 +166,7 @@ namespace HotDynamite
         private void OnCollisionEnter2D(Collision2D collision)
         {
             TryPassBomb(collision != null ? collision.collider : null);
+            TryBounceOnPlayerCollision(collision);
         }
 
         private void OnCollisionStay2D(Collision2D collision)
@@ -203,9 +236,42 @@ namespace HotDynamite
             estimatedVelocity = Vector2.zero;
             temporarySpeedMultiplier = 1f;
             temporarySpeedUntil = -1f;
+            bounceVelocity = Vector2.zero;
+            bounceCooldownUntil = -1f;
+            bounceInputSuppressionUntil = -1f;
             UpdateRunAnimation(Vector2.zero);
 
             gameObject.SetActive(false);
+        }
+
+        private void TryBounceOnPlayerCollision(Collision2D collision)
+        {
+            if (collision == null || !isAlive || body == null || Time.time < bounceCooldownUntil)
+            {
+                return;
+            }
+
+            HotDynamitePlayer otherPlayer = collision.collider != null
+                ? collision.collider.GetComponentInParent<HotDynamitePlayer>()
+                : null;
+            if (otherPlayer == null || otherPlayer == this || !otherPlayer.isAlive || otherPlayer.body == null)
+            {
+                return;
+            }
+
+            // Process each player pair once per contact event.
+            if (GetInstanceID() > otherPlayer.GetInstanceID() || Time.time < otherPlayer.bounceCooldownUntil)
+            {
+                return;
+            }
+
+            Vector2 separation = otherPlayer.Position - Position;
+            Vector2 direction = separation.sqrMagnitude > 0.0001f
+                ? separation.normalized
+                : (collision.relativeVelocity.sqrMagnitude > 0.0001f ? collision.relativeVelocity.normalized : Vector2.right);
+
+            ApplyBounceImpulse(-direction);
+            otherPlayer.ApplyBounceImpulse(direction);
         }
 
         private void OnDestroy()
@@ -222,8 +288,14 @@ namespace HotDynamite
                     bombInstance = Instantiate(bombPrefab, transform);
                     bombInstance.transform.localPosition = bombLocalOffset;
                     bombInstance.transform.localRotation = Quaternion.identity;
+                    bombAnimator = bombInstance.GetComponent<Animator>();
+                    if (bombAnimator != null)
+                    {
+                        bombAnimator.enabled = false;
+                    }
                 }
 
+                UpdateBombAnimationState();
                 return;
             }
 
@@ -269,6 +341,21 @@ namespace HotDynamite
 
             Destroy(bombInstance);
             bombInstance = null;
+            bombAnimator = null;
+        }
+
+        private void ApplyBounceImpulse(Vector2 direction)
+        {
+            Vector2 normalized = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.zero;
+            bounceVelocity += normalized * Mathf.Max(0f, playerBounceSpeed);
+            float maxBounce = Mathf.Max(0f, playerBounceMaxSpeed);
+            if (bounceVelocity.sqrMagnitude > maxBounce * maxBounce)
+            {
+                bounceVelocity = bounceVelocity.normalized * maxBounce;
+            }
+
+            bounceCooldownUntil = Time.time + Mathf.Max(0f, playerBounceCooldownSeconds);
+            bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, playerBounceInputSuppressionSeconds);
         }
 
         private void UpdateFacing(Vector2 movementInput)
@@ -325,6 +412,30 @@ namespace HotDynamite
 
             runAnimatorOverride["Run"] = selectedClip;
             runAnimator.runtimeAnimatorController = runAnimatorOverride;
+        }
+
+        private void UpdateBombAnimationState()
+        {
+            if (bombAnimator == null)
+            {
+                return;
+            }
+
+            bool shouldAnimate = hasBomb
+                && manager != null
+                && manager.BombTimeRemaining <= Mathf.Max(0f, bombAnimationCountdownSeconds);
+
+            if (bombAnimator.enabled == shouldAnimate)
+            {
+                return;
+            }
+
+            bombAnimator.enabled = shouldAnimate;
+
+            if (shouldAnimate)
+            {
+                bombAnimator.Play(0, 0, 0f);
+            }
         }
     }
 }

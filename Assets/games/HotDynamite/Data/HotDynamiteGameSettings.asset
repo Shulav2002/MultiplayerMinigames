@@ -12,12 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 823c34a43c43129448efb7c009921700, type: 3}
   m_Name: HotDynamiteGameSettings
   m_EditorClassIdentifier: HotDynamite::HotDynamite.HotDynamiteGameSettings
-  totalPlayers: 4
+  playerSettings: {fileID: 11400000, guid: 514e0af64a674093bf0f8480f900b6a2, type: 2}
+  bombSettings: {fileID: 11400000, guid: ea17183e59624303aa23f2a4d1409d9a, type: 2}
+  arenaSettings: {fileID: 11400000, guid: c2a96c797f30451494db79d30c89eebb, type: 2}
+  botSettings: {fileID: 11400000, guid: e924289687074a5ab01b05ba5c06629d, type: 2}
+  keepSettingsSynced: 1
+  syncMode: 0
+  totalPlayers: 6
   humanPlayers: 1
   moveSpeed: 3
   bombHolderSpeedMultiplier: 1.1
   bombTimerSeconds: 10
   passCooldownSeconds: 0.5
+  bombPassSpeedEffectSeconds: 1.5
+  bombPasserSpeedMultiplier: 1.15
+  bombReceiverSpeedMultiplier: 0.85
   arenaMin: {x: -8, y: -4.5}
   arenaMax: {x: 8, y: 4.5}
   botDecisionInterval: 0.1

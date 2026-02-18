@@ -5,21 +5,23 @@ namespace HotDynamite
 {
     public class HotDynamiteGameManager : MonoBehaviour
     {
-        private const float BombFuseSeconds = 10f;
-
         [SerializeField] private HotDynamiteGameSettings settings;
         [SerializeField] private HotDynamitePlayer playerPrefab;
         [SerializeField] private Transform playerParent;
         [SerializeField] private Transform[] spawnPoints;
+        [Header("Bots")]
+        [SerializeField] private bool hardModeBots = false;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
 
         private HotDynamitePlayer bombHolder;
         private float bombTimer;
+        private float bombFuseSeconds = 10f;
         private float bombPassLockUntil;
         private bool gameOver;
 
         public HotDynamitePlayer BombHolder => bombHolder;
+        public bool HardModeBots => hardModeBots;
         public float BombTimeRemaining => Mathf.Max(0f, bombTimer);
         public float BombUrgency01
         {
@@ -30,7 +32,7 @@ namespace HotDynamite
                     return 0f;
                 }
 
-                float remaining01 = bombTimer / BombFuseSeconds;
+                float remaining01 = bombTimer / Mathf.Max(0.1f, bombFuseSeconds);
                 return Mathf.Clamp01(1f - remaining01);
             }
         }
@@ -43,6 +45,8 @@ namespace HotDynamite
                 enabled = false;
                 return;
             }
+
+            bombFuseSeconds = Mathf.Max(0.1f, settings.BombTimerSeconds);
 
             if (playerPrefab == null)
             {
@@ -111,14 +115,14 @@ namespace HotDynamite
                 return;
             }
 
+            bombTimer = bombFuseSeconds;
             bombHolder = alivePlayers[Random.Range(0, alivePlayers.Count)];
             for (int i = 0; i < alivePlayers.Count; i++)
             {
                 alivePlayers[i].SetHasBomb(alivePlayers[i] == bombHolder);
             }
 
-            bombTimer = BombFuseSeconds;
-            bombPassLockUntil = Time.time + settings.passCooldownSeconds;
+            bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
         }
 
         public void RequestBombPass(HotDynamitePlayer from, HotDynamitePlayer to)
@@ -141,9 +145,9 @@ namespace HotDynamite
             bombHolder = to;
             from.SetHasBomb(false);
             to.SetHasBomb(true);
-            from.ApplyTemporarySpeedMultiplier(settings.bombPasserSpeedMultiplier, settings.bombPassSpeedEffectSeconds);
-            to.ApplyTemporarySpeedMultiplier(settings.bombReceiverSpeedMultiplier, settings.bombPassSpeedEffectSeconds);
-            bombPassLockUntil = Time.time + settings.passCooldownSeconds;
+            from.ApplyTemporarySpeedMultiplier(settings.BombPasserSpeedMultiplier, settings.BombPassSpeedEffectSeconds);
+            to.ApplyTemporarySpeedMultiplier(settings.BombReceiverSpeedMultiplier, settings.BombPassSpeedEffectSeconds);
+            bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
             Debug.Log($"HotDynamite: Bomb transferred from {from.name} (ID {from.GetInstanceID()}) to {to.name} (ID {to.GetInstanceID()}).");
         }
 

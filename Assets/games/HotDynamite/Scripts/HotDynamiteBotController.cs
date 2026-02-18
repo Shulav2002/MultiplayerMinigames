@@ -17,6 +17,8 @@ namespace HotDynamite
         [SerializeField, Range(0f, 3f)] private float edgePatrolBias = 1.1f;
         [SerializeField] private float stuckSpeedThreshold = 0.12f;
         [SerializeField] private float stuckDirectionRefreshTime = 0.45f;
+        [SerializeField] private float steeringSmoothness = 12f;
+        [SerializeField, Range(0f, 0.1f)] private float orbitFlipChance = 0.008f;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
@@ -25,6 +27,7 @@ namespace HotDynamite
         private float nextTargetSelectionTime;
         private float nextUnstuckTime;
         private Vector2 moveVector;
+        private Vector2 desiredMoveVector;
         private HotDynamitePlayer chaseTarget;
         private float orbitSign = 1f;
 
@@ -36,6 +39,8 @@ namespace HotDynamite
             this.settings = settings;
             this.owner = owner;
             orbitSign = Random.value < 0.5f ? -1f : 1f;
+            moveVector = Vector2.zero;
+            desiredMoveVector = Vector2.zero;
         }
 
         private void Update()
@@ -43,19 +48,21 @@ namespace HotDynamite
             if (owner == null || manager == null || settings == null || !owner.IsAlive)
             {
                 moveVector = Vector2.zero;
+                desiredMoveVector = Vector2.zero;
                 return;
             }
 
             float now = Time.time;
             if (now < nextDecisionTime)
             {
+                SmoothMoveVector(Time.deltaTime);
                 return;
             }
 
             float bombUrgency = manager.BombUrgency01;
             float decisionInterval = owner.HasBomb
-                ? settings.botDecisionInterval * Mathf.Lerp(0.55f, 0.2f, bombUrgency)
-                : settings.botDecisionInterval * Mathf.Lerp(0.8f, 0.55f, bombUrgency);
+                ? settings.BotDecisionInterval * Mathf.Lerp(0.55f, 0.2f, bombUrgency)
+                : settings.BotDecisionInterval * Mathf.Lerp(0.8f, 0.55f, bombUrgency);
             nextDecisionTime = now + Mathf.Max(0.01f, decisionInterval);
 
             Vector2 desired = Vector2.zero;
@@ -102,7 +109,7 @@ namespace HotDynamite
 
             Vector2 avoid = CalculateArenaAvoidance(owner.Position);
 
-            float clampedWanderStrength = Mathf.Clamp(settings.botWanderStrength, 0f, 1f);
+            float clampedWanderStrength = Mathf.Clamp(settings.BotWanderStrength, 0f, 1f);
             float primaryWeight;
             float avoidWeight;
             float wanderWeight;
@@ -110,7 +117,7 @@ namespace HotDynamite
             if (owner.HasBomb)
             {
                 primaryWeight = Mathf.Lerp(2.4f, 3.8f, bombUrgency);
-                avoidWeight = Mathf.Lerp(settings.botAvoidanceStrength * 0.45f, settings.botAvoidanceStrength * 0.25f, bombUrgency);
+                avoidWeight = Mathf.Lerp(settings.BotAvoidanceStrength * 0.45f, settings.BotAvoidanceStrength * 0.25f, bombUrgency);
                 wanderWeight = 0f;
             }
             else
@@ -118,7 +125,7 @@ namespace HotDynamite
                 float danger = 0f;
                 if (bombHolder != null)
                 {
-                    float safeDistance = Mathf.Max(0.1f, settings.botAvoidanceDistance * 4f);
+                    float safeDistance = Mathf.Max(0.1f, settings.BotAvoidanceDistance * 4f);
                     float bombDistance = Vector2.Distance(owner.Position, bombHolder.Position);
                     danger = Mathf.Clamp01(1f - (bombDistance / safeDistance));
                 }
@@ -130,16 +137,17 @@ namespace HotDynamite
                 avoidWeight = Mathf.Lerp(1.0f, 0.5f, urgencyBiasedDanger);
                 wanderWeight = clampedWanderStrength * 0.1f * (1f - urgencyBiasedDanger);
 
-                Vector2 center = (settings.arenaMin + settings.arenaMax) * 0.5f;
+                Vector2 center = (settings.ArenaMin + settings.ArenaMax) * 0.5f;
                 Vector2 centerPull = (center - owner.Position);
                 centerPull = centerPull.sqrMagnitude > 0.0001f ? centerPull.normalized : Vector2.zero;
 
                 Vector2 edgePatrol = CalculateEdgePatrolDirection(center);
                 float edgeFactor = GetEdgeFactor(owner.Position);
+                desired = ConstrainDesiredDirectionAtEdge(desired, center, edgeFactor);
                 float centerWeight = centerBias
                     * Mathf.Lerp(1.0f, 0.3f, urgencyBiasedDanger)
-                    * Mathf.Lerp(1.0f, 0.12f, edgeFactor);
-                float edgePatrolWeight = edgePatrolBias * Mathf.Lerp(0.4f, 1.2f, edgeFactor);
+                    * Mathf.Lerp(1.0f, 0.0f, edgeFactor);
+                float edgePatrolWeight = edgePatrolBias * Mathf.Lerp(0.5f, 1.9f, edgeFactor);
 
                 Vector2 cohesionPull = Vector2.zero;
                 float cohesionWeight = 0f;
@@ -147,11 +155,13 @@ namespace HotDynamite
                 {
                     cohesionPull = centroid - owner.Position;
                     cohesionPull = cohesionPull.sqrMagnitude > 0.0001f ? cohesionPull.normalized : Vector2.zero;
-                    cohesionWeight = cohesionBias * Mathf.Lerp(0.9f, 0.25f, urgencyBiasedDanger);
+                    cohesionWeight = cohesionBias
+                        * Mathf.Lerp(0.9f, 0.25f, urgencyBiasedDanger)
+                        * Mathf.Lerp(1.0f, 0.35f, edgeFactor);
                 }
 
                 Vector2 nonBombWander = Random.insideUnitCircle * wanderWeight;
-                moveVector = desired * primaryWeight
+                desiredMoveVector = desired * primaryWeight
                     + avoid * avoidWeight
                     + centerPull * centerWeight
                     + edgePatrol * edgePatrolWeight
@@ -159,7 +169,7 @@ namespace HotDynamite
                     + nonBombWander;
 
                 // If forces cancel out, force a fresh tangential direction so bots keep moving.
-                if (moveVector.sqrMagnitude < 0.04f || owner.EstimatedVelocity.magnitude < stuckSpeedThreshold)
+                if (desiredMoveVector.sqrMagnitude < 0.04f || owner.EstimatedVelocity.magnitude < stuckSpeedThreshold)
                 {
                     if (now >= nextUnstuckTime)
                     {
@@ -167,16 +177,18 @@ namespace HotDynamite
                         nextUnstuckTime = now + Mathf.Max(0.1f, stuckDirectionRefreshTime);
                     }
 
-                    moveVector += edgePatrol * Mathf.Max(0.45f, edgePatrolWeight);
+                    desiredMoveVector += edgePatrol * Mathf.Max(0.45f, edgePatrolWeight);
                 }
 
-                NormalizeMoveVector();
+                NormalizeDesiredMoveVector();
+                SmoothMoveVector(Time.deltaTime);
                 return;
             }
 
             Vector2 wander = Random.insideUnitCircle * wanderWeight;
-            moveVector = desired * primaryWeight + avoid * avoidWeight + wander;
-            NormalizeMoveVector();
+            desiredMoveVector = desired * primaryWeight + avoid * avoidWeight + wander;
+            NormalizeDesiredMoveVector();
+            SmoothMoveVector(Time.deltaTime);
         }
 
         private Vector2 CalculateInterceptDirection(HotDynamitePlayer target, float urgency)
@@ -192,7 +204,12 @@ namespace HotDynamite
                 return Vector2.zero;
             }
 
-            float ownerSpeed = Mathf.Max(0.1f, settings.moveSpeed * settings.bombHolderSpeedMultiplier);
+            if (!manager.HardModeBots)
+            {
+                return toTarget.normalized;
+            }
+
+            float ownerSpeed = Mathf.Max(0.1f, settings.MoveSpeed * settings.BombHolderSpeedMultiplier);
             float targetSpeed = target.EstimatedVelocity.magnitude;
             float travelTime = toTarget.magnitude / Mathf.Max(0.1f, ownerSpeed + targetSpeed * 0.75f);
 
@@ -233,7 +250,7 @@ namespace HotDynamite
 
             Vector2 toBombDir = -awayDir;
             Vector2 orbitDir = new Vector2(-toBombDir.y, toBombDir.x) * orbitSign;
-            if (Random.value < 0.02f)
+            if (Random.value < orbitFlipChance)
             {
                 orbitSign *= -1f;
             }
@@ -265,25 +282,58 @@ namespace HotDynamite
 
         private float GetEdgeFactor(Vector2 pos)
         {
-            Vector2 center = (settings.arenaMin + settings.arenaMax) * 0.5f;
-            float halfWidth = Mathf.Max(0.1f, (settings.arenaMax.x - settings.arenaMin.x) * 0.5f);
-            float halfHeight = Mathf.Max(0.1f, (settings.arenaMax.y - settings.arenaMin.y) * 0.5f);
+            Vector2 center = (settings.ArenaMin + settings.ArenaMax) * 0.5f;
+            float halfWidth = Mathf.Max(0.1f, (settings.ArenaMax.x - settings.ArenaMin.x) * 0.5f);
+            float halfHeight = Mathf.Max(0.1f, (settings.ArenaMax.y - settings.ArenaMin.y) * 0.5f);
             float arenaRadius = Mathf.Min(halfWidth, halfHeight);
             float distanceToCenter = Vector2.Distance(pos, center);
             float distanceToEdge = Mathf.Max(0f, arenaRadius - distanceToCenter);
 
-            float edgeRange = Mathf.Max(0.1f, settings.botAvoidanceDistance * 2.2f);
+            float edgeRange = Mathf.Max(0.1f, settings.BotAvoidanceDistance * 2.2f);
             return Mathf.Clamp01(1f - (distanceToEdge / edgeRange));
         }
 
         private Vector2 CalculateArenaAvoidance(Vector2 position)
         {
             Vector2 avoid = Vector2.zero;
-            if (position.x < settings.arenaMin.x) { avoid.x += 1f; }
-            if (position.x > settings.arenaMax.x) { avoid.x -= 1f; }
-            if (position.y < settings.arenaMin.y) { avoid.y += 1f; }
-            if (position.y > settings.arenaMax.y) { avoid.y -= 1f; }
+            if (position.x < settings.ArenaMin.x) { avoid.x += 1f; }
+            if (position.x > settings.ArenaMax.x) { avoid.x -= 1f; }
+            if (position.y < settings.ArenaMin.y) { avoid.y += 1f; }
+            if (position.y > settings.ArenaMax.y) { avoid.y -= 1f; }
             return avoid.sqrMagnitude > 1f ? avoid.normalized : avoid;
+        }
+
+        private Vector2 ConstrainDesiredDirectionAtEdge(Vector2 desired, Vector2 center, float edgeFactor)
+        {
+            if (desired.sqrMagnitude <= VectorEpsilonSqr || edgeFactor <= 0.01f)
+            {
+                return desired;
+            }
+
+            Vector2 radial = owner.Position - center;
+            if (radial.sqrMagnitude <= VectorEpsilonSqr)
+            {
+                return desired;
+            }
+
+            radial.Normalize();
+            Vector2 tangent = new Vector2(-radial.y, radial.x) * orbitSign;
+            float edgeBlend = Mathf.Clamp01(Mathf.InverseLerp(0.45f, 1f, edgeFactor));
+            Vector2 blended = Vector2.Lerp(desired, tangent, edgeBlend);
+
+            // Near the edge, remove any strong outward push that causes wall-hugging stalls.
+            float outward = Vector2.Dot(blended, radial);
+            if (outward > 0f)
+            {
+                blended -= radial * outward;
+            }
+
+            if (blended.sqrMagnitude <= VectorEpsilonSqr)
+            {
+                blended = tangent;
+            }
+
+            return blended.normalized;
         }
 
         private void NormalizeMoveVector()
@@ -292,6 +342,28 @@ namespace HotDynamite
             {
                 moveVector.Normalize();
             }
+        }
+
+        private void NormalizeDesiredMoveVector()
+        {
+            if (desiredMoveVector.sqrMagnitude > 1f)
+            {
+                desiredMoveVector.Normalize();
+            }
+        }
+
+        private void SmoothMoveVector(float deltaTime)
+        {
+            float smooth = Mathf.Max(0f, steeringSmoothness);
+            if (smooth <= 0f)
+            {
+                moveVector = desiredMoveVector;
+                return;
+            }
+
+            float t = 1f - Mathf.Exp(-smooth * Mathf.Max(0f, deltaTime));
+            moveVector = Vector2.Lerp(moveVector, desiredMoveVector, t);
+            NormalizeMoveVector();
         }
 
     }

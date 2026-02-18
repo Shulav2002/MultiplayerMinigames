@@ -61,10 +61,14 @@
     <Analyzer Include="D:\UnityVersions\6000.3.5f2\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteArenaSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\ShaderPlayToggle.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBombSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerInput.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayer.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteGameManager.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerSettings.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBotSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBotController.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteGameSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\FixedAspectCamera.cs" />

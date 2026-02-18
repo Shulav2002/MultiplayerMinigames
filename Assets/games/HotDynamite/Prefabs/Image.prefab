@@ -85,7 +85,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -10.020985, y: 3.95858}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -95,7 +95,7 @@ BoxCollider2D:
     drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 53.28, y: 64.15}
+  m_Size: {x: 47.352844, y: 78.83002}
   m_EdgeRadius: 0
 --- !u!50 &2157814970713621843
 Rigidbody2D:
@@ -113,7 +113,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: e281ebc4e134d994f879f71b17a146f8, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -149,6 +149,7 @@ MonoBehaviour:
   runAnimator: {fileID: 8556690934117707606}
   runAnimationThreshold: 0.05
   runAnimationSpeed: 1
+  bombAnimationCountdownSeconds: 3
   runAnimationVariants:
   - {fileID: 7400000, guid: 33d04c02bba8eb1408f05e99263568b2, type: 2}
   - {fileID: 7400000, guid: cdd9cb8e6cbb44f9978af07ff85dec04, type: 2}
@@ -176,6 +177,8 @@ MonoBehaviour:
   edgePatrolBias: 1.1
   stuckSpeedThreshold: 0.12
   stuckDirectionRefreshTime: 0.45
+  steeringSmoothness: 12
+  orbitFlipChance: 0.008
 --- !u!114 &3935951586534857363
 MonoBehaviour:
   m_ObjectHideFlags: 0
