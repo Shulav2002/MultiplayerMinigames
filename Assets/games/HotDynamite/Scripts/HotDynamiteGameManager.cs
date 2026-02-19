@@ -9,6 +9,8 @@ namespace HotDynamite
         [SerializeField] private HotDynamitePlayer playerPrefab;
         [SerializeField] private Transform playerParent;
         [SerializeField] private Transform[] spawnPoints;
+        [Header("VFX")]
+        [SerializeField] private GameObject explosionPrefab;
         [Header("Bots")]
         [SerializeField] private bool hardModeBots = false;
 
@@ -156,6 +158,12 @@ namespace HotDynamite
             if (bombHolder == null)
             {
                 return;
+            }
+
+            if (explosionPrefab != null)
+            {
+                Vector3 explosionPosition = new Vector3(bombHolder.Position.x, bombHolder.Position.y, 0f);
+                Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
             }
 
             Eliminate(bombHolder);

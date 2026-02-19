@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 01ab65e6b8912a248be03c37ab84b87b
+guid: d50bc1ea00ecf74408685fa9a13584d3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1662661599317514490
-    second: "\u2014Pngtree\u2014white circle background_6044507_0"
+      213: -4756028443593143600
+    second: shadow_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u2014Pngtree\u2014white circle background_6044507_0"
+      name: shadow_0
       rect:
         serializedVersion: 2
-        x: 164
-        y: 214
-        width: 878
-        height: 880
+        x: 0
+        y: 0
+        width: 74
+        height: 65
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6072ff6a51a0de8e0800000000000000
-      internalID: -1662661599317514490
+      spriteID: 0da0afd34513ffdb0800000000000000
+      internalID: -4756028443593143600
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u2014Pngtree\u2014white circle background_6044507_0": -1662661599317514490
+      shadow_0: -4756028443593143600
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
