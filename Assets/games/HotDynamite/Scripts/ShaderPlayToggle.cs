@@ -28,12 +28,12 @@ namespace HotDynamite
 
         private void Apply()
         {
-            if (targetMaterial == null || !targetMaterial.HasProperty(AnimateId))
+            if (!CanApplyToMaterial())
             {
                 return;
             }
 
-            float animateValue = (Application.isPlaying || animateInEditMode) ? 1f : 0f;
+            float animateValue = GetDesiredAnimateValue();
             if (Mathf.Approximately(animateValue, lastAppliedValue))
             {
                 return;
@@ -41,6 +41,16 @@ namespace HotDynamite
 
             targetMaterial.SetFloat(AnimateId, animateValue);
             lastAppliedValue = animateValue;
+        }
+
+        private bool CanApplyToMaterial()
+        {
+            return targetMaterial != null && targetMaterial.HasProperty(AnimateId);
+        }
+
+        private float GetDesiredAnimateValue()
+        {
+            return (Application.isPlaying || animateInEditMode) ? 1f : 0f;
         }
     }
 }

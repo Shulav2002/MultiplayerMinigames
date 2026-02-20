@@ -28,13 +28,17 @@ namespace HotDynamite
             Vector2 input = UseMobileInput()
                 ? ReadMobileJoystickInput()
                 : ReadLegacyAxisInput();
+            MoveVector = NormalizeInput(input);
+        }
 
+        private static Vector2 NormalizeInput(Vector2 input)
+        {
             if (input.sqrMagnitude > 1f)
             {
                 input.Normalize();
             }
 
-            MoveVector = input;
+            return input;
         }
 
         private bool UseMobileInput()
@@ -52,38 +56,67 @@ namespace HotDynamite
             return forceMobileJoystickInEditor;
         }
 
-        private Vector2 ReadLegacyAxisInput()
+        private static Vector2 ReadLegacyAxisInput()
         {
             return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         }
 
         private Vector2 ReadMobileJoystickInput()
         {
-            float halfScreenWidth = Screen.width * 0.5f;
-
-            if (activeFingerId >= 0)
+            if (TryReadActiveTouch(out Vector2 activeTouchInput))
             {
-                for (int i = 0; i < Input.touchCount; i++)
-                {
-                    Touch touch = Input.GetTouch(i);
-                    if (touch.fingerId != activeFingerId)
-                    {
-                        continue;
-                    }
-
-                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    {
-                        ResetJoystick();
-                        return Vector2.zero;
-                    }
-
-                    UpdateJoystickDelta(touch.position);
-                    return GetNormalizedJoystickVector();
-                }
-
-                ResetJoystick();
+                return activeTouchInput;
             }
 
+            if (TryBeginTouchControl())
+            {
+                return Vector2.zero;
+            }
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+            if (forceMobileJoystickInEditor)
+            {
+                return ReadMouseJoystickInput();
+            }
+#endif
+
+            return Vector2.zero;
+        }
+
+        private bool TryReadActiveTouch(out Vector2 input)
+        {
+            input = Vector2.zero;
+            if (activeFingerId < 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+                if (touch.fingerId != activeFingerId)
+                {
+                    continue;
+                }
+
+                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
+                    ResetJoystick();
+                    return true;
+                }
+
+                UpdateJoystickDelta(touch.position);
+                input = GetNormalizedJoystickVector();
+                return true;
+            }
+
+            ResetJoystick();
+            return false;
+        }
+
+        private bool TryBeginTouchControl()
+        {
+            float halfScreenWidth = Screen.width * 0.5f;
             for (int i = 0; i < Input.touchCount; i++)
             {
                 Touch touch = Input.GetTouch(i);
@@ -98,17 +131,10 @@ namespace HotDynamite
                 }
 
                 BeginJoystickControl(touch.fingerId, touch.position);
-                return Vector2.zero;
+                return true;
             }
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-            if (forceMobileJoystickInEditor)
-            {
-                return ReadMouseJoystickInput();
-            }
-#endif
-
-            return Vector2.zero;
+            return false;
         }
 
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -187,7 +213,9 @@ namespace HotDynamite
             float knobSize = joystickRadiusPixels;
 
             Vector2 guiOrigin = new Vector2(joystickOrigin.x, Screen.height - joystickOrigin.y);
-            Vector2 guiKnob = new Vector2(joystickOrigin.x + joystickDelta.x, Screen.height - (joystickOrigin.y + joystickDelta.y));
+            Vector2 guiKnob = new Vector2(
+                joystickOrigin.x + joystickDelta.x,
+                Screen.height - (joystickOrigin.y + joystickDelta.y));
 
             Rect baseRect = new Rect(guiOrigin.x - joystickRadiusPixels, guiOrigin.y - joystickRadiusPixels, baseSize, baseSize);
             Rect knobRect = new Rect(guiKnob.x - knobSize * 0.5f, guiKnob.y - knobSize * 0.5f, knobSize, knobSize);
@@ -213,11 +241,13 @@ namespace HotDynamite
             }
         }
 
-        private Texture2D CreateCircleTexture(int size)
+        private static Texture2D CreateCircleTexture(int size)
         {
-            Texture2D texture = new Texture2D(size, size, TextureFormat.ARGB32, false);
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Bilinear;
+            Texture2D texture = new Texture2D(size, size, TextureFormat.ARGB32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
 
             float radius = (size - 1) * 0.5f;
             float radiusSquared = radius * radius;

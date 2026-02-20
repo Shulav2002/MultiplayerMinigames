@@ -6,6 +6,8 @@ namespace HotDynamite
     [RequireComponent(typeof(Camera))]
     public class FixedAspectCamera : MonoBehaviour
     {
+        private static readonly Rect FullViewport = new Rect(0f, 0f, 1f, 1f);
+
         [SerializeField] private float targetAspectWidth = 16f;
         [SerializeField] private float targetAspectHeight = 9f;
 
@@ -21,7 +23,7 @@ namespace HotDynamite
 
         private void Update()
         {
-            if (Screen.width == lastScreenWidth && Screen.height == lastScreenHeight)
+            if (!HasScreenSizeChanged())
             {
                 return;
             }
@@ -39,7 +41,7 @@ namespace HotDynamite
         {
             if (cachedCamera != null)
             {
-                cachedCamera.rect = new Rect(0f, 0f, 1f, 1f);
+                cachedCamera.rect = FullViewport;
             }
         }
 
@@ -63,7 +65,7 @@ namespace HotDynamite
             float targetAspect = width / height;
             float currentAspect = (float)Screen.width / Mathf.Max(1, Screen.height);
 
-            Rect viewport = new Rect(0f, 0f, 1f, 1f);
+            Rect viewport = FullViewport;
             float scaleHeight = currentAspect / targetAspect;
 
             if (scaleHeight < 1f)
@@ -81,6 +83,11 @@ namespace HotDynamite
             cachedCamera.rect = viewport;
             lastScreenWidth = Screen.width;
             lastScreenHeight = Screen.height;
+        }
+
+        private bool HasScreenSizeChanged()
+        {
+            return Screen.width != lastScreenWidth || Screen.height != lastScreenHeight;
         }
     }
 }

@@ -41,6 +41,8 @@ namespace HotDynamite
         [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
 
+        private const float MovementInputNormalizeThreshold = 1f;
+        private const float VectorEpsilonSqr = 0.0001f;
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
         private const float DefaultPlayerBounceSpeed = 4.8f;
@@ -80,95 +82,27 @@ namespace HotDynamite
             this.settings = settings;
             this.isHuman = isHuman;
 
-            if (body == null)
-            {
-                body = GetComponent<Rigidbody2D>();
-            }
-
-            if (hitCollider == null)
-            {
-                hitCollider = GetComponent<Collider2D>();
-            }
-
-            if (hitCollider != null && hitCollider.isTrigger)
-            {
-                hitCollider.isTrigger = false;
-            }
-
-            if (facingRenderer == null)
-            {
-                facingRenderer = GetComponent<SpriteRenderer>();
-            }
-
-            if (facingTransform == null)
-            {
-                facingTransform = facingRenderer != null ? facingRenderer.transform : transform;
-            }
-
-            if (runAnimator == null)
-            {
-                runAnimator = GetComponent<Animator>();
-            }
-
+            CacheRequiredComponents();
             ApplyAppearanceVariant();
-
-            if (humanInput != null)
-            {
-                humanInput.enabled = isHuman;
-            }
-
-            if (botInput != null)
-            {
-                botInput.enabled = !isHuman;
-                botInput.Initialize(manager, settings, this);
-            }
-
-            isAlive = true;
-            hasBomb = false;
-            temporarySpeedMultiplier = 1f;
-            temporarySpeedUntil = -1f;
-            bounceVelocity = Vector2.zero;
-            bounceCooldownUntil = -1f;
-            bounceInputSuppressionUntil = -1f;
+            ConfigureInputSources();
+            ResetForNewRound();
             UpdateBombVisual();
         }
 
         private void FixedUpdate()
         {
-            if (!isAlive || settings == null)
+            if (!CanSimulateMovement())
             {
                 estimatedVelocity = Vector2.zero;
                 return;
             }
 
-            Vector2 input = ReadMoveInput();
-
-            if (input.sqrMagnitude > 1f)
-            {
-                input.Normalize();
-            }
-
-            float speed = settings.MoveSpeed
-                * (hasBomb ? settings.BombHolderSpeedMultiplier : 1f)
-                * GetTemporarySpeedMultiplier();
-            Vector2 baseVelocity = Time.time < bounceInputSuppressionUntil ? Vector2.zero : input * speed;
-            estimatedVelocity = baseVelocity + bounceVelocity;
+            Vector2 input = GetNormalizedMoveInput();
+            estimatedVelocity = CalculateEstimatedVelocity(input);
             UpdateRunAnimation(input);
             UpdateFacing(input);
-            Vector2 next = body.position + estimatedVelocity * Time.fixedDeltaTime;
-            body.MovePosition(next);
-
-            if (bounceVelocity.sqrMagnitude > 0.0001f)
-            {
-                bounceVelocity = Vector2.MoveTowards(
-                    bounceVelocity,
-                    Vector2.zero,
-                    Mathf.Max(0f, PlayerBounceDecay) * Time.fixedDeltaTime);
-            }
-            else
-            {
-                bounceVelocity = Vector2.zero;
-            }
+            MoveByEstimatedVelocity();
+            DecayBounceVelocity();
         }
 
         private void Update()
@@ -268,11 +202,8 @@ namespace HotDynamite
             }
 
             estimatedVelocity = Vector2.zero;
-            temporarySpeedMultiplier = 1f;
-            temporarySpeedUntil = -1f;
-            bounceVelocity = Vector2.zero;
-            bounceCooldownUntil = -1f;
-            bounceInputSuppressionUntil = -1f;
+            ResetTemporarySpeed();
+            ResetBounceState();
             UpdateRunAnimation(Vector2.zero);
 
             gameObject.SetActive(false);
@@ -300,87 +231,17 @@ namespace HotDynamite
             }
 
             Vector2 separation = otherPlayer.Position - Position;
-            Vector2 direction = separation.sqrMagnitude > 0.0001f
+            Vector2 direction = separation.sqrMagnitude > VectorEpsilonSqr
                 ? separation.normalized
-                : (collision.relativeVelocity.sqrMagnitude > 0.0001f ? collision.relativeVelocity.normalized : Vector2.right);
+                : (collision.relativeVelocity.sqrMagnitude > VectorEpsilonSqr ? collision.relativeVelocity.normalized : Vector2.right);
 
             ApplyBounceImpulse(-direction);
             otherPlayer.ApplyBounceImpulse(direction);
         }
 
-        private void OnDestroy()
-        {
-            DestroyBombVisual();
-        }
-
-        private void UpdateBombVisual()
-        {
-            if (hasBomb)
-            {
-                if (bombInstance == null && bombPrefab != null)
-                {
-                    bombInstance = Instantiate(bombPrefab, transform);
-                    bombInstance.transform.localPosition = bombLocalOffset;
-                    bombInstance.transform.localRotation = Quaternion.identity;
-                    bombAnimator = bombInstance.GetComponent<Animator>();
-                    if (bombAnimator != null)
-                    {
-                        bombAnimator.enabled = false;
-                    }
-                }
-
-                UpdateBombAnimationState();
-                return;
-            }
-
-            if (bombInstance != null)
-            {
-                DestroyBombVisual();
-            }
-        }
-
-        private Vector2 ReadMoveInput()
-        {
-            if (isHuman && humanInput != null)
-            {
-                return humanInput.MoveVector;
-            }
-
-            if (!isHuman && botInput != null)
-            {
-                return botInput.MoveVector;
-            }
-
-            return Vector2.zero;
-        }
-
-        private float GetTemporarySpeedMultiplier()
-        {
-            if (Time.time < temporarySpeedUntil)
-            {
-                return temporarySpeedMultiplier;
-            }
-
-            temporarySpeedMultiplier = 1f;
-            temporarySpeedUntil = -1f;
-            return 1f;
-        }
-
-        private void DestroyBombVisual()
-        {
-            if (bombInstance == null)
-            {
-                return;
-            }
-
-            Destroy(bombInstance);
-            bombInstance = null;
-            bombAnimator = null;
-        }
-
         private void ApplyBounceImpulse(Vector2 direction)
         {
-            Vector2 normalized = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.zero;
+            Vector2 normalized = direction.sqrMagnitude > VectorEpsilonSqr ? direction.normalized : Vector2.zero;
             bounceVelocity += normalized * Mathf.Max(0f, PlayerBounceSpeed);
             float maxBounce = Mathf.Max(0f, PlayerBounceMaxSpeed);
             if (bounceVelocity.sqrMagnitude > maxBounce * maxBounce)
@@ -390,6 +251,72 @@ namespace HotDynamite
 
             bounceCooldownUntil = Time.time + Mathf.Max(0f, PlayerBounceCooldownSeconds);
             bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, PlayerBounceInputSuppressionSeconds);
+        }
+
+        private bool CanSimulateMovement()
+        {
+            return isAlive && settings != null && body != null;
+        }
+
+        private Vector2 GetNormalizedMoveInput()
+        {
+            Vector2 input = ReadMoveInput();
+            if (input.sqrMagnitude > MovementInputNormalizeThreshold)
+            {
+                input.Normalize();
+            }
+
+            return input;
+        }
+
+        private Vector2 CalculateEstimatedVelocity(Vector2 input)
+        {
+            Vector2 baseVelocity = Time.time < bounceInputSuppressionUntil
+                ? Vector2.zero
+                : input * GetCurrentMoveSpeed();
+            return baseVelocity + bounceVelocity;
+        }
+
+        private float GetCurrentMoveSpeed()
+        {
+            if (settings == null)
+            {
+                return 0f;
+            }
+
+            float speed = settings.MoveSpeed;
+            if (hasBomb)
+            {
+                speed *= settings.BombHolderSpeedMultiplier;
+            }
+
+            return speed * GetTemporarySpeedMultiplier();
+        }
+
+        private void MoveByEstimatedVelocity()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            Vector2 next = body.position + estimatedVelocity * Time.fixedDeltaTime;
+            body.MovePosition(next);
+        }
+
+        private void DecayBounceVelocity()
+        {
+            if (bounceVelocity.sqrMagnitude > VectorEpsilonSqr)
+            {
+                bounceVelocity = Vector2.MoveTowards(
+                    bounceVelocity,
+                    Vector2.zero,
+                    Mathf.Max(0f, PlayerBounceDecay) * Time.fixedDeltaTime);
+            }
+            else
+            {
+                bounceVelocity = Vector2.zero;
+            }
         }
 
         private void UpdateFacing(Vector2 movementInput)
@@ -458,6 +385,141 @@ namespace HotDynamite
             return runAnimationVariants[appearanceIndex % runAnimationVariants.Length];
         }
 
+        private void CacheRequiredComponents()
+        {
+            if (body == null)
+            {
+                body = GetComponent<Rigidbody2D>();
+            }
+
+            if (hitCollider == null)
+            {
+                hitCollider = GetComponent<Collider2D>();
+            }
+
+            if (hitCollider != null && hitCollider.isTrigger)
+            {
+                hitCollider.isTrigger = false;
+            }
+
+            if (facingRenderer == null)
+            {
+                facingRenderer = GetComponent<SpriteRenderer>();
+            }
+
+            if (facingTransform == null)
+            {
+                facingTransform = facingRenderer != null ? facingRenderer.transform : transform;
+            }
+
+            if (runAnimator == null)
+            {
+                runAnimator = GetComponent<Animator>();
+            }
+        }
+
+        private void ConfigureInputSources()
+        {
+            if (humanInput != null)
+            {
+                humanInput.enabled = isHuman;
+            }
+
+            if (botInput != null)
+            {
+                botInput.enabled = !isHuman;
+                botInput.Initialize(manager, settings, this);
+            }
+        }
+
+        private void ResetForNewRound()
+        {
+            isAlive = true;
+            hasBomb = false;
+            ResetTemporarySpeed();
+            ResetBounceState();
+        }
+
+        private void ResetTemporarySpeed()
+        {
+            temporarySpeedMultiplier = 1f;
+            temporarySpeedUntil = -1f;
+        }
+
+        private void ResetBounceState()
+        {
+            bounceVelocity = Vector2.zero;
+            bounceCooldownUntil = -1f;
+            bounceInputSuppressionUntil = -1f;
+        }
+
+        private Vector2 ReadMoveInput()
+        {
+            if (isHuman && humanInput != null)
+            {
+                return humanInput.MoveVector;
+            }
+
+            if (!isHuman && botInput != null)
+            {
+                return botInput.MoveVector;
+            }
+
+            return Vector2.zero;
+        }
+
+        private float GetTemporarySpeedMultiplier()
+        {
+            if (Time.time < temporarySpeedUntil)
+            {
+                return temporarySpeedMultiplier;
+            }
+
+            ResetTemporarySpeed();
+            return 1f;
+        }
+
+        private void UpdateBombVisual()
+        {
+            if (!hasBomb)
+            {
+                DestroyBombVisual();
+                return;
+            }
+
+            EnsureBombVisual();
+            UpdateBombAnimationState();
+        }
+
+        private void EnsureBombVisual()
+        {
+            if (bombInstance != null || bombPrefab == null)
+            {
+                return;
+            }
+
+            bombInstance = Instantiate(bombPrefab, transform);
+            bombInstance.transform.localPosition = bombLocalOffset;
+            bombInstance.transform.localRotation = Quaternion.identity;
+            bombAnimator = bombInstance.GetComponent<Animator>();
+            if (bombAnimator != null)
+            {
+                bombAnimator.enabled = false;
+            }
+        }
+
+        private void DestroyBombVisual()
+        {
+            if (bombInstance == null)
+            {
+                return;
+            }
+
+            Destroy(bombInstance);
+            bombInstance = null;
+            bombAnimator = null;
+        }
+
         private void UpdateBombAnimationState()
         {
             if (bombAnimator == null)
@@ -480,6 +542,11 @@ namespace HotDynamite
             {
                 bombAnimator.Play(0, 0, 0f);
             }
+        }
+
+        private void OnDestroy()
+        {
+            DestroyBombVisual();
         }
     }
 }

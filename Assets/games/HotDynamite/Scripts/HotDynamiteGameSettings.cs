@@ -183,54 +183,10 @@ namespace HotDynamite
         internal void SyncFromSplitAssets()
         {
             bool changed = false;
-
-            if (playerSettings != null)
-            {
-                changed |= SetIfDifferent(ref totalPlayers, playerSettings.totalPlayers);
-                changed |= SetIfDifferent(ref humanPlayers, playerSettings.humanPlayers);
-                changed |= SetIfDifferent(ref moveSpeed, playerSettings.moveSpeed);
-                changed |= SetIfDifferent(ref bombHolderSpeedMultiplier, playerSettings.bombHolderSpeedMultiplier);
-                changed |= SetIfDifferent(ref playerBounceSpeed, playerSettings.playerBounceSpeed);
-                changed |= SetIfDifferent(ref playerBounceMaxSpeed, playerSettings.playerBounceMaxSpeed);
-                changed |= SetIfDifferent(ref playerBounceDecay, playerSettings.playerBounceDecay);
-                changed |= SetIfDifferent(ref playerBounceCooldownSeconds, playerSettings.playerBounceCooldownSeconds);
-                changed |= SetIfDifferent(ref playerBounceInputSuppressionSeconds, playerSettings.playerBounceInputSuppressionSeconds);
-            }
-
-            if (bombSettings != null)
-            {
-                changed |= SetIfDifferent(ref bombTimerSeconds, bombSettings.bombTimerSeconds);
-                changed |= SetIfDifferent(ref passCooldownSeconds, bombSettings.passCooldownSeconds);
-                changed |= SetIfDifferent(ref bombPassSpeedEffectSeconds, bombSettings.bombPassSpeedEffectSeconds);
-                changed |= SetIfDifferent(ref bombPasserSpeedMultiplier, bombSettings.bombPasserSpeedMultiplier);
-                changed |= SetIfDifferent(ref bombReceiverSpeedMultiplier, bombSettings.bombReceiverSpeedMultiplier);
-            }
-
-            if (arenaSettings != null)
-            {
-                changed |= SetIfDifferent(ref arenaMin, arenaSettings.arenaMin);
-                changed |= SetIfDifferent(ref arenaMax, arenaSettings.arenaMax);
-            }
-
-            if (botSettings != null)
-            {
-                changed |= SetIfDifferent(ref botDecisionInterval, botSettings.botDecisionInterval);
-                changed |= SetIfDifferent(ref botWanderStrength, botSettings.botWanderStrength);
-                changed |= SetIfDifferent(ref botAvoidanceDistance, botSettings.botAvoidanceDistance);
-                changed |= SetIfDifferent(ref botAvoidanceStrength, botSettings.botAvoidanceStrength);
-                changed |= SetIfDifferent(ref botRandomChaseTargetChance, botSettings.botRandomChaseTargetChance);
-                changed |= SetIfDifferent(ref botChaseTargetHoldTime, botSettings.botChaseTargetHoldTime);
-                changed |= SetIfDifferent(ref botInterceptLookAhead, botSettings.botInterceptLookAhead);
-                changed |= SetIfDifferent(ref botPreferredBombDistance, botSettings.botPreferredBombDistance);
-                changed |= SetIfDifferent(ref botOrbitBlend, botSettings.botOrbitBlend);
-                changed |= SetIfDifferent(ref botCenterBias, botSettings.botCenterBias);
-                changed |= SetIfDifferent(ref botCohesionBias, botSettings.botCohesionBias);
-                changed |= SetIfDifferent(ref botEdgePatrolBias, botSettings.botEdgePatrolBias);
-                changed |= SetIfDifferent(ref botStuckSpeedThreshold, botSettings.botStuckSpeedThreshold);
-                changed |= SetIfDifferent(ref botStuckDirectionRefreshTime, botSettings.botStuckDirectionRefreshTime);
-                changed |= SetIfDifferent(ref botSteeringSmoothness, botSettings.botSteeringSmoothness);
-                changed |= SetIfDifferent(ref botOrbitFlipChance, botSettings.botOrbitFlipChance);
-            }
+            changed |= SyncPlayerFallbackFromSplit();
+            changed |= SyncBombFallbackFromSplit();
+            changed |= SyncArenaFallbackFromSplit();
+            changed |= SyncBotFallbackFromSplit();
 
 #if UNITY_EDITOR
             if (changed)
@@ -243,74 +199,10 @@ namespace HotDynamite
         internal void SyncFallbackToSplitAssets()
         {
             bool changed = false;
-
-            if (playerSettings != null)
-            {
-                bool localChanged = false;
-                localChanged |= SetIfDifferent(ref playerSettings.totalPlayers, totalPlayers);
-                localChanged |= SetIfDifferent(ref playerSettings.humanPlayers, humanPlayers);
-                localChanged |= SetIfDifferent(ref playerSettings.moveSpeed, moveSpeed);
-                localChanged |= SetIfDifferent(ref playerSettings.bombHolderSpeedMultiplier, bombHolderSpeedMultiplier);
-                localChanged |= SetIfDifferent(ref playerSettings.playerBounceSpeed, playerBounceSpeed);
-                localChanged |= SetIfDifferent(ref playerSettings.playerBounceMaxSpeed, playerBounceMaxSpeed);
-                localChanged |= SetIfDifferent(ref playerSettings.playerBounceDecay, playerBounceDecay);
-                localChanged |= SetIfDifferent(ref playerSettings.playerBounceCooldownSeconds, playerBounceCooldownSeconds);
-                localChanged |= SetIfDifferent(ref playerSettings.playerBounceInputSuppressionSeconds, playerBounceInputSuppressionSeconds);
-                changed |= localChanged;
-#if UNITY_EDITOR
-                if (localChanged) { EditorUtility.SetDirty(playerSettings); }
-#endif
-            }
-
-            if (bombSettings != null)
-            {
-                bool localChanged = false;
-                localChanged |= SetIfDifferent(ref bombSettings.bombTimerSeconds, bombTimerSeconds);
-                localChanged |= SetIfDifferent(ref bombSettings.passCooldownSeconds, passCooldownSeconds);
-                localChanged |= SetIfDifferent(ref bombSettings.bombPassSpeedEffectSeconds, bombPassSpeedEffectSeconds);
-                localChanged |= SetIfDifferent(ref bombSettings.bombPasserSpeedMultiplier, bombPasserSpeedMultiplier);
-                localChanged |= SetIfDifferent(ref bombSettings.bombReceiverSpeedMultiplier, bombReceiverSpeedMultiplier);
-                changed |= localChanged;
-#if UNITY_EDITOR
-                if (localChanged) { EditorUtility.SetDirty(bombSettings); }
-#endif
-            }
-
-            if (arenaSettings != null)
-            {
-                bool localChanged = false;
-                localChanged |= SetIfDifferent(ref arenaSettings.arenaMin, arenaMin);
-                localChanged |= SetIfDifferent(ref arenaSettings.arenaMax, arenaMax);
-                changed |= localChanged;
-#if UNITY_EDITOR
-                if (localChanged) { EditorUtility.SetDirty(arenaSettings); }
-#endif
-            }
-
-            if (botSettings != null)
-            {
-                bool localChanged = false;
-                localChanged |= SetIfDifferent(ref botSettings.botDecisionInterval, botDecisionInterval);
-                localChanged |= SetIfDifferent(ref botSettings.botWanderStrength, botWanderStrength);
-                localChanged |= SetIfDifferent(ref botSettings.botAvoidanceDistance, botAvoidanceDistance);
-                localChanged |= SetIfDifferent(ref botSettings.botAvoidanceStrength, botAvoidanceStrength);
-                localChanged |= SetIfDifferent(ref botSettings.botRandomChaseTargetChance, botRandomChaseTargetChance);
-                localChanged |= SetIfDifferent(ref botSettings.botChaseTargetHoldTime, botChaseTargetHoldTime);
-                localChanged |= SetIfDifferent(ref botSettings.botInterceptLookAhead, botInterceptLookAhead);
-                localChanged |= SetIfDifferent(ref botSettings.botPreferredBombDistance, botPreferredBombDistance);
-                localChanged |= SetIfDifferent(ref botSettings.botOrbitBlend, botOrbitBlend);
-                localChanged |= SetIfDifferent(ref botSettings.botCenterBias, botCenterBias);
-                localChanged |= SetIfDifferent(ref botSettings.botCohesionBias, botCohesionBias);
-                localChanged |= SetIfDifferent(ref botSettings.botEdgePatrolBias, botEdgePatrolBias);
-                localChanged |= SetIfDifferent(ref botSettings.botStuckSpeedThreshold, botStuckSpeedThreshold);
-                localChanged |= SetIfDifferent(ref botSettings.botStuckDirectionRefreshTime, botStuckDirectionRefreshTime);
-                localChanged |= SetIfDifferent(ref botSettings.botSteeringSmoothness, botSteeringSmoothness);
-                localChanged |= SetIfDifferent(ref botSettings.botOrbitFlipChance, botOrbitFlipChance);
-                changed |= localChanged;
-#if UNITY_EDITOR
-                if (localChanged) { EditorUtility.SetDirty(botSettings); }
-#endif
-            }
+            changed |= SyncPlayerSplitFromFallback();
+            changed |= SyncBombSplitFromFallback();
+            changed |= SyncArenaSplitFromFallback();
+            changed |= SyncBotSplitFromFallback();
 
 #if UNITY_EDITOR
             if (changed)
@@ -318,6 +210,170 @@ namespace HotDynamite
                 EditorUtility.SetDirty(this);
             }
 #endif
+        }
+
+        private bool SyncPlayerFallbackFromSplit()
+        {
+            if (playerSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref totalPlayers, playerSettings.totalPlayers);
+            changed |= SetIfDifferent(ref humanPlayers, playerSettings.humanPlayers);
+            changed |= SetIfDifferent(ref moveSpeed, playerSettings.moveSpeed);
+            changed |= SetIfDifferent(ref bombHolderSpeedMultiplier, playerSettings.bombHolderSpeedMultiplier);
+            changed |= SetIfDifferent(ref playerBounceSpeed, playerSettings.playerBounceSpeed);
+            changed |= SetIfDifferent(ref playerBounceMaxSpeed, playerSettings.playerBounceMaxSpeed);
+            changed |= SetIfDifferent(ref playerBounceDecay, playerSettings.playerBounceDecay);
+            changed |= SetIfDifferent(ref playerBounceCooldownSeconds, playerSettings.playerBounceCooldownSeconds);
+            changed |= SetIfDifferent(ref playerBounceInputSuppressionSeconds, playerSettings.playerBounceInputSuppressionSeconds);
+            return changed;
+        }
+
+        private bool SyncBombFallbackFromSplit()
+        {
+            if (bombSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref bombTimerSeconds, bombSettings.bombTimerSeconds);
+            changed |= SetIfDifferent(ref passCooldownSeconds, bombSettings.passCooldownSeconds);
+            changed |= SetIfDifferent(ref bombPassSpeedEffectSeconds, bombSettings.bombPassSpeedEffectSeconds);
+            changed |= SetIfDifferent(ref bombPasserSpeedMultiplier, bombSettings.bombPasserSpeedMultiplier);
+            changed |= SetIfDifferent(ref bombReceiverSpeedMultiplier, bombSettings.bombReceiverSpeedMultiplier);
+            return changed;
+        }
+
+        private bool SyncArenaFallbackFromSplit()
+        {
+            if (arenaSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref arenaMin, arenaSettings.arenaMin);
+            changed |= SetIfDifferent(ref arenaMax, arenaSettings.arenaMax);
+            return changed;
+        }
+
+        private bool SyncBotFallbackFromSplit()
+        {
+            if (botSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref botDecisionInterval, botSettings.botDecisionInterval);
+            changed |= SetIfDifferent(ref botWanderStrength, botSettings.botWanderStrength);
+            changed |= SetIfDifferent(ref botAvoidanceDistance, botSettings.botAvoidanceDistance);
+            changed |= SetIfDifferent(ref botAvoidanceStrength, botSettings.botAvoidanceStrength);
+            changed |= SetIfDifferent(ref botRandomChaseTargetChance, botSettings.botRandomChaseTargetChance);
+            changed |= SetIfDifferent(ref botChaseTargetHoldTime, botSettings.botChaseTargetHoldTime);
+            changed |= SetIfDifferent(ref botInterceptLookAhead, botSettings.botInterceptLookAhead);
+            changed |= SetIfDifferent(ref botPreferredBombDistance, botSettings.botPreferredBombDistance);
+            changed |= SetIfDifferent(ref botOrbitBlend, botSettings.botOrbitBlend);
+            changed |= SetIfDifferent(ref botCenterBias, botSettings.botCenterBias);
+            changed |= SetIfDifferent(ref botCohesionBias, botSettings.botCohesionBias);
+            changed |= SetIfDifferent(ref botEdgePatrolBias, botSettings.botEdgePatrolBias);
+            changed |= SetIfDifferent(ref botStuckSpeedThreshold, botSettings.botStuckSpeedThreshold);
+            changed |= SetIfDifferent(ref botStuckDirectionRefreshTime, botSettings.botStuckDirectionRefreshTime);
+            changed |= SetIfDifferent(ref botSteeringSmoothness, botSettings.botSteeringSmoothness);
+            changed |= SetIfDifferent(ref botOrbitFlipChance, botSettings.botOrbitFlipChance);
+            return changed;
+        }
+
+        private bool SyncPlayerSplitFromFallback()
+        {
+            if (playerSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref playerSettings.totalPlayers, totalPlayers);
+            changed |= SetIfDifferent(ref playerSettings.humanPlayers, humanPlayers);
+            changed |= SetIfDifferent(ref playerSettings.moveSpeed, moveSpeed);
+            changed |= SetIfDifferent(ref playerSettings.bombHolderSpeedMultiplier, bombHolderSpeedMultiplier);
+            changed |= SetIfDifferent(ref playerSettings.playerBounceSpeed, playerBounceSpeed);
+            changed |= SetIfDifferent(ref playerSettings.playerBounceMaxSpeed, playerBounceMaxSpeed);
+            changed |= SetIfDifferent(ref playerSettings.playerBounceDecay, playerBounceDecay);
+            changed |= SetIfDifferent(ref playerSettings.playerBounceCooldownSeconds, playerBounceCooldownSeconds);
+            changed |= SetIfDifferent(ref playerSettings.playerBounceInputSuppressionSeconds, playerBounceInputSuppressionSeconds);
+#if UNITY_EDITOR
+            if (changed) { EditorUtility.SetDirty(playerSettings); }
+#endif
+            return changed;
+        }
+
+        private bool SyncBombSplitFromFallback()
+        {
+            if (bombSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref bombSettings.bombTimerSeconds, bombTimerSeconds);
+            changed |= SetIfDifferent(ref bombSettings.passCooldownSeconds, passCooldownSeconds);
+            changed |= SetIfDifferent(ref bombSettings.bombPassSpeedEffectSeconds, bombPassSpeedEffectSeconds);
+            changed |= SetIfDifferent(ref bombSettings.bombPasserSpeedMultiplier, bombPasserSpeedMultiplier);
+            changed |= SetIfDifferent(ref bombSettings.bombReceiverSpeedMultiplier, bombReceiverSpeedMultiplier);
+#if UNITY_EDITOR
+            if (changed) { EditorUtility.SetDirty(bombSettings); }
+#endif
+            return changed;
+        }
+
+        private bool SyncArenaSplitFromFallback()
+        {
+            if (arenaSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref arenaSettings.arenaMin, arenaMin);
+            changed |= SetIfDifferent(ref arenaSettings.arenaMax, arenaMax);
+#if UNITY_EDITOR
+            if (changed) { EditorUtility.SetDirty(arenaSettings); }
+#endif
+            return changed;
+        }
+
+        private bool SyncBotSplitFromFallback()
+        {
+            if (botSettings == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            changed |= SetIfDifferent(ref botSettings.botDecisionInterval, botDecisionInterval);
+            changed |= SetIfDifferent(ref botSettings.botWanderStrength, botWanderStrength);
+            changed |= SetIfDifferent(ref botSettings.botAvoidanceDistance, botAvoidanceDistance);
+            changed |= SetIfDifferent(ref botSettings.botAvoidanceStrength, botAvoidanceStrength);
+            changed |= SetIfDifferent(ref botSettings.botRandomChaseTargetChance, botRandomChaseTargetChance);
+            changed |= SetIfDifferent(ref botSettings.botChaseTargetHoldTime, botChaseTargetHoldTime);
+            changed |= SetIfDifferent(ref botSettings.botInterceptLookAhead, botInterceptLookAhead);
+            changed |= SetIfDifferent(ref botSettings.botPreferredBombDistance, botPreferredBombDistance);
+            changed |= SetIfDifferent(ref botSettings.botOrbitBlend, botOrbitBlend);
+            changed |= SetIfDifferent(ref botSettings.botCenterBias, botCenterBias);
+            changed |= SetIfDifferent(ref botSettings.botCohesionBias, botCohesionBias);
+            changed |= SetIfDifferent(ref botSettings.botEdgePatrolBias, botEdgePatrolBias);
+            changed |= SetIfDifferent(ref botSettings.botStuckSpeedThreshold, botStuckSpeedThreshold);
+            changed |= SetIfDifferent(ref botSettings.botStuckDirectionRefreshTime, botStuckDirectionRefreshTime);
+            changed |= SetIfDifferent(ref botSettings.botSteeringSmoothness, botSteeringSmoothness);
+            changed |= SetIfDifferent(ref botSettings.botOrbitFlipChance, botOrbitFlipChance);
+#if UNITY_EDITOR
+            if (changed) { EditorUtility.SetDirty(botSettings); }
+#endif
+            return changed;
         }
 
         private static bool SetIfDifferent(ref int target, int value)

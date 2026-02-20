@@ -5,6 +5,8 @@ namespace HotDynamite
 {
     public class HotDynamiteGameManager : MonoBehaviour
     {
+        private const float MinBombFuseSeconds = 0.1f;
+
         [SerializeField] private HotDynamiteGameSettings settings;
         [SerializeField] private HotDynamitePlayer playerPrefab;
         [SerializeField] private Transform playerParent;
@@ -35,58 +37,93 @@ namespace HotDynamite
                     return 0f;
                 }
 
-                float remaining01 = bombTimer / Mathf.Max(0.1f, bombFuseSeconds);
+                float remaining01 = bombTimer / Mathf.Max(MinBombFuseSeconds, bombFuseSeconds);
                 return Mathf.Clamp01(1f - remaining01);
             }
         }
 
         private void Start()
         {
-            if (settings == null)
+            if (!TryInitializeGame())
             {
-                Debug.LogError("HotDynamiteGameManager: Settings not assigned.");
                 enabled = false;
                 return;
-            }
-
-            bombFuseSeconds = Mathf.Max(0.1f, settings.BombTimerSeconds);
-
-            if (playerPrefab == null)
-            {
-                Debug.LogError("HotDynamiteGameManager: Player prefab not assigned.");
-                enabled = false;
-                return;
-            }
-
-            int total = settings.ClampedTotalPlayers;
-            if (spawnPoints == null || spawnPoints.Length < total)
-            {
-                Debug.LogError($"HotDynamiteGameManager: Need at least {total} spawn points assigned.");
-                enabled = false;
-                return;
-            }
-
-            for (int i = 0; i < total; i++)
-            {
-                if (spawnPoints[i] == null)
-                {
-                    Debug.LogError($"HotDynamiteGameManager: Spawn point at index {i} is not assigned.");
-                    enabled = false;
-                    return;
-                }
             }
 
             SpawnPlayers();
-            AssignBombToRandom();
+            AssignBombToRandomAlivePlayer();
         }
 
         private void Update()
         {
-            if (gameOver || bombHolder == null)
+            if (!IsRoundActive())
             {
                 return;
             }
 
+            TickBombTimer();
+        }
+
+        private bool TryInitializeGame()
+        {
+            if (!ValidateSettingsAssigned() || !ValidatePlayerPrefabAssigned())
+            {
+                return false;
+            }
+
+            bombFuseSeconds = Mathf.Max(MinBombFuseSeconds, settings.BombTimerSeconds);
+            return ValidateSpawnPoints(settings.ClampedTotalPlayers);
+        }
+
+        private bool ValidateSettingsAssigned()
+        {
+            if (settings != null)
+            {
+                return true;
+            }
+
+            Debug.LogError("HotDynamiteGameManager: Settings not assigned.");
+            return false;
+        }
+
+        private bool ValidatePlayerPrefabAssigned()
+        {
+            if (playerPrefab != null)
+            {
+                return true;
+            }
+
+            Debug.LogError("HotDynamiteGameManager: Player prefab not assigned.");
+            return false;
+        }
+
+        private bool ValidateSpawnPoints(int requiredCount)
+        {
+            if (spawnPoints == null || spawnPoints.Length < requiredCount)
+            {
+                Debug.LogError($"HotDynamiteGameManager: Need at least {requiredCount} spawn points assigned.");
+                return false;
+            }
+
+            for (int i = 0; i < requiredCount; i++)
+            {
+                if (spawnPoints[i] == null)
+                {
+                    Debug.LogError($"HotDynamiteGameManager: Spawn point at index {i} is not assigned.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsRoundActive()
+        {
+            return !gameOver && bombHolder != null;
+        }
+
+        private void TickBombTimer()
+        {
             bombTimer -= Time.deltaTime;
             if (bombTimer <= 0f)
             {
@@ -111,47 +148,63 @@ namespace HotDynamite
             }
         }
 
-        private void AssignBombToRandom()
+        private void AssignBombToRandomAlivePlayer()
         {
             if (alivePlayers.Count == 0)
             {
                 return;
             }
 
+            HotDynamitePlayer randomHolder = alivePlayers[Random.Range(0, alivePlayers.Count)];
+            SetBombHolder(randomHolder);
             bombTimer = bombFuseSeconds;
-            bombHolder = alivePlayers[Random.Range(0, alivePlayers.Count)];
+            bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
+        }
+
+        private void SetBombHolder(HotDynamitePlayer nextHolder)
+        {
+            bombHolder = nextHolder;
             for (int i = 0; i < alivePlayers.Count; i++)
             {
-                alivePlayers[i].SetHasBomb(alivePlayers[i] == bombHolder);
+                HotDynamitePlayer player = alivePlayers[i];
+                player.SetHasBomb(player == bombHolder);
             }
-
-            bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
         }
 
         public void RequestBombPass(HotDynamitePlayer from, HotDynamitePlayer to)
         {
-            if (gameOver || from == null || to == null)
+            if (!CanTransferBomb(from, to))
             {
                 return;
+            }
+
+            TransferBomb(from, to);
+        }
+
+        private bool CanTransferBomb(HotDynamitePlayer from, HotDynamitePlayer to)
+        {
+            if (gameOver || from == null || to == null)
+            {
+                return false;
             }
 
             if (from != bombHolder || !to.IsAlive)
             {
-                return;
+                return false;
             }
 
-            if (Time.time < bombPassLockUntil)
-            {
-                return;
-            }
+            return Time.time >= bombPassLockUntil;
+        }
 
-            bombHolder = to;
-            from.SetHasBomb(false);
-            to.SetHasBomb(true);
+        private void TransferBomb(HotDynamitePlayer from, HotDynamitePlayer to)
+        {
+            SetBombHolder(to);
             from.ApplyTemporarySpeedMultiplier(settings.BombPasserSpeedMultiplier, settings.BombPassSpeedEffectSeconds);
             to.ApplyTemporarySpeedMultiplier(settings.BombReceiverSpeedMultiplier, settings.BombPassSpeedEffectSeconds);
             bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
-            Debug.Log($"HotDynamite: Bomb transferred from {from.name} (ID {from.GetInstanceID()}) to {to.name} (ID {to.GetInstanceID()}).");
+
+            Debug.Log(
+                $"HotDynamite: Bomb transferred from {from.name} (ID {from.GetInstanceID()}) to {to.name} (ID {to.GetInstanceID()}).");
         }
 
         private void Explode()
@@ -161,42 +214,8 @@ namespace HotDynamite
                 return;
             }
 
-            if (explosionPrefab != null)
-            {
-                Vector3 explosionPosition = new Vector3(bombHolder.Position.x, bombHolder.Position.y, 0f);
-                GameObject explosionInstance = Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
-                if (explosionInstance != null)
-                {
-                    Transform particleBodyRoot = FindParticleBodyRoot(explosionInstance.transform);
-                    ParticleSystem[] particleSystems = explosionInstance.GetComponentsInChildren<ParticleSystem>(true);
-                    float oneShotDuration = 0f;
-
-                    for (int i = 0; i < particleSystems.Length; i++)
-                    {
-                        ParticleSystem particleSystem = particleSystems[i];
-                        ParticleSystem.MainModule main = particleSystem.main;
-                        main.loop = false;
-                        if (particleBodyRoot != null
-                            && (particleSystem.transform == particleBodyRoot || particleSystem.transform.IsChildOf(particleBodyRoot)))
-                        {
-                            Color holderColor = bombHolder.GetAppearanceColor();
-                            float alpha = main.startColor.color.a;
-                            main.startColor = new ParticleSystem.MinMaxGradient(new Color(holderColor.r, holderColor.g, holderColor.b, alpha));
-                        }
-                        oneShotDuration = Mathf.Max(oneShotDuration, main.duration + main.startLifetime.constantMax);
-                        particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                        particleSystem.Play(true);
-                    }
-
-                    float destroyDelay = explosionLifetimeSeconds > 0f ? explosionLifetimeSeconds : oneShotDuration;
-                    if (destroyDelay > 0f)
-                    {
-                        Destroy(explosionInstance, destroyDelay);
-                    }
-                }
-            }
-
-            Eliminate(bombHolder);
+            SpawnExplosionAtBombHolder();
+            EliminatePlayer(bombHolder);
 
             if (alivePlayers.Count <= 1)
             {
@@ -204,10 +223,61 @@ namespace HotDynamite
                 return;
             }
 
-            AssignBombToRandom();
+            AssignBombToRandomAlivePlayer();
         }
 
-        private void Eliminate(HotDynamitePlayer player)
+        private void SpawnExplosionAtBombHolder()
+        {
+            if (explosionPrefab == null || bombHolder == null)
+            {
+                return;
+            }
+
+            Vector3 explosionPosition = new Vector3(bombHolder.Position.x, bombHolder.Position.y, 0f);
+            GameObject explosionInstance = Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
+            if (explosionInstance == null)
+            {
+                return;
+            }
+
+            float oneShotDuration = ConfigureExplosionParticleSystems(explosionInstance.transform, bombHolder.GetAppearanceColor());
+            float destroyDelay = explosionLifetimeSeconds > 0f ? explosionLifetimeSeconds : oneShotDuration;
+            if (destroyDelay > 0f)
+            {
+                Destroy(explosionInstance, destroyDelay);
+            }
+        }
+
+        private static float ConfigureExplosionParticleSystems(Transform explosionRoot, Color holderColor)
+        {
+            float oneShotDuration = 0f;
+            Transform particleBodyRoot = FindParticleBodyRoot(explosionRoot);
+            ParticleSystem[] particleSystems = explosionRoot.GetComponentsInChildren<ParticleSystem>(true);
+
+            for (int i = 0; i < particleSystems.Length; i++)
+            {
+                ParticleSystem particleSystem = particleSystems[i];
+                ParticleSystem.MainModule main = particleSystem.main;
+                main.loop = false;
+
+                bool isBodyParticle = particleBodyRoot != null
+                    && (particleSystem.transform == particleBodyRoot || particleSystem.transform.IsChildOf(particleBodyRoot));
+                if (isBodyParticle)
+                {
+                    float alpha = main.startColor.color.a;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        new Color(holderColor.r, holderColor.g, holderColor.b, alpha));
+                }
+
+                oneShotDuration = Mathf.Max(oneShotDuration, main.duration + main.startLifetime.constantMax);
+                particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                particleSystem.Play(true);
+            }
+
+            return oneShotDuration;
+        }
+
+        private void EliminatePlayer(HotDynamitePlayer player)
         {
             player.Eliminate();
             alivePlayers.Remove(player);
