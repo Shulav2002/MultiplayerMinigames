@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Unity\\MultiplayerMiniGames\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\hotdynamitebotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitebotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\shaders\\uitoonwaterurp.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\shaders\\uitoonwaterurp.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\hotdynamitebotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitebotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\scripts\\hotdynamiteplayerinput.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -26,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,28 +42,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "HotDynamiteBotController.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
               "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
               "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
-              "ViewState": "AgIAAHcAAAAAAAAAAAAnwJQAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAA1wCgAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-17T06:32:50.66Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "UIToonWaterURP.shader",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
               "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
               "RelativeToolTip": "Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
-              "ViewState": "AgIAAGsAAAAAAAAAAAAAAG8AAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAAAG8AAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2026-02-16T10:44:38.268Z"
+              "WhenOpened": "2026-02-16T10:44:38.268Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",

@@ -239,6 +239,11 @@ MonoBehaviour:
   facingInputThreshold: 0.05
   facingAngleOffset: 0
   runAnimator: {fileID: 8556690934117707606}
+  appearanceColors:
+  - {r: 0.9843138, g: 0.15294118, b: 0.16470589, a: 1}
+  - {r: 0.15294118, g: 0.5411765, b: 0.9686275, a: 1}
+  - {r: 0.27058825, g: 0.67058825, b: 0.29411766, a: 1}
+  - {r: 0.9921569, g: 0.8117648, b: 0.15294118, a: 1}
   runAnimationThreshold: 0.05
   runAnimationSpeed: 1
   bombAnimationCountdownSeconds: 3

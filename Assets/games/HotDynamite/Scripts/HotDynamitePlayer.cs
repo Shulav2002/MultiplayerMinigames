@@ -18,6 +18,7 @@ namespace HotDynamite
         [SerializeField] private float facingAngleOffset = 0f;
         [Header("Animation")]
         [SerializeField] private Animator runAnimator;
+        [SerializeField] private Color[] appearanceColors;
         [SerializeField] private float runAnimationThreshold = 0.05f;
         [SerializeField] private float runAnimationSpeed = 1f;
         [SerializeField] private float bombAnimationCountdownSeconds = 3f;
@@ -213,6 +214,17 @@ namespace HotDynamite
             ApplyAppearanceVariant();
         }
 
+        public Color GetAppearanceColor()
+        {
+            if (appearanceColors == null || appearanceColors.Length == 0)
+            {
+                return Color.white;
+            }
+
+            int colorIndex = appearanceIndex % appearanceColors.Length;
+            return appearanceColors[colorIndex];
+        }
+
         public void Eliminate()
         {
             isAlive = false;
@@ -387,7 +399,7 @@ namespace HotDynamite
                 return;
             }
 
-            AnimationClip selectedClip = runAnimationVariants[appearanceIndex % runAnimationVariants.Length];
+            AnimationClip selectedClip = GetSelectedAppearanceClip();
             if (selectedClip == null)
             {
                 return;
@@ -412,6 +424,16 @@ namespace HotDynamite
 
             runAnimatorOverride["Run"] = selectedClip;
             runAnimator.runtimeAnimatorController = runAnimatorOverride;
+        }
+
+        private AnimationClip GetSelectedAppearanceClip()
+        {
+            if (runAnimationVariants == null || runAnimationVariants.Length == 0)
+            {
+                return null;
+            }
+
+            return runAnimationVariants[appearanceIndex % runAnimationVariants.Length];
         }
 
         private void UpdateBombAnimationState()

@@ -11,6 +11,7 @@ namespace HotDynamite
         [SerializeField] private Transform[] spawnPoints;
         [Header("VFX")]
         [SerializeField] private GameObject explosionPrefab;
+        [SerializeField, Min(0f)] private float explosionLifetimeSeconds = 2f;
         [Header("Bots")]
         [SerializeField] private bool hardModeBots = false;
 
@@ -163,7 +164,36 @@ namespace HotDynamite
             if (explosionPrefab != null)
             {
                 Vector3 explosionPosition = new Vector3(bombHolder.Position.x, bombHolder.Position.y, 0f);
-                Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
+                GameObject explosionInstance = Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
+                if (explosionInstance != null)
+                {
+                    Transform particleBodyRoot = FindParticleBodyRoot(explosionInstance.transform);
+                    ParticleSystem[] particleSystems = explosionInstance.GetComponentsInChildren<ParticleSystem>(true);
+                    float oneShotDuration = 0f;
+
+                    for (int i = 0; i < particleSystems.Length; i++)
+                    {
+                        ParticleSystem particleSystem = particleSystems[i];
+                        ParticleSystem.MainModule main = particleSystem.main;
+                        main.loop = false;
+                        if (particleBodyRoot != null
+                            && (particleSystem.transform == particleBodyRoot || particleSystem.transform.IsChildOf(particleBodyRoot)))
+                        {
+                            Color holderColor = bombHolder.GetAppearanceColor();
+                            float alpha = main.startColor.color.a;
+                            main.startColor = new ParticleSystem.MinMaxGradient(new Color(holderColor.r, holderColor.g, holderColor.b, alpha));
+                        }
+                        oneShotDuration = Mathf.Max(oneShotDuration, main.duration + main.startLifetime.constantMax);
+                        particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                        particleSystem.Play(true);
+                    }
+
+                    float destroyDelay = explosionLifetimeSeconds > 0f ? explosionLifetimeSeconds : oneShotDuration;
+                    if (destroyDelay > 0f)
+                    {
+                        Destroy(explosionInstance, destroyDelay);
+                    }
+                }
             }
 
             Eliminate(bombHolder);
@@ -262,6 +292,26 @@ namespace HotDynamite
 
             centroid /= count;
             return true;
+        }
+
+        private static Transform FindParticleBodyRoot(Transform explosionRoot)
+        {
+            if (explosionRoot == null)
+            {
+                return null;
+            }
+
+            Transform[] allTransforms = explosionRoot.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < allTransforms.Length; i++)
+            {
+                Transform current = allTransforms[i];
+                if (current != null && current.name == "Particlebody")
+                {
+                    return current;
+                }
+            }
+
+            return null;
         }
     }
 }
