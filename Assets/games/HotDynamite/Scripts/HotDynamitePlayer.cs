@@ -5,34 +5,49 @@ namespace HotDynamite
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class HotDynamitePlayer : MonoBehaviour
     {
+        [Tooltip("Input provider used when this player is controlled by a human.")]
         [SerializeField] private HotDynamitePlayerInput humanInput;
+        [Tooltip("Input provider used when this player is controlled by AI.")]
         [SerializeField] private HotDynamiteBotController botInput;
+        [Tooltip("Rigidbody used for 2D movement and collision response.")]
         [SerializeField] private Rigidbody2D body;
+        [Tooltip("Primary collider used for contact, bomb passing, and bounce interactions.")]
         [SerializeField] private Collider2D hitCollider;
+        [Tooltip("Bomb visual prefab instantiated as a child when this player is the bomb holder.")]
         [SerializeField] private GameObject bombPrefab;
+        [Tooltip("Local position offset for the spawned bomb visual.")]
         [SerializeField] private Vector3 bombLocalOffset = new Vector3(0f, 0.9f, 0f);
         [Header("Facing")]
+        [Tooltip("Sprite renderer used to determine the transform to rotate for facing direction.")]
         [SerializeField] private SpriteRenderer facingRenderer;
+        [Tooltip("Transform rotated toward movement direction. Falls back to renderer transform if not assigned.")]
         [SerializeField] private Transform facingTransform;
+        [Tooltip("Minimum movement magnitude required before updating facing rotation.")]
         [SerializeField] private float facingInputThreshold = 0.05f;
+        [Tooltip("Extra angle offset (degrees) applied on top of movement-facing rotation.")]
         [SerializeField] private float facingAngleOffset = 0f;
         [Header("Animation")]
+        [Tooltip("Animator that drives run and appearance animation states.")]
         [SerializeField] private Animator runAnimator;
+        [Tooltip("Color set used for player visual variants.")]
         [SerializeField] private Color[] appearanceColors;
+        [Tooltip("Minimum movement magnitude required for run animation to be considered active.")]
         [SerializeField] private float runAnimationThreshold = 0.05f;
+        [Tooltip("Animator playback speed while running.")]
         [SerializeField] private float runAnimationSpeed = 1f;
+        [Tooltip("Bomb starts animating when remaining fuse time is at or below this value.")]
         [SerializeField] private float bombAnimationCountdownSeconds = 3f;
         [Header("Appearance")]
+        [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
-        [Header("Collision")]
-        [SerializeField] private float playerBounceSpeed = 4.8f;
-        [SerializeField] private float playerBounceMaxSpeed = 6.5f;
-        [SerializeField] private float playerBounceDecay = 8f;
-        [SerializeField] private float playerBounceCooldownSeconds = 0.16f;
-        [SerializeField] private float playerBounceInputSuppressionSeconds = 0.08f;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
+        private const float DefaultPlayerBounceSpeed = 4.8f;
+        private const float DefaultPlayerBounceMaxSpeed = 6.5f;
+        private const float DefaultPlayerBounceDecay = 8f;
+        private const float DefaultPlayerBounceCooldownSeconds = 0.16f;
+        private const float DefaultPlayerBounceInputSuppressionSeconds = 0.08f;
         private bool isHuman;
         private bool hasBomb;
         private bool isAlive = true;
@@ -51,6 +66,13 @@ namespace HotDynamite
         public bool HasBomb => hasBomb;
         public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
         public Vector2 EstimatedVelocity => estimatedVelocity;
+        private float PlayerBounceSpeed => settings != null ? settings.PlayerBounceSpeed : DefaultPlayerBounceSpeed;
+        private float PlayerBounceMaxSpeed => settings != null ? settings.PlayerBounceMaxSpeed : DefaultPlayerBounceMaxSpeed;
+        private float PlayerBounceDecay => settings != null ? settings.PlayerBounceDecay : DefaultPlayerBounceDecay;
+        private float PlayerBounceCooldownSeconds => settings != null ? settings.PlayerBounceCooldownSeconds : DefaultPlayerBounceCooldownSeconds;
+        private float PlayerBounceInputSuppressionSeconds => settings != null
+            ? settings.PlayerBounceInputSuppressionSeconds
+            : DefaultPlayerBounceInputSuppressionSeconds;
 
         public void Initialize(HotDynamiteGameManager manager, HotDynamiteGameSettings settings, bool isHuman)
         {
@@ -141,7 +163,7 @@ namespace HotDynamite
                 bounceVelocity = Vector2.MoveTowards(
                     bounceVelocity,
                     Vector2.zero,
-                    Mathf.Max(0f, playerBounceDecay) * Time.fixedDeltaTime);
+                    Mathf.Max(0f, PlayerBounceDecay) * Time.fixedDeltaTime);
             }
             else
             {
@@ -359,15 +381,15 @@ namespace HotDynamite
         private void ApplyBounceImpulse(Vector2 direction)
         {
             Vector2 normalized = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.zero;
-            bounceVelocity += normalized * Mathf.Max(0f, playerBounceSpeed);
-            float maxBounce = Mathf.Max(0f, playerBounceMaxSpeed);
+            bounceVelocity += normalized * Mathf.Max(0f, PlayerBounceSpeed);
+            float maxBounce = Mathf.Max(0f, PlayerBounceMaxSpeed);
             if (bounceVelocity.sqrMagnitude > maxBounce * maxBounce)
             {
                 bounceVelocity = bounceVelocity.normalized * maxBounce;
             }
 
-            bounceCooldownUntil = Time.time + Mathf.Max(0f, playerBounceCooldownSeconds);
-            bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, playerBounceInputSuppressionSeconds);
+            bounceCooldownUntil = Time.time + Mathf.Max(0f, PlayerBounceCooldownSeconds);
+            bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, PlayerBounceInputSuppressionSeconds);
         }
 
         private void UpdateFacing(Vector2 movementInput)

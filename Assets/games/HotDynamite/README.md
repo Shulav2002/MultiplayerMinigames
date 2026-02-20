@@ -22,12 +22,19 @@
 ## Gameplay Tuning (Game Settings)
 Use `HotDynamiteGameSettings` to tune:
 - Player speed and bomb-holder speed multiplier.
+- Player collision bounce:
+  - `playerBounceSpeed`
+  - `playerBounceMaxSpeed`
+  - `playerBounceDecay`
+  - `playerBounceCooldownSeconds`
+  - `playerBounceInputSuppressionSeconds`
 - Pass cooldown.
 - Pass effects:
   - `bombPassSpeedEffectSeconds`
   - `bombPasserSpeedMultiplier`
   - `bombReceiverSpeedMultiplier`
 - Bot steering/avoidance behavior.
+  - Includes chase targeting, intercept look-ahead, orbiting, cohesion/center bias, stuck recovery, and steering smoothness values.
 
 ## Split ScriptableObjects
 `HotDynamiteGameSettings` now supports split config assets:

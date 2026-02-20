@@ -22,6 +22,11 @@ MonoBehaviour:
   humanPlayers: 1
   moveSpeed: 3
   bombHolderSpeedMultiplier: 1.1
+  playerBounceSpeed: 3
+  playerBounceMaxSpeed: 4.5
+  playerBounceDecay: 8
+  playerBounceCooldownSeconds: 0.16
+  playerBounceInputSuppressionSeconds: 0.08
   bombTimerSeconds: 10
   passCooldownSeconds: 0.5
   bombPassSpeedEffectSeconds: 1.5
@@ -33,3 +38,15 @@ MonoBehaviour:
   botWanderStrength: 0.2
   botAvoidanceDistance: 1.5
   botAvoidanceStrength: 2
+  botRandomChaseTargetChance: 0.3
+  botChaseTargetHoldTime: {x: 0.35, y: 0.9}
+  botInterceptLookAhead: {x: 0.12, y: 0.55}
+  botPreferredBombDistance: {x: 3.2, y: 6.3}
+  botOrbitBlend: 0.65
+  botCenterBias: 0.9
+  botCohesionBias: 0.7
+  botEdgePatrolBias: 1.1
+  botStuckSpeedThreshold: 0.12
+  botStuckDirectionRefreshTime: 0.45
+  botSteeringSmoothness: 12
+  botOrbitFlipChance: 0.008

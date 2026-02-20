@@ -252,11 +252,6 @@ MonoBehaviour:
   - {fileID: 7400000, guid: cdd9cb8e6cbb44f9978af07ff85dec04, type: 2}
   - {fileID: 7400000, guid: 061771c79e7e4b0db5663901442a445e, type: 2}
   - {fileID: 7400000, guid: bd9749dd5283401e9a2f072c44213d04, type: 2}
-  playerBounceSpeed: 4.8
-  playerBounceMaxSpeed: 6.5
-  playerBounceDecay: 8
-  playerBounceCooldownSeconds: 0.16
-  playerBounceInputSuppressionSeconds: 0.08
 --- !u!114 &6886270607401937245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,18 +264,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d6142003d54394aa466a0a611356b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: HotDynamite::HotDynamite.HotDynamiteBotController
-  randomChaseTargetChance: 0.3
-  chaseTargetHoldTime: {x: 0.35, y: 0.9}
-  interceptLookAhead: {x: 0.12, y: 0.55}
-  preferredBombDistance: {x: 3.2, y: 6.3}
-  orbitBlend: 0.65
-  centerBias: 0.9
-  cohesionBias: 0.7
-  edgePatrolBias: 1.1
-  stuckSpeedThreshold: 0.12
-  stuckDirectionRefreshTime: 0.45
-  steeringSmoothness: 12
-  orbitFlipChance: 0.008
 --- !u!114 &3935951586534857363
 MonoBehaviour:
   m_ObjectHideFlags: 0

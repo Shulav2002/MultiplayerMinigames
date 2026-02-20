@@ -16,3 +16,8 @@ MonoBehaviour:
   humanPlayers: 1
   moveSpeed: 3
   bombHolderSpeedMultiplier: 1.1
+  playerBounceSpeed: 3
+  playerBounceMaxSpeed: 4.5
+  playerBounceDecay: 8
+  playerBounceCooldownSeconds: 0.16
+  playerBounceInputSuppressionSeconds: 0.08

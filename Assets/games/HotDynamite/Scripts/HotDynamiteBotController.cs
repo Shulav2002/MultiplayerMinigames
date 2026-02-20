@@ -5,20 +5,18 @@ namespace HotDynamite
     public class HotDynamiteBotController : MonoBehaviour
     {
         private const float VectorEpsilonSqr = 0.0001f;
-
-        [SerializeField, Range(0f, 1f)] private float randomChaseTargetChance = 0.3f;
-        [SerializeField] private Vector2 chaseTargetHoldTime = new Vector2(0.35f, 0.9f);
-        [SerializeField] private Vector2 interceptLookAhead = new Vector2(0.12f, 0.55f);
-        [Header("Non-Bomb Behavior")]
-        [SerializeField] private Vector2 preferredBombDistance = new Vector2(3.2f, 6.3f);
-        [SerializeField, Range(0f, 1f)] private float orbitBlend = 0.65f;
-        [SerializeField, Range(0f, 2f)] private float centerBias = 0.9f;
-        [SerializeField, Range(0f, 2f)] private float cohesionBias = 0.7f;
-        [SerializeField, Range(0f, 3f)] private float edgePatrolBias = 1.1f;
-        [SerializeField] private float stuckSpeedThreshold = 0.12f;
-        [SerializeField] private float stuckDirectionRefreshTime = 0.45f;
-        [SerializeField] private float steeringSmoothness = 12f;
-        [SerializeField, Range(0f, 0.1f)] private float orbitFlipChance = 0.008f;
+        private const float DefaultBotRandomChaseTargetChance = 0.3f;
+        private static readonly Vector2 DefaultBotChaseTargetHoldTime = new Vector2(0.35f, 0.9f);
+        private static readonly Vector2 DefaultBotInterceptLookAhead = new Vector2(0.12f, 0.55f);
+        private static readonly Vector2 DefaultBotPreferredBombDistance = new Vector2(3.2f, 6.3f);
+        private const float DefaultBotOrbitBlend = 0.65f;
+        private const float DefaultBotCenterBias = 0.9f;
+        private const float DefaultBotCohesionBias = 0.7f;
+        private const float DefaultBotEdgePatrolBias = 1.1f;
+        private const float DefaultBotStuckSpeedThreshold = 0.12f;
+        private const float DefaultBotStuckDirectionRefreshTime = 0.45f;
+        private const float DefaultBotSteeringSmoothness = 12f;
+        private const float DefaultBotOrbitFlipChance = 0.008f;
 
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
@@ -32,6 +30,18 @@ namespace HotDynamite
         private float orbitSign = 1f;
 
         public Vector2 MoveVector => moveVector;
+        private float BotRandomChaseTargetChance => settings != null ? settings.BotRandomChaseTargetChance : DefaultBotRandomChaseTargetChance;
+        private Vector2 BotChaseTargetHoldTime => settings != null ? settings.BotChaseTargetHoldTime : DefaultBotChaseTargetHoldTime;
+        private Vector2 BotInterceptLookAhead => settings != null ? settings.BotInterceptLookAhead : DefaultBotInterceptLookAhead;
+        private Vector2 BotPreferredBombDistance => settings != null ? settings.BotPreferredBombDistance : DefaultBotPreferredBombDistance;
+        private float BotOrbitBlend => settings != null ? settings.BotOrbitBlend : DefaultBotOrbitBlend;
+        private float BotCenterBias => settings != null ? settings.BotCenterBias : DefaultBotCenterBias;
+        private float BotCohesionBias => settings != null ? settings.BotCohesionBias : DefaultBotCohesionBias;
+        private float BotEdgePatrolBias => settings != null ? settings.BotEdgePatrolBias : DefaultBotEdgePatrolBias;
+        private float BotStuckSpeedThreshold => settings != null ? settings.BotStuckSpeedThreshold : DefaultBotStuckSpeedThreshold;
+        private float BotStuckDirectionRefreshTime => settings != null ? settings.BotStuckDirectionRefreshTime : DefaultBotStuckDirectionRefreshTime;
+        private float BotSteeringSmoothness => settings != null ? settings.BotSteeringSmoothness : DefaultBotSteeringSmoothness;
+        private float BotOrbitFlipChance => settings != null ? settings.BotOrbitFlipChance : DefaultBotOrbitFlipChance;
 
         public void Initialize(HotDynamiteGameManager manager, HotDynamiteGameSettings settings, HotDynamitePlayer owner)
         {
@@ -76,8 +86,8 @@ namespace HotDynamite
                     || now >= nextTargetSelectionTime)
                 {
                     float effectiveRandomTargetChance = Mathf.Lerp(
-                        randomChaseTargetChance,
-                        randomChaseTargetChance * 0.25f,
+                        BotRandomChaseTargetChance,
+                        BotRandomChaseTargetChance * 0.25f,
                         bombUrgency);
                     bool pickRandomTarget = Random.value < effectiveRandomTargetChance;
                     chaseTarget = pickRandomTarget
@@ -89,8 +99,8 @@ namespace HotDynamite
                         chaseTarget = manager.GetClosestAlivePlayer(owner);
                     }
 
-                    float minHold = Mathf.Max(0.05f, chaseTargetHoldTime.x);
-                    float maxHold = Mathf.Max(minHold, chaseTargetHoldTime.y);
+                    float minHold = Mathf.Max(0.05f, BotChaseTargetHoldTime.x);
+                    float maxHold = Mathf.Max(minHold, BotChaseTargetHoldTime.y);
                     float holdScale = Mathf.Lerp(1f, 0.45f, bombUrgency);
                     nextTargetSelectionTime = now + Random.Range(minHold, maxHold) * holdScale;
                 }
@@ -144,10 +154,10 @@ namespace HotDynamite
                 Vector2 edgePatrol = CalculateEdgePatrolDirection(center);
                 float edgeFactor = GetEdgeFactor(owner.Position);
                 desired = ConstrainDesiredDirectionAtEdge(desired, center, edgeFactor);
-                float centerWeight = centerBias
+                float centerWeight = BotCenterBias
                     * Mathf.Lerp(1.0f, 0.3f, urgencyBiasedDanger)
                     * Mathf.Lerp(1.0f, 0.0f, edgeFactor);
-                float edgePatrolWeight = edgePatrolBias * Mathf.Lerp(0.5f, 1.9f, edgeFactor);
+                float edgePatrolWeight = BotEdgePatrolBias * Mathf.Lerp(0.5f, 1.9f, edgeFactor);
 
                 Vector2 cohesionPull = Vector2.zero;
                 float cohesionWeight = 0f;
@@ -155,7 +165,7 @@ namespace HotDynamite
                 {
                     cohesionPull = centroid - owner.Position;
                     cohesionPull = cohesionPull.sqrMagnitude > 0.0001f ? cohesionPull.normalized : Vector2.zero;
-                    cohesionWeight = cohesionBias
+                    cohesionWeight = BotCohesionBias
                         * Mathf.Lerp(0.9f, 0.25f, urgencyBiasedDanger)
                         * Mathf.Lerp(1.0f, 0.35f, edgeFactor);
                 }
@@ -169,12 +179,12 @@ namespace HotDynamite
                     + nonBombWander;
 
                 // If forces cancel out, force a fresh tangential direction so bots keep moving.
-                if (desiredMoveVector.sqrMagnitude < 0.04f || owner.EstimatedVelocity.magnitude < stuckSpeedThreshold)
+                if (desiredMoveVector.sqrMagnitude < 0.04f || owner.EstimatedVelocity.magnitude < BotStuckSpeedThreshold)
                 {
                     if (now >= nextUnstuckTime)
                     {
                         orbitSign *= -1f;
-                        nextUnstuckTime = now + Mathf.Max(0.1f, stuckDirectionRefreshTime);
+                        nextUnstuckTime = now + Mathf.Max(0.1f, BotStuckDirectionRefreshTime);
                     }
 
                     desiredMoveVector += edgePatrol * Mathf.Max(0.45f, edgePatrolWeight);
@@ -213,8 +223,8 @@ namespace HotDynamite
             float targetSpeed = target.EstimatedVelocity.magnitude;
             float travelTime = toTarget.magnitude / Mathf.Max(0.1f, ownerSpeed + targetSpeed * 0.75f);
 
-            float minLookAhead = Mathf.Max(0.02f, interceptLookAhead.x);
-            float maxLookAhead = Mathf.Max(minLookAhead, interceptLookAhead.y);
+            float minLookAhead = Mathf.Max(0.02f, BotInterceptLookAhead.x);
+            float maxLookAhead = Mathf.Max(minLookAhead, BotInterceptLookAhead.y);
             float urgencyBias = Mathf.Lerp(1f, 0.6f, urgency);
             float lookAhead = Mathf.Clamp(travelTime * urgencyBias, minLookAhead, maxLookAhead);
 
@@ -240,8 +250,8 @@ namespace HotDynamite
             }
 
             Vector2 awayDir = away / distance;
-            float minDistance = Mathf.Max(0.5f, preferredBombDistance.x);
-            float maxDistance = Mathf.Max(minDistance + 0.25f, preferredBombDistance.y);
+            float minDistance = Mathf.Max(0.5f, BotPreferredBombDistance.x);
+            float maxDistance = Mathf.Max(minDistance + 0.25f, BotPreferredBombDistance.y);
 
             if (distance < minDistance)
             {
@@ -250,7 +260,7 @@ namespace HotDynamite
 
             Vector2 toBombDir = -awayDir;
             Vector2 orbitDir = new Vector2(-toBombDir.y, toBombDir.x) * orbitSign;
-            if (Random.value < orbitFlipChance)
+            if (Random.value < BotOrbitFlipChance)
             {
                 orbitSign *= -1f;
             }
@@ -262,7 +272,7 @@ namespace HotDynamite
             }
 
             float bandT = Mathf.InverseLerp(minDistance, maxDistance, distance);
-            float adjustedOrbitBlend = Mathf.Lerp(orbitBlend * 0.55f, orbitBlend, bandT);
+            float adjustedOrbitBlend = Mathf.Lerp(BotOrbitBlend * 0.55f, BotOrbitBlend, bandT);
             Vector2 bandMove = Vector2.Lerp(awayDir, orbitDir, adjustedOrbitBlend);
             return bandMove.sqrMagnitude > VectorEpsilonSqr ? bandMove.normalized : awayDir;
         }
@@ -354,7 +364,7 @@ namespace HotDynamite
 
         private void SmoothMoveVector(float deltaTime)
         {
-            float smooth = Mathf.Max(0f, steeringSmoothness);
+            float smooth = Mathf.Max(0f, BotSteeringSmoothness);
             if (smooth <= 0f)
             {
                 moveVector = desiredMoveVector;
