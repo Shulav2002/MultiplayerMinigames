@@ -12,13 +12,18 @@ namespace HotDynamite
         [SerializeField] private HotDynamitePlayer playerPrefab;
         [SerializeField] private Transform playerParent;
         [SerializeField] private Transform[] spawnPoints;
+
         [Header("VFX")]
         [SerializeField] private GameObject explosionPrefab;
+
         [SerializeField, Min(0f)] private float explosionLifetimeSeconds = 2f;
+
         [Header("Bots")]
         [SerializeField] private bool hardModeBots = false;
+
         [Header("Network")]
         [SerializeField] private bool runAsNetworkClient = false;
+
         [SerializeField] private HotDynamiteNetworkAdapter networkAdapter;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
@@ -38,6 +43,7 @@ namespace HotDynamite
         public bool IsNetworkMode => networkMode;
         public string LocalNetworkPlayerId => localNetworkPlayerId;
         public float BombTimeRemaining => Mathf.Max(0f, bombTimer);
+
         public float BombUrgency01
         {
             get
@@ -92,6 +98,7 @@ namespace HotDynamite
                     enabled = false;
                     return;
                 }
+                Debug.LogError("HotDynamiteGameManager: Failed to initialize game. Check previous error messages for details.");
 
                 bombFuseSeconds = Mathf.Max(MinBombFuseSeconds, settings.BombTimerSeconds);
                 return;

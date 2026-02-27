@@ -3,11 +3,19 @@
   "WorkspaceRootPath": "D:\\Unity\\MultiplayerMiniGames\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\network\\hotdynamitewiremodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\network\\hotdynamitewiremodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\network\\hotdynamitenetworkadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\network\\hotdynamitenetworkadapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\shaders\\uitoonwaterurp.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\shaders\\uitoonwaterurp.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\shaders\\uitoonwaterurp.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
@@ -26,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,7 +50,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
+              "Title": "HotDynamiteWireModels.cs",
+              "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
+              "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
+              "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
+              "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-20T06:42:44.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HotDynamiteNetworkAdapter.cs",
+              "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
+              "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
+              "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
+              "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-20T06:41:29.103Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "HotDynamiteBotController.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteBotController.cs",
@@ -54,7 +88,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "UIToonWaterURP.shader",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
@@ -62,25 +96,24 @@
               "RelativeToolTip": "Assets\\games\\HotDynamite\\Shaders\\UIToonWaterURP.shader",
               "ViewState": "AgIAAH0AAAAAAAAAAIBJwG8AAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2026-02-16T10:44:38.268Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-16T10:44:38.268Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "HotDynamiteGameManager.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
               "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
               "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
-              "ViewState": "AgIAAEkAAAAAAAAAAAAewGUAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAewGUAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-16T10:19:44.135Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "HotDynamitePlayerInput.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamitePlayerInput.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamitePlayerInput.cs",
