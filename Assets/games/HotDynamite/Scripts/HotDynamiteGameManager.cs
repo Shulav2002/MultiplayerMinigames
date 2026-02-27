@@ -38,16 +38,11 @@ namespace HotDynamite
         private string localNetworkPlayerId;
         private string activeRoomId;
 
-        private float matchStartDelayTimer;
-        private bool isMatchStarting;
-
         public HotDynamitePlayer BombHolder => bombHolder;
         public bool HardModeBots => hardModeBots;
         public bool IsNetworkMode => networkMode;
         public string LocalNetworkPlayerId => localNetworkPlayerId;
         public float BombTimeRemaining => Mathf.Max(0f, bombTimer);
-        public bool IsMatchStarting => isMatchStarting;
-        public float MatchStartDelayRemaining => Mathf.Max(0f, matchStartDelayTimer);
 
         public float BombUrgency01
         {
@@ -108,16 +103,6 @@ namespace HotDynamite
                 bombFuseSeconds = Mathf.Max(MinBombFuseSeconds, settings.BombTimerSeconds);
                 return;
             }
-            // Local mode: do not automatically start the game on Start().
-            // Call StartGameLocal() from the Lobby Manager instead.
-        }
-
-        public void StartGameLocal()
-        {
-            if (networkMode)
-            {
-                return;
-            }
 
             if (!TryInitializeGame())
             {
@@ -127,26 +112,12 @@ namespace HotDynamite
 
             SpawnPlayers();
             AssignBombToRandomAlivePlayer();
-            
-            // Set up match start delay
-            isMatchStarting = true;
-            matchStartDelayTimer = 3f;
         }
 
         private void Update()
         {
             if (networkMode)
             {
-                return;
-            }
-
-            if (isMatchStarting)
-            {
-                matchStartDelayTimer -= Time.deltaTime;
-                if (matchStartDelayTimer <= 0f)
-                {
-                    isMatchStarting = false;
-                }
                 return;
             }
 
@@ -267,7 +238,7 @@ namespace HotDynamite
 
         public void RequestBombPass(HotDynamitePlayer from, HotDynamitePlayer to)
         {
-            if (networkMode || isMatchStarting)
+            if (networkMode)
             {
                 return;
             }

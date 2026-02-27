@@ -64,7 +64,6 @@
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteArenaSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteWireModels.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\ShaderPlayToggle.cs" />
-    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteLobbyManager.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBombSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteNetworkAdapter.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerInput.cs" />

@@ -383,7 +383,7 @@ namespace HotDynamite
 
         private bool CanSimulateMovement()
         {
-            return isAlive && settings != null && body != null && manager != null && !manager.IsMatchStarting;
+            return isAlive && settings != null && body != null;
         }
 
         private Vector2 GetNormalizedMoveInput()

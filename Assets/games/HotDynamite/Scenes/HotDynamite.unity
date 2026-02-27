@@ -670,19 +670,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 372325336}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 699998921}
-        m_TargetAssemblyTypeName: HotDynamite.Lobby.HotDynamiteLobbyManager, HotDynamite
-        m_MethodName: OnPlayButtonClicked
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &372325336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1170,7 +1158,6 @@ GameObject:
   - component: {fileID: 699998919}
   - component: {fileID: 699998918}
   - component: {fileID: 699998917}
-  - component: {fileID: 699998921}
   m_Layer: 5
   m_Name: Canvas Lobby
   m_TagString: Untagged
@@ -1261,22 +1248,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &699998921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699998916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5f8ec730d1c04f49b4bbcd76b68245a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Lobby.HotDynamiteLobbyManager
-  gameSceneName: HotDynamite
-  lobbyCanvas: {fileID: 699998916}
-  gameContainer: {fileID: 368035262}
-  gameManager: {fileID: 1475341650}
 --- !u!1 &751061348
 GameObject:
   m_ObjectHideFlags: 0
@@ -1894,14 +1865,13 @@ GameObject:
   - component: {fileID: 1088182738}
   - component: {fileID: 1088182737}
   - component: {fileID: 1088182736}
-  - component: {fileID: 1088182740}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1088182736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1986,22 +1956,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1088182740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088182735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5f8ec730d1c04f49b4bbcd76b68245a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Lobby.HotDynamiteLobbyManager
-  gameSceneName: HotDynamite
-  lobbyCanvas: {fileID: 699998916}
-  gameContainer: {fileID: 368035262}
-  gameManager: {fileID: 1475341650}
 --- !u!1 &1128413484
 GameObject:
   m_ObjectHideFlags: 0
@@ -2389,10 +2343,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.0002155304
-    width: 1
-    height: 0.99956894
+    x: 0.000138551
+    y: 0
+    width: 0.9997229
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
