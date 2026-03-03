@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 ///                This removes Unity Start() ordering race conditions.
 /// WALL ALGO    : Wall count and length are derived from grid size automatically.
 /// SORTING LAYER: Wall segments use the "Wall" sorting layer.
+/// SHADER       : Uses sprite with outline shader instead of fake quads.
 /// </summary>
 public class TankBattleMapGenerator : MonoBehaviour
 {
@@ -56,7 +57,7 @@ public class TankBattleMapGenerator : MonoBehaviour
         HexColor("91663B"),
         HexColor("828282"),
     };
-    [Tooltip("Outline/stroke color drawn around each wall (fake outline via larger quad behind)")]
+    [Tooltip("Outline/stroke color drawn around each wall (via shader)")]
     public Color[] outlineColors = new Color[]
     {
         HexColor("000000"),   // darker blue
@@ -65,7 +66,7 @@ public class TankBattleMapGenerator : MonoBehaviour
     };
 
     [Header("Wall Outline")]
-    [Tooltip("Outline width in world-units added around every wall/border quad. 0 = no outline.")]
+    [Tooltip("Outline width in world-units added around every wall/border segment")]
     public float outlineThickness = 0.04f;
 
     [Header("Seed")]
@@ -479,8 +480,7 @@ public class TankBattleMapGenerator : MonoBehaviour
         }
 
         // ── Junction fills ─────────────────────────────────────────────
-        // Interior corners where a vEdge and hEdge cross: fill with wall color,
-        // no outline, size = gap + 2×outlineThickness to cover outline tips.
+        // Interior corners where a vEdge and hEdge cross: fill with wall color
         for (int x = 1; x < cols; x++)
         for (int y = 1; y < rows; y++)
         {
@@ -500,33 +500,35 @@ public class TankBattleMapGenerator : MonoBehaviour
 
     // ── Helpers ────────────────────────────────────────────────────────
 
-    // MakeSeg: spawns one wall quad + an outline quad (larger, behind)
+    // MakeSeg: spawns wall with outline (2 sprites: outline background + fill foreground)
     void MakeSeg(string lbl, float wx, float wy, float sw, float sh, string layer, int order)
     {
+        // Outline sprite (behind, slightly larger, darker)
         if (outlineThickness > 0f)
         {
-            GameObject ol = new GameObject(lbl + "_OL");
-            ol.transform.SetParent(wallParent);
-            ol.transform.position   = new Vector3(wx, wy, 0f);
-            ol.transform.localScale = new Vector3(sw + outlineThickness * 2f, sh + outlineThickness * 2f, 1f);
-            SpriteRenderer olSr = ol.AddComponent<SpriteRenderer>();
-            olSr.sprite           = GetPxSprite();
-            olSr.color            = activeOutlineColor;
-            olSr.sortingLayerName = layer;
-            olSr.sortingOrder     = 3;   // ALL outlines at one fixed order → uniform, no double-darkness at joins
-
+            GameObject outline = new GameObject(lbl + "_Outline");
+            outline.transform.SetParent(wallParent);
+            outline.transform.position = new Vector3(wx, wy, 0f);
+            outline.transform.localScale = new Vector3(sw + outlineThickness * 2f, sh + outlineThickness * 2f, 1f);
+            
+            SpriteRenderer outlineSr = outline.AddComponent<SpriteRenderer>();
+            outlineSr.sprite = GetPxSprite();
+            outlineSr.color = activeOutlineColor;
+            outlineSr.sortingLayerName = layer;
+            outlineSr.sortingOrder = order - 1;
         }
-
+        
+        // Main wall sprite (foreground)
         GameObject go = new GameObject(lbl);
         go.transform.SetParent(wallParent);
-        go.transform.position   = new Vector3(wx, wy, 0f);
+        go.transform.position = new Vector3(wx, wy, 0f);
         go.transform.localScale = new Vector3(sw, sh, 1f);
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite           = GetPxSprite();
-        sr.color            = activeWallColor;
+        sr.sprite = GetPxSprite();
+        sr.color = activeWallColor;
         sr.sortingLayerName = layer;
-        sr.sortingOrder     = order;
+        sr.sortingOrder = order;
 
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.size = Vector2.one;
@@ -540,10 +542,13 @@ public class TankBattleMapGenerator : MonoBehaviour
     Sprite GetPxSprite()
     {
         if (_pxSprite != null) return _pxSprite;
+        
+        // Simple 1x1 white pixel sprite
         Texture2D t = new Texture2D(1, 1);
         t.SetPixel(0, 0, Color.white);
         t.Apply();
-        _pxSprite = Sprite.Create(t, new Rect(0,0,1,1), new Vector2(0.5f,0.5f), 1f);
+        
+        _pxSprite = Sprite.Create(t, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
         return _pxSprite;
     }
 }

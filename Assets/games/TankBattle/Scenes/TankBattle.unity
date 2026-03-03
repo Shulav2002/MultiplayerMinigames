@@ -641,7 +641,9 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
-  outlineThickness: 0.04
+  wallMaterial: {fileID: 2100000, guid: 6980d043deab3274a857edaaf1b3eb21, type: 2}
+  wallSprite: {fileID: 0}
+  outlineWidth: 1
   seed: 0
   randomSeedEveryRound: 1
   lastCols: 0
