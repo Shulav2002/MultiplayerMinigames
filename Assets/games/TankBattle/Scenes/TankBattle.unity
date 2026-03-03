@@ -396,7 +396,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 0}
+  m_BackGroundColor: {r: 0.35248306, g: 0.50545263, b: 0.8396226, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -621,7 +621,7 @@ MonoBehaviour:
   screenPadding: 0.4
   cellSize: 1
   gapSize: 0.12
-  gridColor: {r: 0.55, g: 0.6, b: 0.65, a: 0.44705883}
+  gridColor: {r: 0.7533375, g: 0.75874424, b: 0.764151, a: 0.80784315}
   minCols: 5
   maxCols: 8
   minRows: 4

@@ -24,7 +24,7 @@ public class TankBattleMapGenerator : MonoBehaviour
     public float cellSize = 1.0f;
     [Tooltip("Gap between cells — used for grid lines, walls, AND border")]
     public float gapSize  = 0.12f;
-    [Tooltip("Grid line / background colour")]
+    [Tooltip("Grid line / gap colour — shown only inside the arena via background quad")]
     public Color gridColor = new Color(0.48f, 0.55f, 0.60f);
 
     [Header("Columns (random per round)")]
@@ -48,6 +48,7 @@ public class TankBattleMapGenerator : MonoBehaviour
     float cs, gap;
     bool[,] hEdge, vEdge;
     Transform wallParent;
+    GameObject arenaBackground;   // coloured quad behind the floor tiles
     Sprite    _pxSprite;
     Vector2Int p1Cell, p2Cell;
     Vector3    gridOrigin;   // bottom-left corner of inner grid in world space
@@ -87,11 +88,13 @@ public class TankBattleMapGenerator : MonoBehaviour
         if (g == null) g = GetComponent<Grid>();
         if (g != null) { g.cellSize = new Vector3(cs, cs, 0f); g.cellGap = new Vector3(gap, gap, 0f); }
 
-        if (mapCamera != null) mapCamera.backgroundColor = gridColor;
+        // NOTE: Camera background colour is intentionally NOT set here.
+        // The arena uses a background quad for grid colour; leave camera colour to the user.
 
         // ── 3. Clear old content ──────────────────────────────────────
         floorTilemap.ClearAllTiles();
-        if (wallParent != null) Destroy(wallParent.gameObject);
+        if (wallParent       != null) Destroy(wallParent.gameObject);
+        if (arenaBackground  != null) Destroy(arenaBackground);
         wallParent = new GameObject("_Walls").transform;
         wallParent.SetParent(transform, false);
 
@@ -107,16 +110,38 @@ public class TankBattleMapGenerator : MonoBehaviour
         transform.position = new Vector3(-innerW * 0.5f, -innerH * 0.5f, 0f);
         gridOrigin = transform.position;   // world-space bottom-left of first tile
 
-        // ── 5. Floor tiles ────────────────────────────────────────────
+        // Calculate cx0 and cy0 here as they are needed for the arena background
+        float cx0    = gridOrigin.x + innerW * 0.5f;
+        float cy0    = gridOrigin.y + innerH * 0.5f;
+
+        // ── 5. Arena background quad (grid gap colour, arena area only) ──
+        // Sits at sorting order -2, behind floor tiles.
+        // The floor tiles (white) sit on top; gridColor shows through
+        // the cell gaps — and ONLY inside the arena, not the whole camera.
+        arenaBackground = new GameObject("_ArenaBG");
+        arenaBackground.transform.SetParent(wallParent.parent, false);
+        arenaBackground.transform.position   = new Vector3(cx0, cy0, 0f);
+
+        // Size: inner area. The gap on each tile edge is already inside innerW/innerH.
+        // Add one gap on each side so the colour fills flush to the border inner face.
+        float bgW = innerW + gap;
+        float bgH = innerH + gap;
+        arenaBackground.transform.localScale  = new Vector3(bgW, bgH, 1f);
+
+        SpriteRenderer bgSr = arenaBackground.AddComponent<SpriteRenderer>();
+        bgSr.sprite           = GetPxSprite();
+        bgSr.color            = gridColor;
+        bgSr.sortingLayerName = LAYER_FLOOR;
+        bgSr.sortingOrder     = -2;
+
+        // 6. Floor tiles ────────────────────────────────────────────
         for (int x = 0; x < cols; x++)
         for (int y = 0; y < rows; y++)
             floorTilemap.SetTile(new Vector3Int(x, y, 0), floorTile);
 
-        // ── 6. Border ─────────────────────────────────────────────────
+        // 7. Border ─────────────────────────────────────────────────
         float outerW = innerW + gap * 2f;
         float outerH = innerH + gap * 2f;
-        float cx0    = gridOrigin.x + innerW * 0.5f;
-        float cy0    = gridOrigin.y + innerH * 0.5f;
 
         MakeSeg("Bdr_B", cx0, gridOrigin.y - gap * 0.5f,        outerW, gap,    LAYER_WALL, 10);
         MakeSeg("Bdr_T", cx0, gridOrigin.y + innerH + gap*0.5f, outerW, gap,    LAYER_WALL, 10);
