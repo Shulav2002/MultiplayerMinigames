@@ -168,7 +168,8 @@ public class TankBattleMapGenerator : MonoBehaviour
             Random.InitState(seed + attempt);
             PlaceWalls(cols, rows);
             attempt++;
-        } while (!SpawnsConnected(cols, rows) && attempt < 8);
+        } while (!AllCellsConnected(cols, rows) && attempt < 20);
+
 
         // ── 9. Render walls ───────────────────────────────────────────
         RenderEdges(cols, rows);
@@ -294,19 +295,20 @@ public class TankBattleMapGenerator : MonoBehaviour
 
     // ── Edge placement with gap enforcement ───────────────────────────
 
-    // CanPlaceH: checks bounds, not already set, parallel-gap, and no enclosure
+    // CanPlaceH: checks bounds, not already set, parallel-gap (INCLUDING border), enclosure
     bool CanPlaceH(int x, int y, int cols, int rows)
     {
         if (x < 0 || x >= cols || y <= 0 || y >= rows) return false;
         if (hEdge[x, y]) return false;
-        // Parallel gap: no hEdge in adjacent rows same col
-        if (y - 1 > 0    && hEdge[x, y - 1]) return false;
-        if (y + 1 < rows && hEdge[x, y + 1]) return false;
-        // Enclosure: placing hEdge[x,y] would be top of cell (x,y-1) — check sides
-        // Cell (x, y-1) would be enclosed if left+right+bottom already walled
-        if (y - 1 >= 0 && hEdge[x, y - 1] && vEdge[x, y - 1] && x + 1 <= cols && vEdge[x + 1, y - 1]) return false;
-        // Cell (x, y) would be enclosed if left+right+top already walled
-        if (y < rows && hEdge[x, y + 1] && vEdge[x, y] && x + 1 <= cols && vEdge[x + 1, y]) return false;
+        // Parallel gap: must be >=1 row from any other hEdge INCLUDING the border (y=0 and y=rows)
+        if (y - 1 >= 0    && hEdge[x, y - 1]) return false;   // was: y-1 > 0  (missed bottom border)
+        if (y + 1 <= rows && hEdge[x, y + 1]) return false;   // was: y+1 < rows (missed top border)
+        // Enclosure: placing hEdge[x,y] is TOP of cell (x, y-1)
+        // Reject if left+right+bottom of that cell already set
+        if (hEdge[x, y - 1] && vEdge[x, y - 1] && vEdge[x + 1, y - 1]) return false;
+        // Placing hEdge[x,y] is BOTTOM of cell (x, y)
+        // Reject if left+right+top of that cell already set
+        if (y + 1 <= rows && hEdge[x, y + 1] && vEdge[x, y] && vEdge[x + 1, y]) return false;
         return true;
     }
 
@@ -314,13 +316,15 @@ public class TankBattleMapGenerator : MonoBehaviour
     {
         if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
         if (vEdge[x, y]) return false;
-        // Parallel gap: no vEdge in adjacent cols same row
-        if (x - 1 > 0    && vEdge[x - 1, y]) return false;
-        if (x + 1 < cols && vEdge[x + 1, y]) return false;
-        // Enclosure: placing vEdge[x,y] is right wall of cell (x-1,y) — check top+bottom+left
-        if (x - 1 >= 0 && vEdge[x - 1, y] && hEdge[x - 1, y] && y + 1 <= rows && hEdge[x - 1, y + 1]) return false;
-        // Check cell (x,y): left wall = vEdge[x,y], check right+top+bottom
-        if (x + 1 <= cols && vEdge[x + 1, y] && hEdge[x, y] && y + 1 <= rows && hEdge[x, y + 1]) return false;
+        // Parallel gap: must be >=1 col from any other vEdge INCLUDING the border (x=0 and x=cols)
+        if (x - 1 >= 0    && vEdge[x - 1, y]) return false;   // was: x-1 > 0  (missed left border)
+        if (x + 1 <= cols && vEdge[x + 1, y]) return false;   // was: x+1 < cols (missed right border)
+        // Enclosure: placing vEdge[x,y] is RIGHT of cell (x-1, y)
+        // Reject if left+top+bottom of that cell already set
+        if (vEdge[x - 1, y] && hEdge[x - 1, y] && hEdge[x - 1, y + 1]) return false;
+        // Placing vEdge[x,y] is LEFT of cell (x, y)
+        // Reject if right+top+bottom of that cell already set
+        if (x + 1 <= cols && vEdge[x + 1, y] && hEdge[x, y] && hEdge[x, y + 1]) return false;
         return true;
     }
 
@@ -353,26 +357,30 @@ public class TankBattleMapGenerator : MonoBehaviour
 
 
     // ── BFS connectivity ───────────────────────────────────────────────
-    bool SpawnsConnected(int cols, int rows)
+    // Returns true ONLY if ALL cells are reachable from p1Cell.
+    // This catches isolated pockets (not just p1→p2 disconnection).
+    bool AllCellsConnected(int cols, int rows)
     {
         bool[,] vis = new bool[cols, rows];
         var q = new System.Collections.Generic.Queue<Vector2Int>();
         q.Enqueue(p1Cell);
         vis[p1Cell.x, p1Cell.y] = true;
+        int reached = 1;
 
         while (q.Count > 0)
         {
             var cur = q.Dequeue();
-            if (cur == p2Cell) return true;
             int x = cur.x, y = cur.y;
 
-            if (x+1 < cols && !vEdge[x+1, y] && !vis[x+1, y]) { vis[x+1,y]=true; q.Enqueue(new Vector2Int(x+1,y)); }
-            if (x-1 >= 0   && !vEdge[x,   y] && !vis[x-1, y]) { vis[x-1,y]=true; q.Enqueue(new Vector2Int(x-1,y)); }
-            if (y+1 < rows && !hEdge[x, y+1] && !vis[x, y+1]) { vis[x,y+1]=true; q.Enqueue(new Vector2Int(x,y+1)); }
-            if (y-1 >= 0   && !hEdge[x,   y] && !vis[x, y-1]) { vis[x,y-1]=true; q.Enqueue(new Vector2Int(x,y-1)); }
+            if (x+1 < cols && !vEdge[x+1, y] && !vis[x+1, y]) { vis[x+1,y]=true; reached++; q.Enqueue(new Vector2Int(x+1,y)); }
+            if (x-1 >= 0   && !vEdge[x,   y] && !vis[x-1, y]) { vis[x-1,y]=true; reached++; q.Enqueue(new Vector2Int(x-1,y)); }
+            if (y+1 < rows && !hEdge[x, y+1] && !vis[x, y+1]) { vis[x,y+1]=true; reached++; q.Enqueue(new Vector2Int(x,y+1)); }
+            if (y-1 >= 0   && !hEdge[x,   y] && !vis[x, y-1]) { vis[x,y-1]=true; reached++; q.Enqueue(new Vector2Int(x,y-1)); }
         }
-        return false;
+        return reached == cols * rows;   // every cell must be reachable
     }
+
+
 
     // ── Render edges (merged runs → continuous lines) ──────────────────
     void RenderEdges(int cols, int rows)
