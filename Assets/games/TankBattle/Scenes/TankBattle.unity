@@ -621,16 +621,15 @@ MonoBehaviour:
   screenPadding: 0.4
   cellSize: 1
   gapSize: 0.12
-  gridColor: {r: 0.55, g: 0.6, b: 0.65, a: 1}
+  gridColor: {r: 0.55, g: 0.6, b: 0.65, a: 0.44705883}
   minCols: 5
   maxCols: 8
   minRows: 4
   maxRows: 8
-  wallPathCount: 7
-  minPathLength: 4
-  maxPathLength: 6
   seed: 0
   randomSeedEveryRound: 1
+  lastCols: 0
+  lastRows: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

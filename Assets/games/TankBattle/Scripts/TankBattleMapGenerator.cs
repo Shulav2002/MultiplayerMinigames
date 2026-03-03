@@ -239,51 +239,76 @@ public class TankBattleMapGenerator : MonoBehaviour
     }
 
     // ── Branch helpers (perpendicular arm at tip) ─────────────────────
+    // Branches use CanPlaceH/CanPlaceV which adds:
+    //   • parallel-gap check (same as main stems)
+    //   • enclosure check: stops if placing would seal off a cell
 
-    // Add a short horizontal branch at the tip of a vertical stub
     void Branch_H(int cx, int tipY, int cols, int rows)
     {
         bool goRight = Random.value > 0.5f;
-        int  bLen    = Random.Range(1, 3);
+        int  bLen    = Random.Range(1, 2);   // short: max 2 cells
         for (int b = 0; b < bLen; b++)
         {
             int bx = goRight ? cx + b : cx - 1 - b;
-            if (!TryHEdgeG(bx, tipY + 1, cols, rows)) break;
+            if (!CanPlaceH(bx, tipY + 1, cols, rows)) break;
+            hEdge[bx, tipY + 1] = true;
         }
     }
 
-    // Add a short vertical branch at the tip of a horizontal stub
     void Branch_V(int tipX, int cy, int cols, int rows)
     {
         bool goUp = Random.value > 0.5f;
-        int  bLen = Random.Range(1, 3);
+        int  bLen = Random.Range(1, 2);
         for (int b = 0; b < bLen; b++)
         {
             int by = goUp ? cy + b : cy - 1 - b;
-            if (!TryVEdgeG(tipX + 1, by, cols, rows)) break;
+            if (!CanPlaceV(tipX + 1, by, cols, rows)) break;
+            vEdge[tipX + 1, by] = true;
         }
     }
 
     // ── Edge placement with gap enforcement ───────────────────────────
-    // TryHEdgeG: also rejects if immediately above/below is already an hEdge
-    // (would leave 0 gap between parallel horizontal walls in adjacent rows)
-    bool TryHEdgeG(int x, int y, int cols, int rows)
+
+    // CanPlaceH: checks bounds, not already set, parallel-gap, and no enclosure
+    bool CanPlaceH(int x, int y, int cols, int rows)
     {
         if (x < 0 || x >= cols || y <= 0 || y >= rows) return false;
         if (hEdge[x, y]) return false;
-        // Gap check: ensures 1 row gap between parallel hEdges
+        // Parallel gap: no hEdge in adjacent rows same col
         if (y - 1 > 0    && hEdge[x, y - 1]) return false;
         if (y + 1 < rows && hEdge[x, y + 1]) return false;
+        // Enclosure: placing hEdge[x,y] would be top of cell (x,y-1) — check sides
+        // Cell (x, y-1) would be enclosed if left+right+bottom already walled
+        if (y - 1 >= 0 && hEdge[x, y - 1] && vEdge[x, y - 1] && x + 1 <= cols && vEdge[x + 1, y - 1]) return false;
+        // Cell (x, y) would be enclosed if left+right+top already walled
+        if (y < rows && hEdge[x, y + 1] && vEdge[x, y] && x + 1 <= cols && vEdge[x + 1, y]) return false;
+        return true;
+    }
+
+    bool CanPlaceV(int x, int y, int cols, int rows)
+    {
+        if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
+        if (vEdge[x, y]) return false;
+        // Parallel gap: no vEdge in adjacent cols same row
+        if (x - 1 > 0    && vEdge[x - 1, y]) return false;
+        if (x + 1 < cols && vEdge[x + 1, y]) return false;
+        // Enclosure: placing vEdge[x,y] is right wall of cell (x-1,y) — check top+bottom+left
+        if (x - 1 >= 0 && vEdge[x - 1, y] && hEdge[x - 1, y] && y + 1 <= rows && hEdge[x - 1, y + 1]) return false;
+        // Check cell (x,y): left wall = vEdge[x,y], check right+top+bottom
+        if (x + 1 <= cols && vEdge[x + 1, y] && hEdge[x, y] && y + 1 <= rows && hEdge[x, y + 1]) return false;
+        return true;
+    }
+
+    // Main-stem versions (used by PlaceWalls — same as CanPlace but auto-writes)
+    bool TryHEdgeG(int x, int y, int cols, int rows)
+    {
+        if (!CanPlaceH(x, y, cols, rows)) return false;
         hEdge[x, y] = true; return true;
     }
 
     bool TryVEdgeG(int x, int y, int cols, int rows)
     {
-        if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
-        if (vEdge[x, y]) return false;
-        // Gap check: ensures 1 col gap between parallel vEdges
-        if (x - 1 > 0    && vEdge[x - 1, y]) return false;
-        if (x + 1 < cols && vEdge[x + 1, y]) return false;
+        if (!CanPlaceV(x, y, cols, rows)) return false;
         vEdge[x, y] = true; return true;
     }
 
@@ -299,8 +324,8 @@ public class TankBattleMapGenerator : MonoBehaviour
         if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
         if (vEdge[x, y]) return false;
         vEdge[x, y] = true; return true;
-
     }
+
 
     // ── BFS connectivity ───────────────────────────────────────────────
     bool SpawnsConnected(int cols, int rows)
@@ -358,6 +383,31 @@ public class TankBattleMapGenerator : MonoBehaviour
                 MakeSeg("VW", wx, wy, gap, h, LAYER_WALL, 5);
             }
         }
+
+        // ── Junction fill ──────────────────────────────────────────────
+        // At every interior grid corner (x, y) where col-edge x and row-edge y
+        // both have wall segments, the gap×gap square between them is visible.
+        // Fill it with a tiny black square.
+        //
+        // Corner (x, y) is covered by:
+        //   vertical:   vEdge[x, y-1]  (wall in cell below)  OR  vEdge[x, y]  (cell above)
+        //   horizontal: hEdge[x-1, y]  (wall in col left)    OR  hEdge[x, y]  (col right)
+
+        for (int x = 1; x < cols; x++)
+        for (int y = 1; y < rows; y++)
+        {
+            bool hasV = (y - 1 >= 0   && y - 1 < rows && vEdge[x, y - 1])
+                     || (y     >= 0   && y     < rows && vEdge[x, y    ]);
+            bool hasH = (x - 1 >= 0   && x - 1 < cols && hEdge[x - 1, y])
+                     || (x     >= 0   && x     < cols && hEdge[x,     y]);
+
+            if (!hasV || !hasH) continue;   // no junction here
+
+            float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+            float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+            MakeSeg("JN", jx, jy, gap, gap, LAYER_WALL, 6);
+        }
+
     }
 
     // ── Helpers ────────────────────────────────────────────────────────
