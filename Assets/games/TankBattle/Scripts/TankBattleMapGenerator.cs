@@ -513,7 +513,8 @@ public class TankBattleMapGenerator : MonoBehaviour
             olSr.sprite           = GetPxSprite();
             olSr.color            = activeOutlineColor;
             olSr.sortingLayerName = layer;
-            olSr.sortingOrder     = order - 1;
+            olSr.sortingOrder     = 3;   // ALL outlines at one fixed order → uniform, no double-darkness at joins
+
         }
 
         GameObject go = new GameObject(lbl);
