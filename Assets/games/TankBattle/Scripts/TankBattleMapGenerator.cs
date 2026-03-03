@@ -24,8 +24,6 @@ public class TankBattleMapGenerator : MonoBehaviour
     public float cellSize = 1.0f;
     [Tooltip("Gap between cells — used for grid lines, walls, AND border")]
     public float gapSize  = 0.12f;
-    [Tooltip("Grid line / gap colour — shown only inside the arena via background quad")]
-    public Color gridColor = new Color(0.48f, 0.55f, 0.60f);
 
     [Header("Columns (random per round)")]
     public int minCols = 6;
@@ -34,6 +32,41 @@ public class TankBattleMapGenerator : MonoBehaviour
     [Header("Rows (random per round, capped at cols)")]
     public int minRows = 4;
     public int maxRows = 9;
+
+    [Header("Color Themes (one entry = one theme, chosen randomly each round)")]
+
+    [Tooltip("Tint for the floor tiles")]
+    public Color[] gridColors = new Color[]
+    {
+        HexColor("739DC8"),   // blue
+        HexColor("5C80A4"),   // dark blue
+        HexColor("AAAAAA"),   // gray
+    };
+    [Tooltip("Background quad color — visible through tile gaps")]
+    public Color[] gapColors  = new Color[]
+    {
+        HexColor("7098C2"),
+        HexColor("B78654"),
+        HexColor("A5A5A5"),
+    };
+    [Tooltip("Wall and border segment color")]
+    public Color[] wallColors = new Color[]
+    {
+        HexColor("5C80A4"),
+        HexColor("91663B"),
+        HexColor("828282"),
+    };
+    [Tooltip("Outline/stroke color drawn around each wall (fake outline via larger quad behind)")]
+    public Color[] outlineColors = new Color[]
+    {
+        HexColor("000000"),   // darker blue
+        HexColor("000000"),   // darker brown
+        HexColor("000000"),   // dark gray
+    };
+
+    [Header("Wall Outline")]
+    [Tooltip("Outline width in world-units added around every wall/border quad. 0 = no outline.")]
+    public float outlineThickness = 0.04f;
 
     [Header("Seed")]
     public int  seed = 0;
@@ -44,14 +77,23 @@ public class TankBattleMapGenerator : MonoBehaviour
     const string LAYER_FLOOR = "Floor";
 
     // ── Runtime ────────────────────────────────────────────────────────
-    [HideInInspector] public int  lastCols, lastRows;   // readable externally
+    [HideInInspector] public int  lastCols, lastRows;
     float cs, gap;
+    Color activeWallColor;
+    Color activeOutlineColor;
     bool[,] hEdge, vEdge;
     Transform wallParent;
-    GameObject arenaBackground;   // coloured quad behind the floor tiles
+    GameObject arenaBackground;
     Sprite    _pxSprite;
     Vector2Int p1Cell, p2Cell;
-    Vector3    gridOrigin;   // bottom-left corner of inner grid in world space
+    Vector3    gridOrigin;
+
+    // Helper — parse a hex string like "739DC8" into a Unity Color
+    static Color HexColor(string hex)
+    {
+        if (UnityEngine.ColorUtility.TryParseHtmlString("#" + hex, out Color c)) return c;
+        return Color.white;
+    }
 
     // ── Public API ─────────────────────────────────────────────────────
     public Vector3 GetPlayer1Spawn() => CellCentre(p1Cell);
@@ -65,6 +107,20 @@ public class TankBattleMapGenerator : MonoBehaviour
     {
         if (randomSeedEveryRound) seed = Random.Range(0, 999999);
         Random.InitState(seed);
+
+        // ── 0. Pick a random color theme ──────────────────────────────
+        int themeCount = Mathf.Min(
+            gridColors != null ? gridColors.Length : 1,
+            Mathf.Min(
+                gapColors  != null ? gapColors.Length  : 1,
+                wallColors != null ? wallColors.Length : 1));
+        themeCount = Mathf.Max(1, themeCount);
+        int themeIdx = Random.Range(0, themeCount);
+
+        Color activeGridColor = (gridColors != null && gridColors.Length > 0) ? gridColors[themeIdx] : Color.white;
+        Color activeGapColor  = (gapColors  != null && gapColors.Length  > 0) ? gapColors[themeIdx]  : new Color(0.48f, 0.55f, 0.60f);
+        activeWallColor    = (wallColors    != null && wallColors.Length    > 0) ? wallColors[themeIdx]    : Color.black;
+        activeOutlineColor = (outlineColors != null && outlineColors.Length > 0) ? outlineColors[themeIdx] : new Color(0f,0f,0f,0.5f);
 
         cs  = cellSize;
         gap = gapSize;
@@ -82,6 +138,10 @@ public class TankBattleMapGenerator : MonoBehaviour
 
         // local shorthands
         int cols = lastCols, rows = lastRows;
+
+        // Apply floor tile colour
+        floorTilemap.color = activeGridColor;
+
 
         // ── 2. Grid component sizes ───────────────────────────────────
         Grid g = GetComponentInParent<Grid>();
@@ -130,9 +190,10 @@ public class TankBattleMapGenerator : MonoBehaviour
 
         SpriteRenderer bgSr = arenaBackground.AddComponent<SpriteRenderer>();
         bgSr.sprite           = GetPxSprite();
-        bgSr.color            = gridColor;
+        bgSr.color            = activeGapColor;
         bgSr.sortingLayerName = LAYER_FLOOR;
         bgSr.sortingOrder     = -2;
+
 
         // 6. Floor tiles ────────────────────────────────────────────
         for (int x = 0; x < cols; x++)
@@ -417,24 +478,18 @@ public class TankBattleMapGenerator : MonoBehaviour
             }
         }
 
-        // ── Junction fill ──────────────────────────────────────────────
-        // At every interior grid corner (x, y) where col-edge x and row-edge y
-        // both have wall segments, the gap×gap square between them is visible.
-        // Fill it with a tiny black square.
-        //
-        // Corner (x, y) is covered by:
-        //   vertical:   vEdge[x, y-1]  (wall in cell below)  OR  vEdge[x, y]  (cell above)
-        //   horizontal: hEdge[x-1, y]  (wall in col left)    OR  hEdge[x, y]  (col right)
-
+        // ── Junction fills ─────────────────────────────────────────────
+        // Interior corners where a vEdge and hEdge cross: fill with wall color,
+        // no outline, size = gap + 2×outlineThickness to cover outline tips.
         for (int x = 1; x < cols; x++)
         for (int y = 1; y < rows; y++)
         {
-            bool hasV = (y - 1 >= 0   && y - 1 < rows && vEdge[x, y - 1])
-                     || (y     >= 0   && y     < rows && vEdge[x, y    ]);
-            bool hasH = (x - 1 >= 0   && x - 1 < cols && hEdge[x - 1, y])
-                     || (x     >= 0   && x     < cols && hEdge[x,     y]);
+            bool hasV = (y - 1 >= 0 && y - 1 < rows && vEdge[x, y - 1])
+                     || (y     >= 0 && y     < rows && vEdge[x, y    ]);
+            bool hasH = (x - 1 >= 0 && x - 1 < cols && hEdge[x - 1, y])
+                     || (x     >= 0 && x     < cols && hEdge[x,     y]);
 
-            if (!hasV || !hasH) continue;   // no junction here
+            if (!hasV || !hasH) continue;
 
             float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
             float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
@@ -445,8 +500,22 @@ public class TankBattleMapGenerator : MonoBehaviour
 
     // ── Helpers ────────────────────────────────────────────────────────
 
+    // MakeSeg: spawns one wall quad + an outline quad (larger, behind)
     void MakeSeg(string lbl, float wx, float wy, float sw, float sh, string layer, int order)
     {
+        if (outlineThickness > 0f)
+        {
+            GameObject ol = new GameObject(lbl + "_OL");
+            ol.transform.SetParent(wallParent);
+            ol.transform.position   = new Vector3(wx, wy, 0f);
+            ol.transform.localScale = new Vector3(sw + outlineThickness * 2f, sh + outlineThickness * 2f, 1f);
+            SpriteRenderer olSr = ol.AddComponent<SpriteRenderer>();
+            olSr.sprite           = GetPxSprite();
+            olSr.color            = activeOutlineColor;
+            olSr.sortingLayerName = layer;
+            olSr.sortingOrder     = order - 1;
+        }
+
         GameObject go = new GameObject(lbl);
         go.transform.SetParent(wallParent);
         go.transform.position   = new Vector3(wx, wy, 0f);
@@ -454,7 +523,7 @@ public class TankBattleMapGenerator : MonoBehaviour
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite           = GetPxSprite();
-        sr.color            = Color.black;
+        sr.color            = activeWallColor;
         sr.sortingLayerName = layer;
         sr.sortingOrder     = order;
 
