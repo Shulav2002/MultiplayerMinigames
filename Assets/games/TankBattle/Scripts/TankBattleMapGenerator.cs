@@ -480,7 +480,7 @@ public class TankBattleMapGenerator : MonoBehaviour
         }
 
         // ── Junction fills ─────────────────────────────────────────────
-        // Interior corners where a vEdge and hEdge cross: fill with wall color
+        // T-junctions: Interior grid points where vEdge and hEdge cross
         for (int x = 1; x < cols; x++)
         for (int y = 1; y < rows; y++)
         {
@@ -489,13 +489,128 @@ public class TankBattleMapGenerator : MonoBehaviour
             bool hasH = (x - 1 >= 0 && x - 1 < cols && hEdge[x - 1, y])
                      || (x     >= 0 && x     < cols && hEdge[x,     y]);
 
-            if (!hasV || !hasH) continue;
-
-            float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
-            float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
-            MakeSeg("JN", jx, jy, gap, gap, LAYER_WALL, 6);
+            if (hasV && hasH)
+            {
+                float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+                float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+                MakeJunction(jx, jy, gap + outlineThickness * 2f);
+            }
         }
 
+        // ── L-junction fills (wall endpoints meeting) ──────────────────
+        // Check horizontal wall ends for adjacent vertical walls
+        for (int y = 1; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                if (!hEdge[x, y]) continue;
+                
+                // Left end of horizontal wall
+                bool isLeftEnd = (x == 0 || !hEdge[x - 1, y]);
+                if (isLeftEnd)
+                {
+                    // Check for vertical walls above/below this point
+                    bool vAbove = (y < rows && vEdge[x, y]);
+                    bool vBelow = (y > 0 && vEdge[x, y - 1]);
+                    
+                    if (vAbove || vBelow)
+                    {
+                        float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+                        float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+                        MakeJunction(jx, jy, gap + outlineThickness * 2f);
+                    }
+                }
+                
+                // Right end of horizontal wall
+                bool isRightEnd = (x == cols - 1 || !hEdge[x + 1, y]);
+                if (isRightEnd)
+                {
+                    // Check for vertical walls above/below the next grid point
+                    bool vAbove = (x + 1 <= cols && y < rows && vEdge[x + 1, y]);
+                    bool vBelow = (x + 1 <= cols && y > 0 && vEdge[x + 1, y - 1]);
+                    
+                    if (vAbove || vBelow)
+                    {
+                        float jx = gridOrigin.x + (x + 1) * (cs + gap) - gap * 0.5f;
+                        float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+                        MakeJunction(jx, jy, gap + outlineThickness * 2f);
+                    }
+                }
+            }
+        }
+        
+        // Check vertical wall ends for adjacent horizontal walls
+        for (int x = 1; x < cols; x++)
+        {
+            for (int y = 0; y < rows; y++)
+            {
+                if (!vEdge[x, y]) continue;
+                
+                // Bottom end of vertical wall
+                bool isBottomEnd = (y == 0 || !vEdge[x, y - 1]);
+                if (isBottomEnd)
+                {
+                    // Check for horizontal walls left/right of this point
+                    bool hLeft = (x > 0 && hEdge[x - 1, y]);
+                    bool hRight = (x < cols && hEdge[x, y]);
+                    
+                    if (hLeft || hRight)
+                    {
+                        float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+                        float jy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+                        MakeJunction(jx, jy, gap + outlineThickness * 2f);
+                    }
+                }
+                
+                // Top end of vertical wall
+                bool isTopEnd = (y == rows - 1 || !vEdge[x, y + 1]);
+                if (isTopEnd)
+                {
+                    // Check for horizontal walls left/right of the next grid point
+                    bool hLeft = (x > 0 && y + 1 <= rows && hEdge[x - 1, y + 1]);
+                    bool hRight = (x < cols && y + 1 <= rows && hEdge[x, y + 1]);
+                    
+                    if (hLeft || hRight)
+                    {
+                        float jx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+                        float jy = gridOrigin.y + (y + 1) * (cs + gap) - gap * 0.5f;
+                        MakeJunction(jx, jy, gap + outlineThickness * 2f);
+                    }
+                }
+            }
+        }
+
+    }
+
+    // Helper to create junction cover (outline + fill)
+    void MakeJunction(float jx, float jy, float jSize)
+    {
+        // Junction outline (same layer as other outlines)
+        if (outlineThickness > 0f)
+        {
+            GameObject jOutline = new GameObject("JN_Outline");
+            jOutline.transform.SetParent(wallParent);
+            jOutline.transform.position = new Vector3(jx, jy, 0f);
+            jOutline.transform.localScale = new Vector3(jSize + outlineThickness * 2f, jSize + outlineThickness * 2f, 1f);
+            
+            SpriteRenderer joSr = jOutline.AddComponent<SpriteRenderer>();
+            joSr.sprite = GetPxSprite();
+            joSr.color = activeOutlineColor;
+            joSr.sortingLayerName = LAYER_WALL;
+            joSr.sortingOrder = 3;  // Same as all outlines
+        }
+        
+        // Junction fill (covers the outline)
+        GameObject junction = new GameObject("JN");
+        junction.transform.SetParent(wallParent);
+        junction.transform.position = new Vector3(jx, jy, 0f);
+        junction.transform.localScale = new Vector3(jSize, jSize, 1f);
+        
+        SpriteRenderer jSr = junction.AddComponent<SpriteRenderer>();
+        jSr.sprite = GetPxSprite();
+        jSr.color = activeWallColor;
+        jSr.sortingLayerName = LAYER_WALL;
+        jSr.sortingOrder = 6;
     }
 
     // ── Helpers ────────────────────────────────────────────────────────
@@ -504,6 +619,7 @@ public class TankBattleMapGenerator : MonoBehaviour
     void MakeSeg(string lbl, float wx, float wy, float sw, float sh, string layer, int order)
     {
         // Outline sprite (behind, slightly larger, darker)
+        // ALL outlines at fixed order 3 to prevent double-darkness at joins
         if (outlineThickness > 0f)
         {
             GameObject outline = new GameObject(lbl + "_Outline");
@@ -515,7 +631,7 @@ public class TankBattleMapGenerator : MonoBehaviour
             outlineSr.sprite = GetPxSprite();
             outlineSr.color = activeOutlineColor;
             outlineSr.sortingLayerName = layer;
-            outlineSr.sortingOrder = order - 1;
+            outlineSr.sortingOrder = 3;  // Fixed order for all outlines
         }
         
         // Main wall sprite (foreground)
