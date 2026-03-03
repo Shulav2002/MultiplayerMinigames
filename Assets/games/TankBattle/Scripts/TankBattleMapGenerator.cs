@@ -1,0 +1,396 @@
+using UnityEngine;
+using UnityEngine.Tilemaps;
+
+/// <summary>
+/// Tank-Battle procedural map generator.
+///
+/// SPAWN FIX    : GenerateMap() is called by TankBattleGameManager — NOT from Start().
+///                This removes Unity Start() ordering race conditions.
+/// WALL ALGO    : Wall count and length are derived from grid size automatically.
+/// SORTING LAYER: Wall segments use the "Wall" sorting layer.
+/// </summary>
+public class TankBattleMapGenerator : MonoBehaviour
+{
+    [Header("Tilemap (floor only)")]
+    public Tilemap  floorTilemap;
+    public TileBase floorTile;
+
+    [Header("Camera")]
+    public Camera mapCamera;
+    public float  screenPadding = 0.2f;
+
+    [Header("Fixed Cell & Gap Size")]
+    [Tooltip("Cell width/height in world-units (same regardless of column count)")]
+    public float cellSize = 1.0f;
+    [Tooltip("Gap between cells — used for grid lines, walls, AND border")]
+    public float gapSize  = 0.12f;
+    [Tooltip("Grid line / background colour")]
+    public Color gridColor = new Color(0.48f, 0.55f, 0.60f);
+
+    [Header("Columns (random per round)")]
+    public int minCols = 6;
+    public int maxCols = 9;
+
+    [Header("Rows (random per round, capped at cols)")]
+    public int minRows = 4;
+    public int maxRows = 9;
+
+    [Header("Seed")]
+    public int  seed = 0;
+    public bool randomSeedEveryRound = true;
+
+    // ── Sorting layer names ────────────────────────────────────────────
+    const string LAYER_WALL  = "Wall";
+    const string LAYER_FLOOR = "Floor";
+
+    // ── Runtime ────────────────────────────────────────────────────────
+    [HideInInspector] public int  lastCols, lastRows;   // readable externally
+    float cs, gap;
+    bool[,] hEdge, vEdge;
+    Transform wallParent;
+    Sprite    _pxSprite;
+    Vector2Int p1Cell, p2Cell;
+    Vector3    gridOrigin;   // bottom-left corner of inner grid in world space
+
+    // ── Public API ─────────────────────────────────────────────────────
+    public Vector3 GetPlayer1Spawn() => CellCentre(p1Cell);
+    public Vector3 GetPlayer2Spawn() => CellCentre(p2Cell);
+
+    // NOTE: Do NOT auto-generate in Start().
+    // TankBattleGameManager calls GenerateMap() explicitly so spawning
+    // always happens AFTER the map is ready.
+
+    public void GenerateMap()
+    {
+        if (randomSeedEveryRound) seed = Random.Range(0, 999999);
+        Random.InitState(seed);
+
+        cs  = cellSize;
+        gap = gapSize;
+
+        // ── 1. Choose grid dimensions ─────────────────────────────────
+        lastCols = Random.Range(Mathf.Max(2, minCols), Mathf.Max(3, maxCols) + 1);
+
+        float camH   = mapCamera != null ? mapCamera.orthographicSize * 2f : 10f;
+        float availH = camH - screenPadding * 2f;
+
+        int maxRowsFit = Mathf.FloorToInt(availH / (cs + gap));
+        int rMin = Mathf.Max(2, Mathf.Min(minRows, lastCols));
+        int rMax = Mathf.Min(Mathf.Min(maxRows, lastCols), maxRowsFit);
+        lastRows = Random.Range(rMin, Mathf.Max(rMin, rMax) + 1);
+
+        // local shorthands
+        int cols = lastCols, rows = lastRows;
+
+        // ── 2. Grid component sizes ───────────────────────────────────
+        Grid g = GetComponentInParent<Grid>();
+        if (g == null) g = GetComponent<Grid>();
+        if (g != null) { g.cellSize = new Vector3(cs, cs, 0f); g.cellGap = new Vector3(gap, gap, 0f); }
+
+        if (mapCamera != null) mapCamera.backgroundColor = gridColor;
+
+        // ── 3. Clear old content ──────────────────────────────────────
+        floorTilemap.ClearAllTiles();
+        if (wallParent != null) Destroy(wallParent.gameObject);
+        wallParent = new GameObject("_Walls").transform;
+        wallParent.SetParent(transform, false);
+
+        hEdge = new bool[cols, rows + 1];
+        vEdge = new bool[cols + 1, rows];
+
+        // ── 4. Compute inner area and centre the grid ─────────────────
+        float innerW = cols * (cs + gap) - gap;
+        float innerH = rows * (cs + gap) - gap;
+
+        // Move the TILEMAP (not Grid) to centre the tiles.
+        // The Grid stays at origin; offset the floorTilemap's parent (this transform).
+        transform.position = new Vector3(-innerW * 0.5f, -innerH * 0.5f, 0f);
+        gridOrigin = transform.position;   // world-space bottom-left of first tile
+
+        // ── 5. Floor tiles ────────────────────────────────────────────
+        for (int x = 0; x < cols; x++)
+        for (int y = 0; y < rows; y++)
+            floorTilemap.SetTile(new Vector3Int(x, y, 0), floorTile);
+
+        // ── 6. Border ─────────────────────────────────────────────────
+        float outerW = innerW + gap * 2f;
+        float outerH = innerH + gap * 2f;
+        float cx0    = gridOrigin.x + innerW * 0.5f;
+        float cy0    = gridOrigin.y + innerH * 0.5f;
+
+        MakeSeg("Bdr_B", cx0, gridOrigin.y - gap * 0.5f,        outerW, gap,    LAYER_WALL, 10);
+        MakeSeg("Bdr_T", cx0, gridOrigin.y + innerH + gap*0.5f, outerW, gap,    LAYER_WALL, 10);
+        MakeSeg("Bdr_L", gridOrigin.x - gap * 0.5f,        cy0,         gap, outerH, LAYER_WALL, 10);
+        MakeSeg("Bdr_R", gridOrigin.x + innerW + gap * 0.5f, cy0,       gap, outerH, LAYER_WALL, 10);
+
+        // Mark border edges as occupied
+        for (int x = 0; x < cols; x++) { hEdge[x, 0] = true; hEdge[x, rows] = true; }
+        for (int y = 0; y < rows; y++) { vEdge[0, y]  = true; vEdge[cols, y] = true; }
+
+        // ── 7. Spawn cells (opposite corners, always clear) ───────────
+        p1Cell = new Vector2Int(0,        0       );
+        p2Cell = new Vector2Int(cols - 1, rows - 1);
+
+        // ── 8. Algorithmic wall generation ────────────────────────────
+        int attempt = 0;
+        do {
+            // Clear edge arrays (keep border marks)
+            hEdge = new bool[cols, rows + 1];
+            vEdge = new bool[cols + 1, rows];
+            for (int x = 0; x < cols; x++) { hEdge[x, 0] = true; hEdge[x, rows] = true; }
+            for (int y = 0; y < rows; y++) { vEdge[0, y]  = true; vEdge[cols, y] = true; }
+
+            Random.InitState(seed + attempt);
+            PlaceWalls(cols, rows);
+            attempt++;
+        } while (!SpawnsConnected(cols, rows) && attempt < 8);
+
+        // ── 9. Render walls ───────────────────────────────────────────
+        RenderEdges(cols, rows);
+
+        // ── 10. Camera centre ─────────────────────────────────────────
+        if (mapCamera != null)
+            mapCamera.transform.position = new Vector3(0f, 0f, mapCamera.transform.position.z);
+    }
+
+    // ── Algorithmic Wall Placement ─────────────────────────────────────
+    //
+    // Rules:
+    //  • wallCount  = (cols + rows) × 0.6  (scales with perimeter)
+    //  • maxLength  = min(cols,rows) / 2    (can't reach the far wall)
+    //  • GAP RULE: a stub stops one cell early if the NEXT cell would be
+    //    immediately adjacent to an existing wall in the same direction
+    //    → always leaves ≥1 empty cell between any two tips
+    //  • BRANCH: 40% chance to add a short perpendicular arm at the tip
+
+    void PlaceWalls(int cols, int rows)
+    {
+        int wallCount = Mathf.RoundToInt((cols + rows) * 0.6f);
+        int maxLen    = Mathf.Max(2, Mathf.Min(cols, rows) / 2);
+        int guard     = 1;
+
+        for (int p = 0; p < wallCount; p++)
+        {
+            int side   = Random.Range(0, 4);
+            int length = Random.Range(2, maxLen + 1);
+            int placed = 0;
+
+            if (side == 0)   // ── bottom → vertical stub going UP ──────────
+            {
+                int cx = Random.Range(guard + 1, cols - guard);
+                for (int i = 0; i < length; i++)
+                {
+                    int ry = i;
+                    if (ry >= rows - guard) break;
+                    // GAP RULE: stop if the cell ABOVE already has a vEdge (would leave 0 gap)
+                    if (ry + 1 < rows && vEdge[cx, ry + 1]) break;
+                    if (!TryVEdgeG(cx, ry, cols, rows)) break;
+                    placed++;
+                }
+                if (placed > 0 && Random.value < 0.4f)
+                    Branch_H(cx, placed - 1, cols, rows);
+            }
+            else if (side == 1)   // ── top → vertical stub going DOWN ──────
+            {
+                int cx = Random.Range(guard + 1, cols - guard);
+                for (int i = 0; i < length; i++)
+                {
+                    int ry = rows - 1 - i;
+                    if (ry < guard) break;
+                    // GAP RULE: stop if the cell BELOW already has a vEdge
+                    if (ry - 1 >= 0 && vEdge[cx, ry - 1]) break;
+                    if (!TryVEdgeG(cx, ry, cols, rows)) break;
+                    placed++;
+                }
+                if (placed > 0 && Random.value < 0.4f)
+                    Branch_H(cx, rows - placed, cols, rows);
+            }
+            else if (side == 2)   // ── left → horizontal stub going RIGHT ──
+            {
+                int cy = Random.Range(guard + 1, rows - guard);
+                for (int i = 0; i < length; i++)
+                {
+                    int rx = i;
+                    if (rx >= cols - guard) break;
+                    // GAP RULE: stop if the cell to the RIGHT already has an hEdge
+                    if (rx + 1 < cols && hEdge[rx + 1, cy]) break;
+                    if (!TryHEdgeG(rx, cy, cols, rows)) break;
+                    placed++;
+                }
+                if (placed > 0 && Random.value < 0.4f)
+                    Branch_V(placed - 1, cy, cols, rows);
+            }
+            else                  // ── right → horizontal stub going LEFT ──
+            {
+                int cy = Random.Range(guard + 1, rows - guard);
+                for (int i = 0; i < length; i++)
+                {
+                    int rx = cols - 1 - i;
+                    if (rx < guard) break;
+                    // GAP RULE: stop if the cell to the LEFT already has an hEdge
+                    if (rx - 1 >= 0 && hEdge[rx - 1, cy]) break;
+                    if (!TryHEdgeG(rx, cy, cols, rows)) break;
+                    placed++;
+                }
+                if (placed > 0 && Random.value < 0.4f)
+                    Branch_V(cols - placed, cy, cols, rows);
+            }
+        }
+    }
+
+    // ── Branch helpers (perpendicular arm at tip) ─────────────────────
+
+    // Add a short horizontal branch at the tip of a vertical stub
+    void Branch_H(int cx, int tipY, int cols, int rows)
+    {
+        bool goRight = Random.value > 0.5f;
+        int  bLen    = Random.Range(1, 3);
+        for (int b = 0; b < bLen; b++)
+        {
+            int bx = goRight ? cx + b : cx - 1 - b;
+            if (!TryHEdgeG(bx, tipY + 1, cols, rows)) break;
+        }
+    }
+
+    // Add a short vertical branch at the tip of a horizontal stub
+    void Branch_V(int tipX, int cy, int cols, int rows)
+    {
+        bool goUp = Random.value > 0.5f;
+        int  bLen = Random.Range(1, 3);
+        for (int b = 0; b < bLen; b++)
+        {
+            int by = goUp ? cy + b : cy - 1 - b;
+            if (!TryVEdgeG(tipX + 1, by, cols, rows)) break;
+        }
+    }
+
+    // ── Edge placement with gap enforcement ───────────────────────────
+    // TryHEdgeG: also rejects if immediately above/below is already an hEdge
+    // (would leave 0 gap between parallel horizontal walls in adjacent rows)
+    bool TryHEdgeG(int x, int y, int cols, int rows)
+    {
+        if (x < 0 || x >= cols || y <= 0 || y >= rows) return false;
+        if (hEdge[x, y]) return false;
+        // Gap check: ensures 1 row gap between parallel hEdges
+        if (y - 1 > 0    && hEdge[x, y - 1]) return false;
+        if (y + 1 < rows && hEdge[x, y + 1]) return false;
+        hEdge[x, y] = true; return true;
+    }
+
+    bool TryVEdgeG(int x, int y, int cols, int rows)
+    {
+        if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
+        if (vEdge[x, y]) return false;
+        // Gap check: ensures 1 col gap between parallel vEdges
+        if (x - 1 > 0    && vEdge[x - 1, y]) return false;
+        if (x + 1 < cols && vEdge[x + 1, y]) return false;
+        vEdge[x, y] = true; return true;
+    }
+
+    // Legacy no-gap-check versions used only for border marking
+    bool TryHEdge(int x, int y, int cols, int rows)
+    {
+        if (x < 0 || x >= cols || y <= 0 || y >= rows) return false;
+        if (hEdge[x, y]) return false;
+        hEdge[x, y] = true; return true;
+    }
+    bool TryVEdge(int x, int y, int cols, int rows)
+    {
+        if (x <= 0 || x >= cols || y < 0 || y >= rows) return false;
+        if (vEdge[x, y]) return false;
+        vEdge[x, y] = true; return true;
+
+    }
+
+    // ── BFS connectivity ───────────────────────────────────────────────
+    bool SpawnsConnected(int cols, int rows)
+    {
+        bool[,] vis = new bool[cols, rows];
+        var q = new System.Collections.Generic.Queue<Vector2Int>();
+        q.Enqueue(p1Cell);
+        vis[p1Cell.x, p1Cell.y] = true;
+
+        while (q.Count > 0)
+        {
+            var cur = q.Dequeue();
+            if (cur == p2Cell) return true;
+            int x = cur.x, y = cur.y;
+
+            if (x+1 < cols && !vEdge[x+1, y] && !vis[x+1, y]) { vis[x+1,y]=true; q.Enqueue(new Vector2Int(x+1,y)); }
+            if (x-1 >= 0   && !vEdge[x,   y] && !vis[x-1, y]) { vis[x-1,y]=true; q.Enqueue(new Vector2Int(x-1,y)); }
+            if (y+1 < rows && !hEdge[x, y+1] && !vis[x, y+1]) { vis[x,y+1]=true; q.Enqueue(new Vector2Int(x,y+1)); }
+            if (y-1 >= 0   && !hEdge[x,   y] && !vis[x, y-1]) { vis[x,y-1]=true; q.Enqueue(new Vector2Int(x,y-1)); }
+        }
+        return false;
+    }
+
+    // ── Render edges (merged runs → continuous lines) ──────────────────
+    void RenderEdges(int cols, int rows)
+    {
+        // Horizontal wall runs
+        for (int y = 1; y < rows; y++)
+        {
+            int x = 0;
+            while (x < cols)
+            {
+                if (!hEdge[x, y]) { x++; continue; }
+                int s = x;
+                while (x < cols && hEdge[x, y]) x++;
+                float w  = (x - s) * cs + (x - s - 1) * gap;
+                float wx = gridOrigin.x + s * (cs + gap) + w * 0.5f;
+                float wy = gridOrigin.y + y * (cs + gap) - gap * 0.5f;
+                MakeSeg("HW", wx, wy, w, gap, LAYER_WALL, 5);
+            }
+        }
+
+        // Vertical wall runs
+        for (int x = 1; x < cols; x++)
+        {
+            int y = 0;
+            while (y < rows)
+            {
+                if (!vEdge[x, y]) { y++; continue; }
+                int s = y;
+                while (y < rows && vEdge[x, y]) y++;
+                float h  = (y - s) * cs + (y - s - 1) * gap;
+                float wx = gridOrigin.x + x * (cs + gap) - gap * 0.5f;
+                float wy = gridOrigin.y + s * (cs + gap) + h * 0.5f;
+                MakeSeg("VW", wx, wy, gap, h, LAYER_WALL, 5);
+            }
+        }
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────
+
+    void MakeSeg(string lbl, float wx, float wy, float sw, float sh, string layer, int order)
+    {
+        GameObject go = new GameObject(lbl);
+        go.transform.SetParent(wallParent);
+        go.transform.position   = new Vector3(wx, wy, 0f);
+        go.transform.localScale = new Vector3(sw, sh, 1f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite           = GetPxSprite();
+        sr.color            = Color.black;
+        sr.sortingLayerName = layer;
+        sr.sortingOrder     = order;
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.size = Vector2.one;
+    }
+
+    // Returns the world-space centre of grid cell (c.x, c.y)
+    Vector3 CellCentre(Vector2Int c)
+        => gridOrigin + new Vector3(c.x * (cs + gap) + cs * 0.5f,
+                                    c.y * (cs + gap) + cs * 0.5f, 0f);
+
+    Sprite GetPxSprite()
+    {
+        if (_pxSprite != null) return _pxSprite;
+        Texture2D t = new Texture2D(1, 1);
+        t.SetPixel(0, 0, Color.white);
+        t.Apply();
+        _pxSprite = Sprite.Create(t, new Rect(0,0,1,1), new Vector2(0.5f,0.5f), 1f);
+        return _pxSprite;
+    }
+}
