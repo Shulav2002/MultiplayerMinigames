@@ -14,6 +14,7 @@ namespace TankBattle
         [SerializeField] private float joystickRadiusPixels = 120f;
         [SerializeField] private float deadZone = 0.1f;
         [SerializeField] private bool forceMobileJoystickInEditor = false;
+        [SerializeField] private Color joystickColor = Color.white;
 
         private int activeFingerId = -1;
         private Vector2 joystickOrigin;
@@ -266,6 +267,11 @@ namespace TankBattle
             Debug.Log("Movement input reset - suppression enabled");
         }
 
+        public void SetJoystickColor(Color color)
+        {
+            joystickColor = color;
+        }
+
         private void OnGUI()
         {
             if (!showJoystick || !UseMobileInput() || activeFingerId == -1)
@@ -292,9 +298,9 @@ namespace TankBattle
             Rect knobRect = new Rect(guiKnob.x - knobSize * 0.5f, guiKnob.y - knobSize * 0.5f, knobSize, knobSize);
 
             Color previousColor = GUI.color;
-            GUI.color = new Color(1f, 1f, 1f, 0.2f);
+            GUI.color = new Color(joystickColor.r, joystickColor.g, joystickColor.b, 0.2f);
             GUI.DrawTexture(baseRect, joystickBaseTexture);
-            GUI.color = new Color(1f, 1f, 1f, 0.45f);
+            GUI.color = new Color(joystickColor.r, joystickColor.g, joystickColor.b, 0.45f);
             GUI.DrawTexture(knobRect, joystickKnobTexture);
             GUI.color = previousColor;
         }

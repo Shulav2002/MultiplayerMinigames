@@ -47,37 +47,42 @@ namespace TankBattle
             if (tank1Prefab != null)
             {
                 spawnedTank1 = Instantiate(tank1Prefab, p1Pos, Quaternion.identity);
-                SetupPlayer(spawnedTank1, enablePlayer1Input);
+                SetupPlayer(spawnedTank1, enablePlayer1Input, 1);
             }
 
             if (tank2Prefab != null)
             {
                 spawnedTank2 = Instantiate(tank2Prefab, p2Pos, Quaternion.identity);
-                SetupPlayer(spawnedTank2, enablePlayer2Input);
+                SetupPlayer(spawnedTank2, enablePlayer2Input, 2);
             }
         }
 
-        void SetupPlayer(GameObject tank, bool enableInput)
+    void SetupPlayer(GameObject tank, bool enableInput, int playerNumber)
+    {
+        if (tank == null) return;
+
+        TankBattlePlayer player = tank.GetComponent<TankBattlePlayer>();
+        if (player == null)
         {
-            if (tank == null) return;
+            player = tank.AddComponent<TankBattlePlayer>();
+        }
 
-            TankBattlePlayer player = tank.GetComponent<TankBattlePlayer>();
-            if (player == null)
+        player.Initialize(bulletPrefab, bulletSettings, enableInput);
+
+        if (enableInput)
+        {
+            TankBattlePlayerInput input = tank.GetComponent<TankBattlePlayerInput>();
+            if (input != null)
             {
-                player = tank.AddComponent<TankBattlePlayer>();
-            }
-
-            player.Initialize(bulletPrefab, bulletSettings, enableInput);
-
-            if (enableInput)
-            {
-                TankBattlePlayerInput input = tank.GetComponent<TankBattlePlayerInput>();
-                if (input != null)
-                {
-                    typeof(TankBattlePlayerInput).GetField("forceMobileJoystickInEditor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(input, true);
-                }
+                typeof(TankBattlePlayerInput).GetField("forceMobileJoystickInEditor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(input, true);
+                
+                Color joystickColor = playerNumber == 1 
+                    ? new Color(0.055f, 0.514f, 0.996f, 1f)
+                    : new Color(0.996f, 0.145f, 0.145f, 1f);
+                input.SetJoystickColor(joystickColor);
             }
         }
+    }
 
         // Call this to regenerate the map and respawn tanks (e.g., between rounds)
         public void RegenerateMap()
