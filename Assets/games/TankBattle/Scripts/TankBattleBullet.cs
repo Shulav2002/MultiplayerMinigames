@@ -58,6 +58,7 @@ namespace TankBattle
                 return;
             }
 
+            body.bodyType = RigidbodyType2D.Dynamic;
             body.gravityScale = 0f;
             body.constraints = RigidbodyConstraints2D.FreezeRotation;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -78,7 +79,7 @@ namespace TankBattle
 
             if (body != null)
             {
-                body.MovePosition(body.position + currentVelocity * Time.fixedDeltaTime);
+                body.linearVelocity = currentVelocity;
             }
         }
 
@@ -89,21 +90,34 @@ namespace TankBattle
                 return;
             }
 
+            Debug.Log($"Bullet hit: {collision.gameObject.name}, Tag: {collision.gameObject.tag}");
+
             if (collision.collider.GetComponent("TankBattlePlayer") != null)
             {
+                Debug.Log("Hit player!");
                 HandlePlayerHit();
                 return;
             }
 
             if (IsWall(collision.gameObject))
             {
+                Debug.Log("Hit wall - reflecting!");
                 ReflectOffWall(collision);
             }
         }
 
         private bool IsWall(GameObject obj)
         {
-            return obj.CompareTag("Wall");
+            if (obj == null) return false;
+            
+            try
+            {
+                return obj.CompareTag("Wall");
+            }
+            catch
+            {
+                return obj.name.Contains("Bdr") || obj.name.Contains("HW") || obj.name.Contains("VW");
+            }
         }
 
         private void HandlePlayerHit()

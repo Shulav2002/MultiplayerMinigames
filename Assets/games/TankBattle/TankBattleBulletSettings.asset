@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d17434091195ae4ea90ca1932f32096, type: 3}
   m_Name: TankBattleBulletSettings
   m_EditorClassIdentifier: Assembly-CSharp::TankBattle.TankBattleBulletSettings
-  bulletSpeed: 8
+  bulletSpeed: 3
   bulletLifetime: 5
   reflectionSpeedRetention: 1
   maxShotsPerPlayer: 5
