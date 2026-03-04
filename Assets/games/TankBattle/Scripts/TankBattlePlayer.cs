@@ -202,24 +202,46 @@ namespace TankBattle
 
         private bool IsBlockedByWall(Vector3 spawnPos, Vector2 direction)
         {
-            float checkDistance = 0.5f;
-            float checkRadius = 0.2f;
-            Vector2 startPos = body != null ? body.position : (Vector2)transform.position;
+            float checkDistance = 0.6f;
+            float checkRadius = 0.15f;
             
-            RaycastHit2D hit = Physics2D.CircleCast(startPos, checkRadius, direction, checkDistance);
+            Vector2 tankCenter = body != null ? body.position : (Vector2)transform.position;
+            RaycastHit2D centerHit = Physics2D.CircleCast(tankCenter, checkRadius, direction, checkDistance);
             
-            if (hit.collider != null)
+            if (IsWallHit(centerHit))
             {
-                if (hit.collider.CompareTag("Wall") || 
-                    hit.collider.name.Contains("Bdr") || 
-                    hit.collider.name.Contains("HW") || 
-                    hit.collider.name.Contains("VW"))
-                {
-                    return true;
-                }
+                return true;
+            }
+            
+            Vector2 nozzlePos = spawnPos;
+            RaycastHit2D nozzleHit = Physics2D.Raycast(nozzlePos, direction, 0.3f);
+            
+            if (IsWallHit(nozzleHit))
+            {
+                return true;
+            }
+            
+            RaycastHit2D touchCheck = Physics2D.CircleCast(nozzlePos, 0.1f, direction, 0.05f);
+            
+            if (IsWallHit(touchCheck))
+            {
+                return true;
             }
             
             return false;
+        }
+
+        private bool IsWallHit(RaycastHit2D hit)
+        {
+            if (hit.collider == null)
+            {
+                return false;
+            }
+            
+            return hit.collider.CompareTag("Wall") || 
+                   hit.collider.name.Contains("Bdr") || 
+                   hit.collider.name.Contains("HW") || 
+                   hit.collider.name.Contains("VW");
         }
 
         private bool CanSimulateMovement()
