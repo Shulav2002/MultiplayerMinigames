@@ -26,9 +26,9 @@ namespace TankBattle
         [Tooltip("Minimum movement magnitude required before updating facing rotation.")]
         [SerializeField] private float facingInputThreshold = 0.05f;
         [Tooltip("Time window in seconds to detect combo key press (e.g., W+D).")]
-        [SerializeField] private float comboPressToleranceMs = 100f;
+        [SerializeField] private float comboPressToleranceMs = 300f;
         [Tooltip("Time window in seconds to hold rotation after releasing keys.")]
-        [SerializeField] private float releaseToleranceMs = 100f;
+        [SerializeField] private float releaseToleranceMs = 300f;
 
         [Header("Shooting")]
         [Tooltip("Bullet prefab to spawn when shooting.")]
@@ -48,7 +48,7 @@ namespace TankBattle
         private int remainingShots = 5;
         private float currentRotationAngle = 0f;
         private float targetRotationAngle = 0f;
-        private float rotationSpeed = 360f;
+        private float rotationSpeed = 550f;
         private Vector2 lastConfirmedInput = Vector2.right;
         private Vector2 previousFrameInput = Vector2.zero;
         private float firstKeyPressTime = 0f;
