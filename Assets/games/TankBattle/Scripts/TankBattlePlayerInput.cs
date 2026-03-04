@@ -21,6 +21,8 @@ namespace TankBattle
         private Texture2D joystickBaseTexture;
         private Texture2D joystickKnobTexture;
         private bool shootPressed;
+        private bool inputSuppressed = false;
+        private bool wasInputActive = false;
 
         public Vector2 MoveVector { get; private set; }
         public bool ShootPressed { get; private set; }
@@ -30,11 +32,33 @@ namespace TankBattle
             Vector2 joystickInput = UseMobileInput() ? ReadMobileJoystickInput() : Vector2.zero;
             Vector2 keyboardInput = ReadLegacyAxisInput();
             
-            Vector2 input = joystickInput.sqrMagnitude > keyboardInput.sqrMagnitude 
+            Vector2 rawInput = joystickInput.sqrMagnitude > keyboardInput.sqrMagnitude 
                 ? joystickInput 
                 : keyboardInput;
-            
-            MoveVector = NormalizeInput(input);
+
+            bool isInputActive = rawInput.sqrMagnitude > 0.01f;
+
+            if (inputSuppressed)
+            {
+                if (isInputActive)
+                {
+                    MoveVector = Vector2.zero;
+                    wasInputActive = true;
+                }
+                else
+                {
+                    if (wasInputActive)
+                    {
+                        inputSuppressed = false;
+                        wasInputActive = false;
+                    }
+                    MoveVector = Vector2.zero;
+                }
+            }
+            else
+            {
+                MoveVector = NormalizeInput(rawInput);
+            }
 
             bool keyboardShoot = Input.GetKeyDown(KeyCode.Space);
             bool touchShoot = UseMobileInput() && DetectRightSideTouch();
@@ -230,6 +254,14 @@ namespace TankBattle
         {
             activeFingerId = -1;
             joystickDelta = Vector2.zero;
+        }
+
+        public void ResetMovementInput()
+        {
+            ResetJoystick();
+            MoveVector = Vector2.zero;
+            inputSuppressed = true;
+            wasInputActive = false;
         }
 
         private void OnGUI()

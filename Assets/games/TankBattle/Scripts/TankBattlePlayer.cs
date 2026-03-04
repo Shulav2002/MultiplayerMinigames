@@ -154,6 +154,16 @@ namespace TankBattle
 
             remainingShots--;
             nextShootTime = Time.time + shootCooldown;
+
+            if (playerInput != null)
+            {
+                playerInput.ResetMovementInput();
+            }
+
+            if (body != null)
+            {
+                body.linearVelocity = Vector2.zero;
+            }
         }
 
         private bool CanSimulateMovement()
