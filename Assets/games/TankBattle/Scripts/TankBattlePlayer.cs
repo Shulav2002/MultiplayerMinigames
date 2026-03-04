@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 namespace TankBattle
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
@@ -28,6 +29,8 @@ namespace TankBattle
         [Header("Shooting")]
         [Tooltip("Bullet prefab to spawn when shooting.")]
         [SerializeField] private GameObject bulletPrefab;
+        [Tooltip("Bullet settings configuration.")]
+        [SerializeField] private TankBattleBulletSettings bulletSettings;
         [Tooltip("Position where bullets spawn.")]
         [SerializeField] private Transform bulletSpawnPoint;
         [Tooltip("Minimum time between shots.")]
@@ -37,14 +40,59 @@ namespace TankBattle
         private bool isAlive = true;
         private Vector2 estimatedVelocity;
         private float nextShootTime = 0f;
+        private bool inputEnabled = true;
+        private int remainingShots = 5;
 
         public bool IsAlive => isAlive;
         public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
+        public int RemainingShots => remainingShots;
+
+        public void Initialize(GameObject bulletPrefabToUse, TankBattleBulletSettings bulletSettingsToUse, bool enableInput)
+        {
+            bulletPrefab = bulletPrefabToUse;
+            bulletSettings = bulletSettingsToUse;
+            inputEnabled = enableInput;
+            
+            if (bulletSettings != null)
+            {
+                remainingShots = bulletSettings.maxShotsPerPlayer;
+            }
+            else
+            {
+                remainingShots = 5;
+            }
+            
+            EnsureComponentsAttached();
+            CacheRequiredComponents();
+            ConfigureRigidbodyForTopDown();
+            
+            if (playerInput != null)
+            {
+                playerInput.enabled = inputEnabled;
+            }
+        }
 
         private void Start()
         {
+            if (playerInput == null && inputEnabled)
+            {
+                EnsureComponentsAttached();
+            }
+            
             CacheRequiredComponents();
             ConfigureRigidbodyForTopDown();
+        }
+
+        private void EnsureComponentsAttached()
+        {
+            if (playerInput == null)
+            {
+                playerInput = GetComponent<TankBattlePlayerInput>();
+                if (playerInput == null)
+                {
+                    playerInput = gameObject.AddComponent<TankBattlePlayerInput>();
+                }
+            }
         }
 
         private void ConfigureRigidbodyForTopDown()
@@ -74,12 +122,12 @@ namespace TankBattle
 
         private void Update()
         {
-            if (!isAlive || playerInput == null)
+            if (!isAlive || !inputEnabled || playerInput == null)
             {
                 return;
             }
 
-            if (playerInput.ShootPressed && Time.time >= nextShootTime)
+            if (playerInput.ShootPressed && Time.time >= nextShootTime && remainingShots > 0)
             {
                 Shoot();
             }
@@ -87,15 +135,24 @@ namespace TankBattle
 
         private void Shoot()
         {
-            if (bulletPrefab == null)
+            if (bulletPrefab == null || remainingShots <= 0)
             {
                 return;
             }
 
             Vector3 spawnPosition = bulletSpawnPoint != null ? bulletSpawnPoint.position : transform.position;
-            Quaternion spawnRotation = facingTransform != null ? facingTransform.rotation : transform.rotation;
+            Vector2 shootDirection = facingTransform != null 
+                ? (Vector2)(facingTransform.right) 
+                : Vector2.right;
 
-            Instantiate(bulletPrefab, spawnPosition, spawnRotation);
+            GameObject bulletObj = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+            TankBattleBullet bullet = bulletObj.GetComponent<TankBattleBullet>();
+            if (bullet != null)
+            {
+                bullet.Initialize(bulletSettings, shootDirection);
+            }
+
+            remainingShots--;
             nextShootTime = Time.time + shootCooldown;
         }
 
@@ -157,6 +214,19 @@ namespace TankBattle
             if (facingTransform == null)
             {
                 facingTransform = transform;
+            }
+
+            if (bulletSpawnPoint == null)
+            {
+                Transform nozzle = transform.Find("Nozzle");
+                if (nozzle != null)
+                {
+                    bulletSpawnPoint = nozzle;
+                }
+                else
+                {
+                    bulletSpawnPoint = transform;
+                }
             }
 
             if (playerInput == null)

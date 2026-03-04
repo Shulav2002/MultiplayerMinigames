@@ -27,9 +27,13 @@ namespace TankBattle
 
         private void Update()
         {
-            Vector2 input = UseMobileInput()
-                ? ReadMobileJoystickInput()
-                : ReadLegacyAxisInput();
+            Vector2 joystickInput = UseMobileInput() ? ReadMobileJoystickInput() : Vector2.zero;
+            Vector2 keyboardInput = ReadLegacyAxisInput();
+            
+            Vector2 input = joystickInput.sqrMagnitude > keyboardInput.sqrMagnitude 
+                ? joystickInput 
+                : keyboardInput;
+            
             MoveVector = NormalizeInput(input);
 
             bool keyboardShoot = Input.GetKeyDown(KeyCode.Space);

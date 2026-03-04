@@ -558,6 +558,9 @@ MonoBehaviour:
   tank1Prefab: {fileID: 3764114919528452043, guid: 2dc7f70008c56b94eb31882dc1e0d87f, type: 3}
   tank2Prefab: {fileID: 4794973882365219163, guid: 24fa1dddd58a3f844970383d070c7c2a, type: 3}
   bulletPrefab: {fileID: 6645904556599770754, guid: 2005e2d7fd2d77f42b7088ecb9c5d57e, type: 3}
+  bulletSettings: {fileID: 11400000, guid: e627accf4cf287c4093d1105ca6bd490, type: 2}
+  enablePlayer1Input: 1
+  enablePlayer2Input: 0
 --- !u!1 &1763958559
 GameObject:
   m_ObjectHideFlags: 0

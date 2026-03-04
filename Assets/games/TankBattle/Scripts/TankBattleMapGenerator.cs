@@ -557,6 +557,7 @@ public class TankBattleMapGenerator : MonoBehaviour
         
         // Main wall sprite (foreground)
         GameObject go = new GameObject(lbl);
+        go.tag = "Wall";
         go.transform.SetParent(wallParent);
         go.transform.position = new Vector3(wx, wy, 0f);
         go.transform.localScale = new Vector3(sw, sh, 1f);

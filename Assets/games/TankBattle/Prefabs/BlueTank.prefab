@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 8651467207661982990}
   - component: {fileID: 5789631874006854100}
   - component: {fileID: 7963848674125872499}
+  - component: {fileID: 7670416425452970368}
+  - component: {fileID: 8949217283123071020}
+  - component: {fileID: 7100748920503390604}
   m_Layer: 0
   m_Name: BlueTank
   m_TagString: Untagged
@@ -30,7 +33,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8705880828952414851}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5789631874006854100
@@ -126,6 +130,104 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.62, y: 0.4}
+  m_Offset: {x: -0.023338817, y: 0.0000000027822036}
+  m_Size: {x: 0.57332885, y: 0.40000254}
   m_Direction: 1
+--- !u!50 &7670416425452970368
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764114919528452043}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &8949217283123071020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764114919528452043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6507f47d0912a74ea6b1e71465b3f9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankBattle.TankBattlePlayer
+  playerInput: {fileID: 7100748920503390604}
+  body: {fileID: 7670416425452970368}
+  hitCollider: {fileID: 7963848674125872499}
+  moveSpeed: 3
+  facingTransform: {fileID: 8651467207661982990}
+  facingInputThreshold: 0.05
+  bulletPrefab: {fileID: 6645904556599770754, guid: 2005e2d7fd2d77f42b7088ecb9c5d57e, type: 3}
+  bulletSettings: {fileID: 11400000, guid: e627accf4cf287c4093d1105ca6bd490, type: 2}
+  bulletSpawnPoint: {fileID: 8705880828952414851}
+  shootCooldown: 0.5
+--- !u!114 &7100748920503390604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3764114919528452043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 428787d36b95f5f42a8f37f53f7c889b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankBattle.TankBattlePlayerInput
+  useMobileJoystick: 1
+  showJoystick: 1
+  limitToLeftHalf: 1
+  joystickRadiusPixels: 120
+  deadZone: 0.1
+  forceMobileJoystickInEditor: 0
+--- !u!1 &5762399396998991353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8705880828952414851}
+  m_Layer: 0
+  m_Name: Nozzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8705880828952414851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5762399396998991353}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.314, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8651467207661982990}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
