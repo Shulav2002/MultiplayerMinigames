@@ -18,10 +18,12 @@ namespace TankBattle
 
         private Vector2 currentVelocity;
         private float destroyTime;
+        private GameObject ownerPlayer;
 
-        public void Initialize(TankBattleBulletSettings bulletSettings, Vector2 direction)
+        public void Initialize(TankBattleBulletSettings bulletSettings, Vector2 direction, GameObject owner)
         {
             settings = bulletSettings;
+            ownerPlayer = owner;
 
             CacheComponents();
             ConfigurePhysics();
@@ -90,18 +92,14 @@ namespace TankBattle
                 return;
             }
 
-            Debug.Log($"Bullet hit: {collision.gameObject.name}, Tag: {collision.gameObject.tag}");
-
             if (collision.collider.GetComponent("TankBattlePlayer") != null)
             {
-                Debug.Log("Hit player!");
-                HandlePlayerHit();
+                HandlePlayerHit(collision.gameObject);
                 return;
             }
 
             if (IsWall(collision.gameObject))
             {
-                Debug.Log("Hit wall - reflecting!");
                 ReflectOffWall(collision);
             }
         }
@@ -120,8 +118,23 @@ namespace TankBattle
             }
         }
 
-        private void HandlePlayerHit()
+        private void HandlePlayerHit(GameObject hitPlayerObj)
         {
+            TankBattleUI ui = FindObjectsByType<TankBattleUI>(FindObjectsSortMode.None).Length > 0 
+                ? FindObjectsByType<TankBattleUI>(FindObjectsSortMode.None)[0] 
+                : null;
+
+            if (ui != null && hitPlayerObj != null && ownerPlayer != null)
+            {
+                TankBattlePlayer hitPlayer = hitPlayerObj.GetComponent<TankBattlePlayer>();
+                TankBattlePlayer shooter = ownerPlayer.GetComponent<TankBattlePlayer>();
+                
+                if (hitPlayer != null && shooter != null)
+                {
+                    ui.OnPlayerHit(hitPlayer, shooter);
+                }
+            }
+
             Destroy(gameObject);
         }
 

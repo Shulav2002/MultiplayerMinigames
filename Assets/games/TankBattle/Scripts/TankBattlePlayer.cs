@@ -167,7 +167,7 @@ namespace TankBattle
             TankBattleBullet bullet = bulletObj.GetComponent<TankBattleBullet>();
             if (bullet != null)
             {
-                bullet.Initialize(bulletSettings, shootDirection);
+                bullet.Initialize(bulletSettings, shootDirection, gameObject);
             }
 
             remainingShots--;

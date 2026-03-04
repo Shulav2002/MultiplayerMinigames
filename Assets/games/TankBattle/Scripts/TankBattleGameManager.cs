@@ -22,6 +22,9 @@ namespace TankBattle
         public bool enablePlayer1Input = true;
         public bool enablePlayer2Input = false;
 
+        [Header("UI")]
+        public TankBattleUI gameUI;
+
         GameObject spawnedTank1;
         GameObject spawnedTank2;
 
@@ -54,6 +57,13 @@ namespace TankBattle
             {
                 spawnedTank2 = Instantiate(tank2Prefab, p2Pos, Quaternion.identity);
                 SetupPlayer(spawnedTank2, enablePlayer2Input, 2);
+            }
+
+            if (gameUI != null)
+            {
+                TankBattlePlayer p1 = spawnedTank1 != null ? spawnedTank1.GetComponent<TankBattlePlayer>() : null;
+                TankBattlePlayer p2 = spawnedTank2 != null ? spawnedTank2.GetComponent<TankBattlePlayer>() : null;
+                gameUI.Initialize(this, p1, p2);
             }
         }
 
@@ -94,6 +104,11 @@ namespace TankBattle
             mapGenerator.GenerateMap();
 
             SpawnTanks();
+        }
+
+        public void OnGameOver(int winnerPlayerNumber)
+        {
+            Debug.Log("GameManager: Player " + winnerPlayerNumber + " has won the game!");
         }
     }
 }

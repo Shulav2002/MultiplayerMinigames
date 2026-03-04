@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7100748920503390604}
   m_Layer: 0
   m_Name: BlueTank
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -200,6 +200,7 @@ MonoBehaviour:
   joystickRadiusPixels: 120
   deadZone: 0.1
   forceMobileJoystickInEditor: 0
+  joystickColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &5762399396998991353
 GameObject:
   m_ObjectHideFlags: 0

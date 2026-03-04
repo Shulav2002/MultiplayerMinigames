@@ -52,7 +52,6 @@ namespace TankBattle
                     {
                         inputSuppressed = false;
                         wasInputActive = false;
-                        Debug.Log("Input suppression released - can move again");
                     }
                     MoveVector = Vector2.zero;
                 }
@@ -264,7 +263,6 @@ namespace TankBattle
             MoveVector = Vector2.zero;
             inputSuppressed = true;
             wasInputActive = false;
-            Debug.Log("Movement input reset - suppression enabled");
         }
 
         public void SetJoystickColor(Color color)

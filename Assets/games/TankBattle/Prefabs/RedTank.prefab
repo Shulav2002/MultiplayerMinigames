@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8631858036047042386}
   m_Layer: 0
   m_Name: RedTank
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -178,6 +178,7 @@ MonoBehaviour:
   joystickRadiusPixels: 120
   deadZone: 0.1
   forceMobileJoystickInEditor: 0
+  joystickColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &8631858036047042386
 MonoBehaviour:
   m_ObjectHideFlags: 0

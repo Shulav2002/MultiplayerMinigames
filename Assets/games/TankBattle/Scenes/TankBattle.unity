@@ -925,6 +925,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 914509080}
+  - component: {fileID: 914509081}
   m_Layer: 5
   m_Name: ScoreBoard
   m_TagString: Untagged
@@ -953,6 +954,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &914509081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914509079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0277a2d0d3eff642987d5811195d062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankBattle.TankBattleUI
+  player1HealthContainer: {fileID: 1310400007}
+  player1ScoreText: {fileID: 169130581}
+  player2HealthContainer: {fileID: 523455104}
+  player2ScoreText: {fileID: 506013264}
 --- !u!1 &920660895
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +980,7 @@ GameObject:
   m_Component:
   - component: {fileID: 920660896}
   m_Layer: 5
-  m_Name: Right
+  m_Name: Right_P2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1188,7 +1205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1398565049}
   m_Layer: 5
-  m_Name: Left
+  m_Name: Left_P1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1497,6 +1514,7 @@ MonoBehaviour:
   bulletSettings: {fileID: 11400000, guid: e627accf4cf287c4093d1105ca6bd490, type: 2}
   enablePlayer1Input: 1
   enablePlayer2Input: 0
+  gameUI: {fileID: 914509081}
 --- !u!1 &1719955205
 GameObject:
   m_ObjectHideFlags: 0
