@@ -92,6 +92,12 @@ namespace TankBattle
                 return;
             }
 
+            if (collision.collider.GetComponent<TankBattleBullet>() != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             if (collision.collider.GetComponent("TankBattlePlayer") != null)
             {
                 HandlePlayerHit(collision.gameObject);
