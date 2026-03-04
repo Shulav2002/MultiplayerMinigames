@@ -193,7 +193,7 @@ MonoBehaviour:
   playerInput: {fileID: 4542392018486439986}
   body: {fileID: 805055884598542596}
   hitCollider: {fileID: 5437194358373496420}
-  moveSpeed: 3
+  moveSpeed: 5
   facingTransform: {fileID: 1472332557429433002}
   facingInputThreshold: 0.05
   bulletPrefab: {fileID: 6645904556599770754, guid: 2005e2d7fd2d77f42b7088ecb9c5d57e, type: 3}

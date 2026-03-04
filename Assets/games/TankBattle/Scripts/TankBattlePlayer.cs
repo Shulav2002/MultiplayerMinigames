@@ -81,6 +81,19 @@ namespace TankBattle
             
             CacheRequiredComponents();
             ConfigureRigidbodyForTopDown();
+            IgnoreOtherPlayers();
+        }
+
+        private void IgnoreOtherPlayers()
+        {
+            TankBattlePlayer[] allPlayers = FindObjectsByType<TankBattlePlayer>(FindObjectsSortMode.None);
+            foreach (TankBattlePlayer otherPlayer in allPlayers)
+            {
+                if (otherPlayer != this && otherPlayer.hitCollider != null && hitCollider != null)
+                {
+                    Physics2D.IgnoreCollision(hitCollider, otherPlayer.hitCollider, true);
+                }
+            }
         }
 
         private void EnsureComponentsAttached()
@@ -104,6 +117,11 @@ namespace TankBattle
 
             body.gravityScale = 0f;
             body.constraints = RigidbodyConstraints2D.FreezeRotation;
+            
+            if (hitCollider != null)
+            {
+                hitCollider.isTrigger = false;
+            }
         }
 
         private void FixedUpdate()
@@ -242,6 +260,20 @@ namespace TankBattle
             if (playerInput == null)
             {
                 playerInput = GetComponent<TankBattlePlayerInput>();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (hitCollider == null) return;
+
+            TankBattlePlayer[] allPlayers = FindObjectsByType<TankBattlePlayer>(FindObjectsSortMode.None);
+            foreach (TankBattlePlayer otherPlayer in allPlayers)
+            {
+                if (otherPlayer != this && otherPlayer.hitCollider != null)
+                {
+                    Physics2D.IgnoreCollision(hitCollider, otherPlayer.hitCollider, false);
+                }
             }
         }
     }
