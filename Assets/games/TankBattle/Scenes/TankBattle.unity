@@ -557,6 +557,7 @@ MonoBehaviour:
   mapGenerator: {fileID: 1763958562}
   tank1Prefab: {fileID: 3764114919528452043, guid: 2dc7f70008c56b94eb31882dc1e0d87f, type: 3}
   tank2Prefab: {fileID: 4794973882365219163, guid: 24fa1dddd58a3f844970383d070c7c2a, type: 3}
+  bulletPrefab: {fileID: 6645904556599770754, guid: 2005e2d7fd2d77f42b7088ecb9c5d57e, type: 3}
 --- !u!1 &1763958559
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,9 +642,7 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
-  wallMaterial: {fileID: 2100000, guid: 6980d043deab3274a857edaaf1b3eb21, type: 2}
-  wallSprite: {fileID: 0}
-  outlineWidth: 1
+  outlineThickness: 0.04
   seed: 0
   randomSeedEveryRound: 1
   lastCols: 0

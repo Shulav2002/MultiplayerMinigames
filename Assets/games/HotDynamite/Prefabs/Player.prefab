@@ -252,6 +252,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: cdd9cb8e6cbb44f9978af07ff85dec04, type: 2}
   - {fileID: 7400000, guid: 061771c79e7e4b0db5663901442a445e, type: 2}
   - {fileID: 7400000, guid: bd9749dd5283401e9a2f072c44213d04, type: 2}
+  networkPositionSmoothing: 18
 --- !u!114 &6886270607401937245
 MonoBehaviour:
   m_ObjectHideFlags: 0

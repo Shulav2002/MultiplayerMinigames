@@ -9,7 +9,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{61BF4B90-CAA5-701A-EA9B-DD1FBF7AC253}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -75,6 +76,8 @@
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBotController.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteGameSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\FixedAspectCamera.cs" />
+    <Compile Include="Assets\games\TankBattle\Scripts\TankBattlePlayer.cs" />
+    <Compile Include="Assets\games\TankBattle\Scripts\TankBattlePlayerInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\games\HotDynamite\Shaders\UIToonWaterURP.shader" />
@@ -1194,8 +1197,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
