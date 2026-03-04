@@ -40,9 +40,6 @@ namespace HotDynamite
         [Header("Appearance")]
         [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
-        [Header("Network")]
-        [Tooltip("Interpolation sharpness used when applying server positions.")]
-        [SerializeField, Min(0f)] private float networkPositionSmoothing = 18f;
 
         private const float MovementInputNormalizeThreshold = 1f;
         private const float VectorEpsilonSqr = 0.0001f;
@@ -66,10 +63,6 @@ namespace HotDynamite
         private Vector2 bounceVelocity;
         private float bounceCooldownUntil = -1f;
         private float bounceInputSuppressionUntil = -1f;
-        private bool networkControlled;
-        private bool networkInputOwner;
-        private Vector2 networkTargetPosition;
-        private Vector2 networkTargetVelocity;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
@@ -95,18 +88,10 @@ namespace HotDynamite
             ConfigureInputSources();
             ResetForNewRound();
             UpdateBombVisual();
-            networkTargetPosition = Position;
-            networkTargetVelocity = Vector2.zero;
         }
 
         private void FixedUpdate()
         {
-            if (networkControlled)
-            {
-                SimulateNetworkControlledMovement();
-                return;
-            }
-
             if (!CanSimulateMovement())
             {
                 estimatedVelocity = Vector2.zero;
@@ -149,7 +134,7 @@ namespace HotDynamite
 
         private void TryPassBomb(Collider2D other)
         {
-            if (networkControlled || !hasBomb || !isAlive || manager == null || other == null)
+            if (!hasBomb || !isAlive || manager == null || other == null)
             {
                 return;
             }
@@ -178,92 +163,6 @@ namespace HotDynamite
 
             temporarySpeedMultiplier = Mathf.Max(0.01f, multiplier);
             temporarySpeedUntil = Time.time + Mathf.Max(0f, durationSeconds);
-        }
-
-        public void SetNetworkControlled(bool value, bool isLocalInputOwner = false)
-        {
-            bool desiredInputOwner = value && isLocalInputOwner;
-            if (networkControlled == value && networkInputOwner == desiredInputOwner)
-            {
-                return;
-            }
-
-            networkControlled = value;
-            networkInputOwner = desiredInputOwner;
-
-            if (networkControlled)
-            {
-                if (botInput != null)
-                {
-                    botInput.enabled = false;
-                }
-
-                if (humanInput != null)
-                {
-                    humanInput.enabled = networkInputOwner;
-                }
-
-                ResetTemporarySpeed();
-                ResetBounceState();
-                return;
-            }
-
-            ConfigureInputSources();
-        }
-
-        public void ApplyNetworkState(Vector2 position, Vector2 velocity, bool alive, bool hasBombState, int appearance)
-        {
-            if (appearance != appearanceIndex)
-            {
-                SetAppearanceIndex(appearance);
-            }
-
-            networkTargetPosition = position;
-            networkTargetVelocity = velocity;
-
-            bool wasAlive = isAlive;
-            if (alive)
-            {
-                if (!gameObject.activeSelf)
-                {
-                    gameObject.SetActive(true);
-                }
-
-                isAlive = true;
-                if (body == null)
-                {
-                    transform.position = position;
-                }
-                else if (!wasAlive)
-                {
-                    body.position = position;
-                }
-            }
-            else
-            {
-                if (isAlive)
-                {
-                    this.hasBomb = false;
-                    UpdateBombVisual();
-                }
-
-                isAlive = false;
-                estimatedVelocity = Vector2.zero;
-                ResetTemporarySpeed();
-                ResetBounceState();
-                UpdateRunAnimation(Vector2.zero);
-                if (body != null)
-                {
-                    body.linearVelocity = Vector2.zero;
-                }
-
-                if (gameObject.activeSelf)
-                {
-                    gameObject.SetActive(false);
-                }
-            }
-
-            SetHasBomb(alive && hasBombState);
         }
 
         public void SetAppearanceIndex(int index)
@@ -313,7 +212,7 @@ namespace HotDynamite
 
         private void TryBounceOnPlayerCollision(Collision2D collision)
         {
-            if (networkControlled || collision == null || !isAlive || body == null || Time.time < bounceCooldownUntil)
+            if (collision == null || !isAlive || body == null || Time.time < bounceCooldownUntil)
             {
                 return;
             }
@@ -339,32 +238,6 @@ namespace HotDynamite
 
             ApplyBounceImpulse(-direction);
             otherPlayer.ApplyBounceImpulse(direction);
-        }
-
-        private void SimulateNetworkControlledMovement()
-        {
-            if (!isAlive)
-            {
-                estimatedVelocity = Vector2.zero;
-                return;
-            }
-
-            if (body == null)
-            {
-                estimatedVelocity = networkTargetVelocity;
-                return;
-            }
-
-            float smoothing = Mathf.Max(0f, networkPositionSmoothing);
-            float interpolation = smoothing <= 0f
-                ? 1f
-                : 1f - Mathf.Exp(-smoothing * Time.fixedDeltaTime);
-            Vector2 nextPosition = Vector2.Lerp(body.position, networkTargetPosition, interpolation);
-            body.MovePosition(nextPosition);
-
-            estimatedVelocity = networkTargetVelocity;
-            UpdateRunAnimation(networkTargetVelocity);
-            UpdateFacing(networkTargetVelocity);
         }
 
         private void ApplyBounceImpulse(Vector2 direction)
