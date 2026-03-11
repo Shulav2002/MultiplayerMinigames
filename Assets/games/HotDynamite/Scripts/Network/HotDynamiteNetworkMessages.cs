@@ -60,6 +60,8 @@ namespace HotDynamite.Networking
         public int chairId;
         public int capacity;
         public string[] chairs;
+        public string hostUserId;
+        public string state;
     }
 
     [Serializable]

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using HotDynamite.Networking;
 
 namespace HotDynamite
 {
@@ -23,6 +24,7 @@ namespace HotDynamite
 
         [Header("Audio")]
         [SerializeField] private AudioClip backgroundMusic;
+
         [SerializeField] private AudioClip startWhistleClip;
         [SerializeField] private AudioClip playerCollisionClip;
         [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
@@ -30,6 +32,8 @@ namespace HotDynamite
         [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.7f;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
+        private readonly List<HotDynamitePlayer> allPlayers = new List<HotDynamitePlayer>();
+        private readonly Dictionary<int, HotDynamitePlayer> playersByChair = new Dictionary<int, HotDynamitePlayer>();
 
         private HotDynamitePlayer bombHolder;
         private float bombTimer;
@@ -42,12 +46,17 @@ namespace HotDynamite
         private AudioSource musicSource;
         private AudioSource sfxSource;
         private float lastCollisionSfxTime = float.NegativeInfinity;
+        private HotDynamiteGameSettings baseSettings;
+        private bool localSimulationEnabled = true;
 
         public HotDynamitePlayer BombHolder => bombHolder;
         public bool HardModeBots => hardModeBots;
         public float BombTimeRemaining => Mathf.Max(0f, bombTimer);
         public bool IsMatchStarting => isMatchStarting;
         public float MatchStartDelayRemaining => Mathf.Max(0f, matchStartDelayTimer);
+        public bool LocalSimulationEnabled => localSimulationEnabled;
+        public IReadOnlyList<HotDynamitePlayer> Players => allPlayers;
+        public bool IsGameOver => gameOver;
 
         public float BombUrgency01
         {
@@ -63,10 +72,9 @@ namespace HotDynamite
             }
         }
 
-
-
         private void Awake()
         {
+            baseSettings = settings;
             EnsureAudioSources();
         }
 
@@ -77,23 +85,66 @@ namespace HotDynamite
 
         public void StartGameLocal()
         {
+            PrepareRuntimeSettings(baseSettings != null ? baseSettings.ClampedTotalPlayers : 4, baseSettings != null ? baseSettings.ClampedHumanPlayers : 1);
+            localSimulationEnabled = true;
             if (!TryInitializeGame())
             {
                 enabled = false;
                 return;
             }
 
+            ClearSpawnedPlayers();
             SpawnPlayers();
             AssignBombToRandomAlivePlayer();
             StartBackgroundMusic();
-            
+
             // Set up match start delay
             isMatchStarting = true;
             matchStartDelayTimer = 3f;
         }
 
+        public void StartOnlineGame(HotDynamiteRosterEntry[] roster, string localUserId, bool simulationAuthority, float startDelaySeconds = 3f)
+        {
+            if (roster == null || roster.Length == 0)
+            {
+                Debug.LogError("HotDynamiteGameManager: Cannot start online game without a roster.");
+                return;
+            }
+
+            PrepareRuntimeSettings(roster.Length, CountHumanParticipants(roster));
+            localSimulationEnabled = simulationAuthority;
+
+            if (!TryInitializeGame())
+            {
+                enabled = false;
+                return;
+            }
+
+            ClearSpawnedPlayers();
+            SpawnPlayers(roster, localUserId, simulationAuthority);
+            if (simulationAuthority)
+            {
+                AssignBombToRandomAlivePlayer();
+            }
+            else
+            {
+                bombHolder = null;
+                bombTimer = bombFuseSeconds;
+            }
+
+            gameOver = false;
+            StartBackgroundMusic();
+            isMatchStarting = startDelaySeconds > 0f;
+            matchStartDelayTimer = Mathf.Max(0f, startDelaySeconds);
+        }
+
         private void Update()
         {
+            if (!localSimulationEnabled)
+            {
+                return;
+            }
+
             if (isMatchStarting)
             {
                 matchStartDelayTimer -= Time.deltaTime;
@@ -194,6 +245,29 @@ namespace HotDynamite
                 player.Initialize(this, settings, isHuman);
                 player.SetAppearanceIndex(i);
                 alivePlayers.Add(player);
+                allPlayers.Add(player);
+            }
+        }
+
+        private void SpawnPlayers(HotDynamiteRosterEntry[] roster, string localUserId, bool simulationAuthority)
+        {
+            for (int i = 0; i < roster.Length; i++)
+            {
+                HotDynamiteRosterEntry entry = roster[i];
+                if (entry == null)
+                {
+                    continue;
+                }
+
+                Vector2 position = spawnPoints[Mathf.Clamp(entry.chairId, 0, spawnPoints.Length - 1)].position;
+                Transform parent = playerParent != null ? playerParent : transform;
+                HotDynamitePlayer player = Instantiate(playerPrefab, position, Quaternion.identity, parent);
+                HotDynamitePlayerControlMode controlMode = ResolveControlMode(entry, localUserId, simulationAuthority);
+                player.Initialize(this, settings, controlMode, entry.userId, entry.chairId, entry.isBot);
+                player.SetAppearanceIndex(entry.appearanceIndex);
+                alivePlayers.Add(player);
+                allPlayers.Add(player);
+                playersByChair[entry.chairId] = player;
             }
         }
 
@@ -222,6 +296,11 @@ namespace HotDynamite
 
         public void RequestBombPass(HotDynamitePlayer from, HotDynamitePlayer to)
         {
+            if (!localSimulationEnabled)
+            {
+                return;
+            }
+
             if (isMatchStarting)
             {
                 return;
@@ -418,6 +497,103 @@ namespace HotDynamite
             return true;
         }
 
+        public HotDynamitePlayer GetPlayerByChair(int chairId)
+        {
+            playersByChair.TryGetValue(chairId, out HotDynamitePlayer player);
+            return player;
+        }
+
+        public void SetNetworkMoveInput(int chairId, Vector2 moveInput)
+        {
+            if (!playersByChair.TryGetValue(chairId, out HotDynamitePlayer player) || player == null)
+            {
+                return;
+            }
+
+            player.SetNetworkMoveInput(moveInput);
+        }
+
+        public HotDynamiteStateSnapshotPayload BuildStateSnapshot(string hostUserId, int tick)
+        {
+            HotDynamitePlayerStateSnapshot[] snapshots = new HotDynamitePlayerStateSnapshot[allPlayers.Count];
+            int bombHolderChairId = -1;
+
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                HotDynamitePlayer player = allPlayers[i];
+                bool playerHasBomb = player != null && player.HasBomb;
+                if (playerHasBomb)
+                {
+                    bombHolderChairId = player.ChairId;
+                }
+
+                snapshots[i] = new HotDynamitePlayerStateSnapshot
+                {
+                    chairId = player != null ? player.ChairId : -1,
+                    x = player != null ? player.Position.x : 0f,
+                    y = player != null ? player.Position.y : 0f,
+                    facingAngle = player != null ? player.FacingAngle : 0f,
+                    velocityX = player != null ? player.EstimatedVelocity.x : 0f,
+                    velocityY = player != null ? player.EstimatedVelocity.y : 0f,
+                    isAlive = player != null && player.IsAlive,
+                    hasBomb = playerHasBomb,
+                    isBot = player != null && player.IsBotParticipant,
+                    appearanceIndex = player != null ? player.AppearanceIndex : 0
+                };
+            }
+
+            return new HotDynamiteStateSnapshotPayload
+            {
+                roomId = string.Empty,
+                hostUserId = hostUserId,
+                tick = tick,
+                bombTimeRemaining = BombTimeRemaining,
+                bombHolderChairId = bombHolderChairId,
+                isMatchStarting = isMatchStarting,
+                matchStartDelayRemaining = MatchStartDelayRemaining,
+                players = snapshots
+            };
+        }
+
+        public void ApplyStateSnapshot(HotDynamiteStateSnapshotPayload snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            bool wasMatchStarting = isMatchStarting;
+
+            bombTimer = Mathf.Max(0f, snapshot.bombTimeRemaining);
+            isMatchStarting = snapshot.isMatchStarting;
+            matchStartDelayTimer = Mathf.Max(0f, snapshot.matchStartDelayRemaining);
+            bombHolder = null;
+
+            if (snapshot.players != null)
+            {
+                for (int i = 0; i < snapshot.players.Length; i++)
+                {
+                    HotDynamitePlayerStateSnapshot playerSnapshot = snapshot.players[i];
+                    HotDynamitePlayer player = GetPlayerByChair(playerSnapshot.chairId);
+                    if (player == null)
+                    {
+                        continue;
+                    }
+
+                    player.ApplyStateSnapshot(playerSnapshot);
+                    if (playerSnapshot.hasBomb)
+                    {
+                        bombHolder = player;
+                    }
+                }
+            }
+
+            if (wasMatchStarting && !isMatchStarting)
+            {
+                PlayStartWhistle();
+            }
+        }
+
         public void NotifyPlayerCollision()
         {
             if (playerCollisionClip == null || Time.unscaledTime < lastCollisionSfxTime + CollisionSfxCooldownSeconds)
@@ -512,6 +688,73 @@ namespace HotDynamite
             sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
         }
 
+        private void PrepareRuntimeSettings(int totalPlayers, int humanPlayers)
+        {
+            if (baseSettings == null)
+            {
+                return;
+            }
 
+            settings = baseSettings.CreateRuntimeCopy(totalPlayers, humanPlayers);
+            bombFuseSeconds = Mathf.Max(MinBombFuseSeconds, settings.BombTimerSeconds);
+        }
+
+        private void ClearSpawnedPlayers()
+        {
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                HotDynamitePlayer player = allPlayers[i];
+                if (player != null)
+                {
+                    Destroy(player.gameObject);
+                }
+            }
+
+            allPlayers.Clear();
+            alivePlayers.Clear();
+            playersByChair.Clear();
+            bombHolder = null;
+            bombTimer = 0f;
+            bombPassLockUntil = 0f;
+            gameOver = false;
+            isMatchStarting = false;
+            matchStartDelayTimer = 0f;
+        }
+
+        private static int CountHumanParticipants(HotDynamiteRosterEntry[] roster)
+        {
+            int humans = 0;
+            for (int i = 0; i < roster.Length; i++)
+            {
+                if (roster[i] != null && !roster[i].isBot)
+                {
+                    humans++;
+                }
+            }
+
+            return Mathf.Max(1, humans);
+        }
+
+        private static HotDynamitePlayerControlMode ResolveControlMode(
+            HotDynamiteRosterEntry entry,
+            string localUserId,
+            bool simulationAuthority)
+        {
+            if (simulationAuthority)
+            {
+                if (entry.isBot)
+                {
+                    return HotDynamitePlayerControlMode.Bot;
+                }
+
+                return entry.userId == localUserId
+                    ? HotDynamitePlayerControlMode.LocalHuman
+                    : HotDynamitePlayerControlMode.NetworkDriven;
+            }
+
+            return entry.userId == localUserId
+                ? HotDynamitePlayerControlMode.LocalHuman
+                : HotDynamitePlayerControlMode.SnapshotOnly;
+        }
     }
 }

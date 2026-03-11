@@ -9,7 +9,7 @@ namespace HotDynamite.Networking
     public class HotDynamiteLobbyNetworkClient : MonoBehaviour
     {
         [Header("Backend")]
-        [SerializeField] private string serverUrl = "ws://10.0.15.223:3000";
+        [SerializeField] private string serverUrl = "ws://10.0.15.178:39003";
         [SerializeField] private string gameId = "HotDynamite";
         [SerializeField, Min(2)] private int roomCapacity = 4;
         [SerializeField] private bool connectOnStart;
@@ -44,6 +44,8 @@ namespace HotDynamite.Networking
         public string CurrentRoomId { get; private set; }
         public int CurrentChairId { get; private set; } = -1;
         public int CurrentCapacity { get; private set; }
+        public string[] CurrentChairs => currentChairs != null ? (string[])currentChairs.Clone() : Array.Empty<string>();
+        public string CurrentBackendRoomState { get; private set; }
         public string HostUserId { get; private set; }
         public int HostChairId { get; private set; } = -1;
         public HotDynamiteLobbyPhase LobbyPhase { get; private set; } = HotDynamiteLobbyPhase.Disconnected;
@@ -229,15 +231,16 @@ namespace HotDynamite.Networking
             CurrentRoomId = joined.roomId;
             CurrentChairId = joined.chairId;
             CurrentCapacity = joined.capacity;
+            CurrentBackendRoomState = joined.state;
             currentChairs = joined.chairs != null ? (string[])joined.chairs.Clone() : new string[joined.capacity];
             roomReadyAnnounced = false;
-            SetHost(joined.chairId == 0 ? LocalUserId : null, joined.chairId == 0 ? joined.chairId : -1);
-            SetLobbyPhase(HotDynamiteLobbyPhase.InRoomWaiting);
+            SetHost(joined.hostUserId, FindChairFromChairs(joined.hostUserId, currentChairs));
+            SetLobbyPhase(MapBackendRoomStateToLobbyPhase(joined.state));
             JoinedRoom?.Invoke(joined);
             NotifyRoomOccupancyChanged();
             BroadcastPresence();
 
-            if (IsHost)
+            if (IsHost && string.IsNullOrEmpty(joined.hostUserId))
             {
                 BroadcastHostAnnouncement();
             }
@@ -388,6 +391,7 @@ namespace HotDynamite.Networking
                 roomMode = payload.roomMode;
             }
 
+            CurrentBackendRoomState = string.IsNullOrEmpty(CurrentBackendRoomState) ? "waiting" : CurrentBackendRoomState;
             SetHost(payload.hostUserId, payload.hostChairId);
             HostAnnouncementReceived?.Invoke(payload);
         }
@@ -496,6 +500,7 @@ namespace HotDynamite.Networking
             CurrentRoomId = null;
             CurrentChairId = -1;
             CurrentCapacity = 0;
+            CurrentBackendRoomState = null;
             SetHost(null, -1);
             currentChairs = null;
             roomReadyAnnounced = false;
@@ -541,6 +546,38 @@ namespace HotDynamite.Networking
             }
 
             return -1;
+        }
+
+        private static int FindChairFromChairs(string userId, string[] chairs)
+        {
+            if (string.IsNullOrEmpty(userId) || chairs == null)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < chairs.Length; i++)
+            {
+                if (chairs[i] == userId)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static HotDynamiteLobbyPhase MapBackendRoomStateToLobbyPhase(string roomState)
+        {
+            switch (roomState)
+            {
+                case "playing":
+                    return HotDynamiteLobbyPhase.InMatch;
+                case "complete":
+                    return HotDynamiteLobbyPhase.MatchPreparing;
+                case "waiting":
+                default:
+                    return HotDynamiteLobbyPhase.InRoomWaiting;
+            }
         }
 
         private static int CountOccupiedChairs(string[] chairs)

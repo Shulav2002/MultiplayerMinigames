@@ -141,6 +141,29 @@ namespace HotDynamite
         public int ClampedTotalPlayers => Mathf.Max(2, TotalPlayers);
         public int ClampedHumanPlayers => Mathf.Clamp(HumanPlayers, 1, ClampedTotalPlayers);
 
+        public HotDynamiteGameSettings CreateRuntimeCopy(int totalPlayersOverride, int humanPlayersOverride)
+        {
+            HotDynamiteGameSettings runtimeCopy = Instantiate(this);
+            runtimeCopy.keepSettingsSynced = false;
+
+            if (runtimeCopy.playerSettings != null)
+            {
+                runtimeCopy.playerSettings = Instantiate(runtimeCopy.playerSettings);
+                runtimeCopy.playerSettings.totalPlayers = Mathf.Max(2, totalPlayersOverride);
+                runtimeCopy.playerSettings.humanPlayers = Mathf.Clamp(
+                    humanPlayersOverride,
+                    1,
+                    runtimeCopy.playerSettings.totalPlayers);
+            }
+            else
+            {
+                runtimeCopy.totalPlayers = Mathf.Max(2, totalPlayersOverride);
+                runtimeCopy.humanPlayers = Mathf.Clamp(humanPlayersOverride, 1, runtimeCopy.totalPlayers);
+            }
+
+            return runtimeCopy;
+        }
+
         private void OnEnable()
         {
             SyncIfNeeded();

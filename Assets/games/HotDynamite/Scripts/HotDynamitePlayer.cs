@@ -1,4 +1,5 @@
 using UnityEngine;
+using HotDynamite.Networking;
 
 namespace HotDynamite
 {
@@ -54,6 +55,7 @@ namespace HotDynamite
         private bool hasBomb;
         private bool isAlive = true;
         private Vector2 estimatedVelocity;
+        private Vector2 networkMoveVector;
         private GameObject bombInstance;
         private float temporarySpeedMultiplier = 1f;
         private float temporarySpeedUntil = -1f;
@@ -63,12 +65,22 @@ namespace HotDynamite
         private Vector2 bounceVelocity;
         private float bounceCooldownUntil = -1f;
         private float bounceInputSuppressionUntil = -1f;
+        private string userId;
+        private int chairId = -1;
+        private bool isBotParticipant;
+        private HotDynamitePlayerControlMode controlMode;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
         public HotDynamitePlayerInput HumanInput => humanInput;
         public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
         public Vector2 EstimatedVelocity => estimatedVelocity;
+        public string UserId => userId;
+        public int ChairId => chairId;
+        public bool IsBotParticipant => isBotParticipant;
+        public HotDynamitePlayerControlMode ControlMode => controlMode;
+        public int AppearanceIndex => appearanceIndex;
+        public float FacingAngle => facingTransform != null ? facingTransform.localEulerAngles.z : transform.localEulerAngles.z;
         private float PlayerBounceSpeed => settings != null ? settings.PlayerBounceSpeed : DefaultPlayerBounceSpeed;
         private float PlayerBounceMaxSpeed => settings != null ? settings.PlayerBounceMaxSpeed : DefaultPlayerBounceMaxSpeed;
         private float PlayerBounceDecay => settings != null ? settings.PlayerBounceDecay : DefaultPlayerBounceDecay;
@@ -79,15 +91,31 @@ namespace HotDynamite
 
         public void Initialize(HotDynamiteGameManager manager, HotDynamiteGameSettings settings, bool isHuman)
         {
+            Initialize(manager, settings, isHuman ? HotDynamitePlayerControlMode.LocalHuman : HotDynamitePlayerControlMode.Bot);
+        }
+
+        public void Initialize(
+            HotDynamiteGameManager manager,
+            HotDynamiteGameSettings settings,
+            HotDynamitePlayerControlMode controlMode,
+            string userId = null,
+            int chairId = -1,
+            bool isBotParticipant = false)
+        {
             this.manager = manager;
             this.settings = settings;
-            this.isHuman = isHuman;
+            this.controlMode = controlMode;
+            this.isHuman = controlMode == HotDynamitePlayerControlMode.LocalHuman;
+            this.userId = userId;
+            this.chairId = chairId;
+            this.isBotParticipant = isBotParticipant;
 
             CacheRequiredComponents();
             ApplyAppearanceVariant();
             ConfigureInputSources();
             ResetForNewRound();
             UpdateBombVisual();
+            RefreshPhysicsSimulationState();
         }
 
         private void FixedUpdate()
@@ -169,6 +197,52 @@ namespace HotDynamite
         {
             appearanceIndex = Mathf.Max(0, index);
             ApplyAppearanceVariant();
+        }
+
+        public void SetNetworkMoveInput(Vector2 moveInput)
+        {
+            networkMoveVector = Vector2.ClampMagnitude(moveInput, 1f);
+        }
+
+        public void ApplyStateSnapshot(HotDynamitePlayerStateSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            if (appearanceIndex != snapshot.appearanceIndex)
+            {
+                SetAppearanceIndex(snapshot.appearanceIndex);
+            }
+
+            isBotParticipant = snapshot.isBot;
+            isAlive = snapshot.isAlive;
+            hasBomb = snapshot.hasBomb;
+            estimatedVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
+
+            if (body != null)
+            {
+                body.position = new Vector2(snapshot.x, snapshot.y);
+            }
+            else
+            {
+                transform.position = new Vector3(snapshot.x, snapshot.y, transform.position.z);
+            }
+
+            if (facingTransform != null)
+            {
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, snapshot.facingAngle);
+            }
+
+            if (body != null)
+            {
+                body.linearVelocity = Vector2.zero;
+            }
+
+            UpdateBombVisual();
+            UpdateRunAnimation(estimatedVelocity);
+            gameObject.SetActive(snapshot.isAlive);
         }
 
         public Color GetAppearanceColor()
@@ -257,7 +331,12 @@ namespace HotDynamite
 
         private bool CanSimulateMovement()
         {
-            return isAlive && settings != null && body != null && manager != null && !manager.IsMatchStarting;
+            return isAlive
+                && settings != null
+                && body != null
+                && manager != null
+                && manager.LocalSimulationEnabled
+                && !manager.IsMatchStarting;
         }
 
         private Vector2 GetNormalizedMoveInput()
@@ -424,13 +503,17 @@ namespace HotDynamite
         {
             if (humanInput != null)
             {
-                humanInput.enabled = isHuman;
+                humanInput.enabled = controlMode == HotDynamitePlayerControlMode.LocalHuman;
             }
 
             if (botInput != null)
             {
-                botInput.enabled = !isHuman;
-                botInput.Initialize(manager, settings, this);
+                bool enableBot = controlMode == HotDynamitePlayerControlMode.Bot;
+                botInput.enabled = enableBot;
+                if (enableBot)
+                {
+                    botInput.Initialize(manager, settings, this);
+                }
             }
         }
 
@@ -438,6 +521,7 @@ namespace HotDynamite
         {
             isAlive = true;
             hasBomb = false;
+            networkMoveVector = Vector2.zero;
             ResetTemporarySpeed();
             ResetBounceState();
         }
@@ -457,14 +541,19 @@ namespace HotDynamite
 
         private Vector2 ReadMoveInput()
         {
-            if (isHuman && humanInput != null)
+            if (controlMode == HotDynamitePlayerControlMode.LocalHuman && humanInput != null)
             {
                 return humanInput.MoveVector;
             }
 
-            if (!isHuman && botInput != null)
+            if (controlMode == HotDynamitePlayerControlMode.Bot && botInput != null)
             {
                 return botInput.MoveVector;
+            }
+
+            if (controlMode == HotDynamitePlayerControlMode.NetworkDriven)
+            {
+                return networkMoveVector;
             }
 
             return Vector2.zero;
@@ -549,6 +638,16 @@ namespace HotDynamite
         private void OnDestroy()
         {
             DestroyBombVisual();
+        }
+
+        private void RefreshPhysicsSimulationState()
+        {
+            if (body == null || manager == null)
+            {
+                return;
+            }
+
+            body.simulated = manager.LocalSimulationEnabled;
         }
     }
 }

@@ -13,18 +13,24 @@ namespace HotDynamite.Lobby
         [Header("UI & Game References")]
         [Tooltip("The Lobby UI canvas to turn off when the game starts.")]
         [SerializeField] private GameObject lobbyCanvas;
-        
+
         [Tooltip("The parent GameObject containing the game elements (GameManager, Level, etc) to turn on.")]
         [SerializeField] private GameObject gameContainer;
 
         [Header("Game Manager Reference")]
         [Tooltip("Reference to the GameManager to call StartGame() on.")]
         [SerializeField] private HotDynamiteGameManager gameManager;
+
         [Header("Networking")]
         [Tooltip("When enabled, Play connects to the backend and joins a room instead of starting local immediately.")]
         [SerializeField] private bool useNetworkLobby = true;
+
         [Tooltip("Optional network client. If missing, one will be added to this GameObject at runtime.")]
         [SerializeField] private HotDynamiteLobbyNetworkClient networkClient;
+
+        [Tooltip("Coordinates the host-authoritative online match flow once a room is joined.")]
+        [SerializeField] private HotDynamiteOnlineMatchController onlineMatchController;
+
         [Tooltip("Starts the local game automatically once the room is full. Leave disabled until gameplay sync is implemented.")]
         [SerializeField] private bool startLocalGameWhenRoomReady = false;
 
@@ -33,12 +39,14 @@ namespace HotDynamite.Lobby
         private void Start()
         {
             EnsureNetworkClient();
+            EnsureOnlineMatchController();
             SubscribeToNetworkEvents();
+            InitializeOnlineMatchController();
 
             // Ensure proper initial state
             if (lobbyCanvas != null)
                 lobbyCanvas.SetActive(true);
-            
+
             if (gameContainer != null)
                 gameContainer.SetActive(false);
         }
@@ -117,6 +125,30 @@ namespace HotDynamite.Lobby
             {
                 networkClient = gameObject.AddComponent<HotDynamiteLobbyNetworkClient>();
             }
+        }
+
+        private void EnsureOnlineMatchController()
+        {
+            if (!useNetworkLobby || onlineMatchController != null)
+            {
+                return;
+            }
+
+            onlineMatchController = GetComponent<HotDynamiteOnlineMatchController>();
+            if (onlineMatchController == null)
+            {
+                onlineMatchController = gameObject.AddComponent<HotDynamiteOnlineMatchController>();
+            }
+        }
+
+        private void InitializeOnlineMatchController()
+        {
+            if (!useNetworkLobby || onlineMatchController == null || networkClient == null || gameManager == null)
+            {
+                return;
+            }
+
+            onlineMatchController.Initialize(gameManager, lobbyCanvas, gameContainer, networkClient);
         }
 
         private void SubscribeToNetworkEvents()
