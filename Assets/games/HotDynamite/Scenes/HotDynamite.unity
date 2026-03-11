@@ -2390,9 +2390,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.0002155304
+    y: 0.0003324449
     width: 1
-    height: 0.99956894
+    height: 0.9993351
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2496,8 +2496,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1475341651}
   - component: {fileID: 1475341650}
-  - component: {fileID: 1475341653}
-  - component: {fileID: 1475341652}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2528,8 +2526,6 @@ MonoBehaviour:
   explosionPrefab: {fileID: 7259869876648334111, guid: fd1000b184de5de49954f01599f95f65, type: 3}
   explosionLifetimeSeconds: 2
   hardModeBots: 0
-  runAsNetworkClient: 0
-  networkAdapter: {fileID: 1475341653}
 --- !u!4 &1475341651
 Transform:
   m_ObjectHideFlags: 0
@@ -2545,39 +2541,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 368035263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1475341652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475341649}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5de858382ef74e65a595e4ba9b8ce6df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Network.HotDynamiteWebSocketClient
-  serverUrl: ws://localhost:8080/ws
-  connectOnStart: 1
-  verboseLogging: 0
---- !u!114 &1475341653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475341649}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 984e7182497d4ce1b2c68e202952848d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Network.HotDynamiteNetworkAdapter
-  webSocketClient: {fileID: 1475341652}
-  gameManager: {fileID: 1475341650}
-  localInput: {fileID: 0}
-  inputSendRateHz: 20
-  sendInputOnlyDuringMatch: 1
-  verboseLogging: 0
 --- !u!1 &1772886698
 GameObject:
   m_ObjectHideFlags: 0
