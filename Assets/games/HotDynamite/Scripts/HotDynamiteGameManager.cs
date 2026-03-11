@@ -6,6 +6,7 @@ namespace HotDynamite
     public class HotDynamiteGameManager : MonoBehaviour
     {
         private const float MinBombFuseSeconds = 0.1f;
+        private const float CollisionSfxCooldownSeconds = 0.05f;
 
         [SerializeField] private HotDynamiteGameSettings settings;
         [SerializeField] private HotDynamitePlayer playerPrefab;
@@ -20,6 +21,14 @@ namespace HotDynamite
         [Header("Bots")]
         [SerializeField] private bool hardModeBots = false;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip backgroundMusic;
+        [SerializeField] private AudioClip startWhistleClip;
+        [SerializeField] private AudioClip playerCollisionClip;
+        [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
+        [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
+        [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.7f;
+
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
 
         private HotDynamitePlayer bombHolder;
@@ -30,6 +39,9 @@ namespace HotDynamite
 
         private float matchStartDelayTimer;
         private bool isMatchStarting;
+        private AudioSource musicSource;
+        private AudioSource sfxSource;
+        private float lastCollisionSfxTime = float.NegativeInfinity;
 
         public HotDynamitePlayer BombHolder => bombHolder;
         public bool HardModeBots => hardModeBots;
@@ -53,6 +65,11 @@ namespace HotDynamite
 
 
 
+        private void Awake()
+        {
+            EnsureAudioSources();
+        }
+
         private void Start()
         {
             // Game is started via StartGameLocal() from the Lobby Manager.
@@ -68,6 +85,7 @@ namespace HotDynamite
 
             SpawnPlayers();
             AssignBombToRandomAlivePlayer();
+            StartBackgroundMusic();
             
             // Set up match start delay
             isMatchStarting = true;
@@ -82,6 +100,7 @@ namespace HotDynamite
                 if (matchStartDelayTimer <= 0f)
                 {
                     isMatchStarting = false;
+                    PlayStartWhistle();
                 }
                 return;
             }
@@ -399,6 +418,23 @@ namespace HotDynamite
             return true;
         }
 
+        public void NotifyPlayerCollision()
+        {
+            if (playerCollisionClip == null || Time.unscaledTime < lastCollisionSfxTime + CollisionSfxCooldownSeconds)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            lastCollisionSfxTime = Time.unscaledTime;
+            sfxSource.PlayOneShot(playerCollisionClip, playerCollisionVolume);
+        }
+
         private static Transform FindParticleBodyRoot(Transform explosionRoot)
         {
             if (explosionRoot == null)
@@ -417,6 +453,63 @@ namespace HotDynamite
             }
 
             return null;
+        }
+
+        private void EnsureAudioSources()
+        {
+            if (musicSource == null)
+            {
+                musicSource = CreateAudioSource(loop: true);
+            }
+
+            if (sfxSource == null)
+            {
+                sfxSource = CreateAudioSource(loop: false);
+            }
+        }
+
+        private AudioSource CreateAudioSource(bool loop)
+        {
+            AudioSource source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            source.spatialBlend = 0f;
+            source.volume = 1f;
+            return source;
+        }
+
+        private void StartBackgroundMusic()
+        {
+            if (backgroundMusic == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (musicSource == null || (musicSource.isPlaying && musicSource.clip == backgroundMusic))
+            {
+                return;
+            }
+
+            musicSource.clip = backgroundMusic;
+            musicSource.volume = backgroundMusicVolume;
+            musicSource.Play();
+        }
+
+        private void PlayStartWhistle()
+        {
+            if (startWhistleClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
         }
 
 

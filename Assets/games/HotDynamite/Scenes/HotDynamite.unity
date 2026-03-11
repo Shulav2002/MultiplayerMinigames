@@ -2526,6 +2526,12 @@ MonoBehaviour:
   explosionPrefab: {fileID: 7259869876648334111, guid: fd1000b184de5de49954f01599f95f65, type: 3}
   explosionLifetimeSeconds: 2
   hardModeBots: 0
+  backgroundMusic: {fileID: 8300000, guid: 7624819599f139f48ae4c40e24b2e04d, type: 3}
+  startWhistleClip: {fileID: 8300000, guid: f5acb313549335a44829bf292199edc3, type: 3}
+  playerCollisionClip: {fileID: 8300000, guid: 32351cc7e46a2a1468512c88ca4175c5, type: 3}
+  backgroundMusicVolume: 0.45
+  startWhistleVolume: 0.9
+  playerCollisionVolume: 0.7
 --- !u!4 &1475341651
 Transform:
   m_ObjectHideFlags: 0
