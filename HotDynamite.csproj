@@ -62,12 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteArenaSettings.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteLobbyNetworkClient.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\ShaderPlayToggle.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteLobbyManager.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBombSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerInput.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteNetworkMessages.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayer.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteGameManager.cs" />
+    <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteWebSocketClient.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBotSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBotController.cs" />

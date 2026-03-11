@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using HotDynamite.Networking;
 
 namespace HotDynamite.Lobby
 {
@@ -19,9 +20,21 @@ namespace HotDynamite.Lobby
         [Header("Game Manager Reference")]
         [Tooltip("Reference to the GameManager to call StartGame() on.")]
         [SerializeField] private HotDynamiteGameManager gameManager;
+        [Header("Networking")]
+        [Tooltip("When enabled, Play connects to the backend and joins a room instead of starting local immediately.")]
+        [SerializeField] private bool useNetworkLobby = true;
+        [Tooltip("Optional network client. If missing, one will be added to this GameObject at runtime.")]
+        [SerializeField] private HotDynamiteLobbyNetworkClient networkClient;
+        [Tooltip("Starts the local game automatically once the room is full. Leave disabled until gameplay sync is implemented.")]
+        [SerializeField] private bool startLocalGameWhenRoomReady = false;
+
+        private bool joinRequestInFlight;
 
         private void Start()
         {
+            EnsureNetworkClient();
+            SubscribeToNetworkEvents();
+
             // Ensure proper initial state
             if (lobbyCanvas != null)
                 lobbyCanvas.SetActive(true);
@@ -30,11 +43,166 @@ namespace HotDynamite.Lobby
                 gameContainer.SetActive(false);
         }
 
+        private void OnDestroy()
+        {
+            UnsubscribeFromNetworkEvents();
+        }
+
         /// <summary>
         /// Call this function from your "Play" UI Button.
         /// It hides the lobby, turns on the game container, and starts the game.
         /// </summary>
-        public void OnPlayButtonClicked()
+        public async void OnPlayButtonClicked()
+        {
+            if (!useNetworkLobby)
+            {
+                StartGameLocalFlow();
+                return;
+            }
+
+            EnsureNetworkClient();
+            if (networkClient == null)
+            {
+                Debug.LogError("HotDynamiteLobbyManager: Network client is missing and could not be created.");
+                return;
+            }
+
+            if (joinRequestInFlight)
+            {
+                return;
+            }
+
+            joinRequestInFlight = true;
+
+            try
+            {
+                if (!networkClient.IsConnected)
+                {
+                    Debug.Log($"HotDynamiteLobbyManager: Connecting to {networkClient.ServerUrl}...");
+                    await networkClient.ConnectAsync();
+                }
+
+                if (!networkClient.IsInRoom)
+                {
+                    Debug.Log($"HotDynamiteLobbyManager: Joining room for game `{networkClient.GameId}` (capacity {networkClient.RoomCapacity})...");
+                    await networkClient.JoinAsync();
+                }
+            }
+            catch (System.Exception exception)
+            {
+                joinRequestInFlight = false;
+                Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Call this function from your "Play" UI Button if you are using separate scenes.
+        /// It will load the specified Game Scene.
+        /// </summary>
+        public void LoadGameScene()
+        {
+            Debug.Log($"Loading game scene: {gameSceneName}");
+            SceneManager.LoadScene(gameSceneName);
+        }
+
+        private void EnsureNetworkClient()
+        {
+            if (!useNetworkLobby || networkClient != null)
+            {
+                return;
+            }
+
+            networkClient = GetComponent<HotDynamiteLobbyNetworkClient>();
+            if (networkClient == null)
+            {
+                networkClient = gameObject.AddComponent<HotDynamiteLobbyNetworkClient>();
+            }
+        }
+
+        private void SubscribeToNetworkEvents()
+        {
+            if (!useNetworkLobby || networkClient == null)
+            {
+                return;
+            }
+
+            networkClient.Connected += HandleNetworkConnected;
+            networkClient.WelcomeReceived += HandleWelcomeReceived;
+            networkClient.JoinedRoom += HandleJoinedRoom;
+            networkClient.RoomOccupancyChanged += HandleRoomOccupancyChanged;
+            networkClient.RoomReady += HandleRoomReady;
+            networkClient.BackendErrorReceived += HandleBackendError;
+            networkClient.ConnectionError += HandleConnectionError;
+            networkClient.Disconnected += HandleDisconnected;
+        }
+
+        private void UnsubscribeFromNetworkEvents()
+        {
+            if (networkClient == null)
+            {
+                return;
+            }
+
+            networkClient.Connected -= HandleNetworkConnected;
+            networkClient.WelcomeReceived -= HandleWelcomeReceived;
+            networkClient.JoinedRoom -= HandleJoinedRoom;
+            networkClient.RoomOccupancyChanged -= HandleRoomOccupancyChanged;
+            networkClient.RoomReady -= HandleRoomReady;
+            networkClient.BackendErrorReceived -= HandleBackendError;
+            networkClient.ConnectionError -= HandleConnectionError;
+            networkClient.Disconnected -= HandleDisconnected;
+        }
+
+        private void HandleNetworkConnected()
+        {
+            Debug.Log("HotDynamiteLobbyManager: Connected to backend.");
+        }
+
+        private void HandleWelcomeReceived(HotDynamiteWelcomeMessage welcome)
+        {
+            Debug.Log($"HotDynamiteLobbyManager: Received welcome for user `{welcome.userId}`.");
+        }
+
+        private void HandleJoinedRoom(HotDynamiteJoinedMessage joined)
+        {
+            joinRequestInFlight = false;
+            Debug.Log($"HotDynamiteLobbyManager: Joined room `{joined.roomId}` as chair {joined.chairId}.");
+        }
+
+        private void HandleRoomOccupancyChanged(int occupiedSeats, int capacity, string[] chairs)
+        {
+            Debug.Log($"HotDynamiteLobbyManager: Room occupancy {occupiedSeats}/{capacity}.");
+        }
+
+        private void HandleRoomReady(string[] chairs)
+        {
+            Debug.Log("HotDynamiteLobbyManager: Room is full and ready.");
+
+            if (startLocalGameWhenRoomReady)
+            {
+                StartGameLocalFlow();
+            }
+        }
+
+        private void HandleBackendError(HotDynamiteErrorMessage error)
+        {
+            joinRequestInFlight = false;
+            Debug.LogError($"HotDynamiteLobbyManager: Backend error: {error.message}");
+        }
+
+        private void HandleConnectionError(string errorMessage)
+        {
+            joinRequestInFlight = false;
+            Debug.LogError($"HotDynamiteLobbyManager: Connection error: {errorMessage}");
+        }
+
+        private void HandleDisconnected(WebSocketCloseReason closeReason)
+        {
+            joinRequestInFlight = false;
+            Debug.Log($"HotDynamiteLobbyManager: Disconnected from backend. Status: {closeReason.Status}, Description: {closeReason.Description}");
+        }
+
+        private void StartGameLocalFlow()
         {
             // 1. Hide Lobby UI
             if (lobbyCanvas != null)
@@ -53,16 +221,6 @@ namespace HotDynamite.Lobby
             {
                 Debug.LogError("HotDynamiteLobbyManager: HotDynamiteGameManager reference is missing!");
             }
-        }
-
-        /// <summary>
-        /// Call this function from your "Play" UI Button if you are using separate scenes.
-        /// It will load the specified Game Scene.
-        /// </summary>
-        public void LoadGameScene()
-        {
-            Debug.Log($"Loading game scene: {gameSceneName}");
-            SceneManager.LoadScene(gameSceneName);
         }
     }
 }
