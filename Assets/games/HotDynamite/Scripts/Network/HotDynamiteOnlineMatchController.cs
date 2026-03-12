@@ -29,6 +29,8 @@ namespace HotDynamite.Networking
         private float nextInputSendAt;
         private float nextSnapshotSendAt;
         private int snapshotTick;
+        private int latestAppliedSnapshotTick = -1;
+        private int localInputSequence;
 
         public void Initialize(
             HotDynamiteGameManager gameManager,
@@ -156,9 +158,9 @@ namespace HotDynamite.Networking
             }
         }
 
-        private void HandleMatchPrepareReceived(HotDynamiteMatchPreparePayload payload)
+        private void HandleMatchPrepareReceived(string senderUserId, HotDynamiteMatchPreparePayload payload)
         {
-            if (networkClient.IsHost || payload == null)
+            if (networkClient.IsHost || payload == null || !IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))
             {
                 return;
             }
@@ -168,20 +170,32 @@ namespace HotDynamite.Networking
             gameManager.StartOnlineGame(payload.roster, networkClient.LocalUserId, simulationAuthority: false, payload.countdownSeconds);
             matchRunning = true;
             nextInputSendAt = Time.time;
+            latestAppliedSnapshotTick = -1;
         }
 
-        private void HandleStateSnapshotReceived(HotDynamiteStateSnapshotPayload payload)
+        private void HandleStateSnapshotReceived(string senderUserId, HotDynamiteStateSnapshotPayload payload)
         {
-            if (networkClient.IsHost || payload == null)
+            if (networkClient.IsHost || payload == null || !IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))
             {
                 return;
             }
 
+            if (payload.tick <= latestAppliedSnapshotTick)
+            {
+                return;
+            }
+
+            latestAppliedSnapshotTick = payload.tick;
             gameManager.ApplyStateSnapshot(payload);
         }
 
-        private void HandleMatchEndReceived(HotDynamiteMatchEndPayload payload)
+        private void HandleMatchEndReceived(string senderUserId, HotDynamiteMatchEndPayload payload)
         {
+            if (!IsTrustedHostMessage(senderUserId, payload != null ? payload.roomId : null, payload != null ? payload.hostUserId : null))
+            {
+                return;
+            }
+
             matchRunning = false;
             matchPreparing = false;
         }
@@ -342,7 +356,7 @@ namespace HotDynamite.Networking
             {
                 playerId = networkClient.LocalUserId,
                 chairId = localPlayer.ChairId,
-                sequence = 0,
+                sequence = localInputSequence++,
                 moveX = move.x,
                 moveY = move.y
             };
@@ -409,6 +423,8 @@ namespace HotDynamite.Networking
             nextInputSendAt = 0f;
             nextSnapshotSendAt = 0f;
             snapshotTick = 0;
+            latestAppliedSnapshotTick = -1;
+            localInputSequence = 0;
         }
 
         private float GetAutoStartDelaySeconds()
@@ -416,6 +432,32 @@ namespace HotDynamite.Networking
             return networkClient.RoomMode == HotDynamiteRoomModes.Private
                 ? privateModeAutoStartSeconds
                 : randomModeAutoStartSeconds;
+        }
+
+        private bool IsTrustedHostMessage(string senderUserId, string roomId, string hostUserId)
+        {
+            if (networkClient == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(roomId) && roomId != networkClient.CurrentRoomId)
+            {
+                return false;
+            }
+
+            string expectedHostUserId = networkClient.HostUserId;
+            if (!string.IsNullOrEmpty(hostUserId) && !string.IsNullOrEmpty(expectedHostUserId) && hostUserId != expectedHostUserId)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(expectedHostUserId) && senderUserId != expectedHostUserId)
+            {
+                return false;
+            }
+
+            return !string.IsNullOrEmpty(senderUserId);
         }
     }
 }

@@ -29,12 +29,12 @@ namespace HotDynamite.Networking
         public event Action<string[]> RoomReady;
         public event Action<HotDynamiteLobbyPhase> LobbyPhaseChanged;
         public event Action<bool, string, int> HostStatusChanged;
-        public event Action<HotDynamiteHostAnnouncementPayload> HostAnnouncementReceived;
-        public event Action<HotDynamiteRosterUpdatePayload> RosterUpdated;
-        public event Action<HotDynamiteMatchPreparePayload> MatchPrepareReceived;
-        public event Action<HotDynamiteMatchStartPayload> MatchStartReceived;
-        public event Action<HotDynamiteStateSnapshotPayload> StateSnapshotReceived;
-        public event Action<HotDynamiteMatchEndPayload> MatchEndReceived;
+        public event Action<string, HotDynamiteHostAnnouncementPayload> HostAnnouncementReceived;
+        public event Action<string, HotDynamiteRosterUpdatePayload> RosterUpdated;
+        public event Action<string, HotDynamiteMatchPreparePayload> MatchPrepareReceived;
+        public event Action<string, HotDynamiteMatchStartPayload> MatchStartReceived;
+        public event Action<string, HotDynamiteStateSnapshotPayload> StateSnapshotReceived;
+        public event Action<string, HotDynamiteMatchEndPayload> MatchEndReceived;
 
         public string ServerUrl => serverUrl;
         public string GameId => gameId;
@@ -280,22 +280,22 @@ namespace HotDynamite.Networking
                     HandlePresencePayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.HostAnnounce:
-                    HandleHostAnnouncementPayload(payloadJson);
+                    HandleHostAnnouncementPayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.RosterUpdate:
-                    HandleRosterUpdatePayload(payloadJson);
+                    HandleRosterUpdatePayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.MatchPrepare:
-                    HandleMatchPreparePayload(payloadJson);
+                    HandleMatchPreparePayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.MatchStart:
-                    HandleMatchStartPayload(payloadJson);
+                    HandleMatchStartPayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.StateSnapshot:
-                    HandleStateSnapshotPayload(payloadJson);
+                    HandleStateSnapshotPayload(senderUserId, payloadJson);
                     break;
                 case HotDynamitePayloadKinds.MatchEnd:
-                    HandleMatchEndPayload(payloadJson);
+                    HandleMatchEndPayload(senderUserId, payloadJson);
                     break;
             }
         }
@@ -378,7 +378,7 @@ namespace HotDynamite.Networking
             }
         }
 
-        private void HandleHostAnnouncementPayload(string payloadJson)
+        private void HandleHostAnnouncementPayload(string senderUserId, string payloadJson)
         {
             HotDynamiteHostAnnouncementPayload payload = JsonUtility.FromJson<HotDynamiteHostAnnouncementPayload>(payloadJson);
             if (payload == null)
@@ -393,10 +393,10 @@ namespace HotDynamite.Networking
 
             CurrentBackendRoomState = string.IsNullOrEmpty(CurrentBackendRoomState) ? "waiting" : CurrentBackendRoomState;
             SetHost(payload.hostUserId, payload.hostChairId);
-            HostAnnouncementReceived?.Invoke(payload);
+            HostAnnouncementReceived?.Invoke(senderUserId, payload);
         }
 
-        private void HandleRosterUpdatePayload(string payloadJson)
+        private void HandleRosterUpdatePayload(string senderUserId, string payloadJson)
         {
             HotDynamiteRosterUpdatePayload payload = JsonUtility.FromJson<HotDynamiteRosterUpdatePayload>(payloadJson);
             if (payload == null)
@@ -409,10 +409,10 @@ namespace HotDynamite.Networking
                 SetHost(payload.hostUserId, FindChairForUser(payload.hostUserId, payload.roster));
             }
 
-            RosterUpdated?.Invoke(payload);
+            RosterUpdated?.Invoke(senderUserId, payload);
         }
 
-        private void HandleMatchPreparePayload(string payloadJson)
+        private void HandleMatchPreparePayload(string senderUserId, string payloadJson)
         {
             HotDynamiteMatchPreparePayload payload = JsonUtility.FromJson<HotDynamiteMatchPreparePayload>(payloadJson);
             if (payload == null)
@@ -421,10 +421,10 @@ namespace HotDynamite.Networking
             }
 
             SetLobbyPhase(HotDynamiteLobbyPhase.MatchPreparing);
-            MatchPrepareReceived?.Invoke(payload);
+            MatchPrepareReceived?.Invoke(senderUserId, payload);
         }
 
-        private void HandleMatchStartPayload(string payloadJson)
+        private void HandleMatchStartPayload(string senderUserId, string payloadJson)
         {
             HotDynamiteMatchStartPayload payload = JsonUtility.FromJson<HotDynamiteMatchStartPayload>(payloadJson);
             if (payload == null)
@@ -433,10 +433,10 @@ namespace HotDynamite.Networking
             }
 
             SetLobbyPhase(HotDynamiteLobbyPhase.MatchStarting);
-            MatchStartReceived?.Invoke(payload);
+            MatchStartReceived?.Invoke(senderUserId, payload);
         }
 
-        private void HandleStateSnapshotPayload(string payloadJson)
+        private void HandleStateSnapshotPayload(string senderUserId, string payloadJson)
         {
             HotDynamiteStateSnapshotPayload payload = JsonUtility.FromJson<HotDynamiteStateSnapshotPayload>(payloadJson);
             if (payload == null)
@@ -445,10 +445,10 @@ namespace HotDynamite.Networking
             }
 
             SetLobbyPhase(HotDynamiteLobbyPhase.InMatch);
-            StateSnapshotReceived?.Invoke(payload);
+            StateSnapshotReceived?.Invoke(senderUserId, payload);
         }
 
-        private void HandleMatchEndPayload(string payloadJson)
+        private void HandleMatchEndPayload(string senderUserId, string payloadJson)
         {
             HotDynamiteMatchEndPayload payload = JsonUtility.FromJson<HotDynamiteMatchEndPayload>(payloadJson);
             if (payload == null)
@@ -457,7 +457,7 @@ namespace HotDynamite.Networking
             }
 
             SetLobbyPhase(HotDynamiteLobbyPhase.InRoomWaiting);
-            MatchEndReceived?.Invoke(payload);
+            MatchEndReceived?.Invoke(senderUserId, payload);
         }
 
         private void NotifyRoomOccupancyChanged()
