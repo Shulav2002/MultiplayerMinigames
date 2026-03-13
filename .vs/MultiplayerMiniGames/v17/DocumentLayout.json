@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "D:\\Unity\\MultiplayerMiniGames\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\scripts\\hotdynamitelobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitelobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\hotdynamitelobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitelobbymanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\network\\hotdynamitelobbynetworkclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\network\\hotdynamitelobbynetworkclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|d:\\unity\\multiplayerminigames\\assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|solutionrelative:assets\\games\\hotdynamite\\scripts\\hotdynamitegamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EB0B4FF0-307F-132E-DA8D-19FE30C38A42}|HotDynamite.csproj|D:\\Unity\\MultiplayerMiniGames\\assets\\games\\hotdynamite\\scripts\\hotdynamiteplayerinput.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -47,19 +51,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "HotDynamiteLobbyNetworkClient.cs",
+              "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteLobbyNetworkClient.cs",
+              "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteLobbyNetworkClient.cs",
+              "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteLobbyNetworkClient.cs",
+              "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteLobbyNetworkClient.cs",
+              "ViewState": "AgIAAIUAAAAAAAAAAAAcwGoAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-13T04:43:47.977Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "HotDynamiteLobbyManager.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteLobbyManager.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteLobbyManager.cs",
               "ToolTip": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteLobbyManager.cs",
               "RelativeToolTip": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteLobbyManager.cs",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAAwIwAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAGwAAAAAAAAAAAAAwI8AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-11T09:20:13.557Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "HotDynamiteWireModels.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteWireModels.cs",
@@ -71,7 +88,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "HotDynamiteNetworkAdapter.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\Network\\HotDynamiteNetworkAdapter.cs",
@@ -83,7 +100,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "HotDynamiteGameManager.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamiteGameManager.cs",
@@ -96,7 +113,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "HotDynamitePlayerInput.cs",
               "DocumentMoniker": "D:\\Unity\\MultiplayerMiniGames\\Assets\\games\\HotDynamite\\Scripts\\HotDynamitePlayerInput.cs",
               "RelativeDocumentMoniker": "Assets\\games\\HotDynamite\\Scripts\\HotDynamitePlayerInput.cs",

@@ -2,6 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using HotDynamite.Networking;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
 namespace HotDynamite.Lobby
 {
     public class HotDynamiteLobbyManager : MonoBehaviour
@@ -25,7 +31,7 @@ namespace HotDynamite.Lobby
         [Tooltip("When enabled, Play connects to the backend and joins a room instead of starting local immediately.")]
         [SerializeField] private bool useNetworkLobby = true;
 
-        [Tooltip("Optional network client. If missing, one will be added to this GameObject at runtime.")]
+        [Tooltip("Network client used for backend lobby communication.")]
         [SerializeField] private HotDynamiteLobbyNetworkClient networkClient;
 
         [Tooltip("Coordinates the host-authoritative online match flow once a room is joined.")]
@@ -40,6 +46,13 @@ namespace HotDynamite.Lobby
         {
             EnsureNetworkClient();
             EnsureOnlineMatchController();
+
+            if (useNetworkLobby && (networkClient == null || onlineMatchController == null))
+            {
+                Debug.LogError("HotDynamiteLobbyManager: Network components are missing. Add them in edit mode before entering play mode.");
+                return;
+            }
+
             SubscribeToNetworkEvents();
             InitializeOnlineMatchController();
 
@@ -71,7 +84,7 @@ namespace HotDynamite.Lobby
             EnsureNetworkClient();
             if (networkClient == null)
             {
-                Debug.LogError("HotDynamiteLobbyManager: Network client is missing and could not be created.");
+                Debug.LogError("HotDynamiteLobbyManager: Network client is missing. Add it in edit mode before entering play mode.");
                 return;
             }
 
@@ -121,10 +134,6 @@ namespace HotDynamite.Lobby
             }
 
             networkClient = GetComponent<HotDynamiteLobbyNetworkClient>();
-            if (networkClient == null)
-            {
-                networkClient = gameObject.AddComponent<HotDynamiteLobbyNetworkClient>();
-            }
         }
 
         private void EnsureOnlineMatchController()
@@ -135,11 +144,55 @@ namespace HotDynamite.Lobby
             }
 
             onlineMatchController = GetComponent<HotDynamiteOnlineMatchController>();
-            if (onlineMatchController == null)
+        }
+
+#if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            if (Application.isPlaying)
             {
-                onlineMatchController = gameObject.AddComponent<HotDynamiteOnlineMatchController>();
+                return;
+            }
+
+            if (!useNetworkLobby)
+            {
+                return;
+            }
+
+            EnsureNetworkClientInEditor();
+            EnsureOnlineMatchControllerInEditor();
+        }
+
+        private void EnsureNetworkClientInEditor()
+        {
+            if (networkClient == null)
+            {
+                networkClient = GetComponent<HotDynamiteLobbyNetworkClient>();
+            }
+
+            if (networkClient == null)
+            {
+                networkClient = Undo.AddComponent<HotDynamiteLobbyNetworkClient>(gameObject);
+                EditorUtility.SetDirty(gameObject);
             }
         }
+
+        private void EnsureOnlineMatchControllerInEditor()
+        {
+            if (onlineMatchController == null)
+            {
+                onlineMatchController = GetComponent<HotDynamiteOnlineMatchController>();
+            }
+
+            if (onlineMatchController == null)
+            {
+                onlineMatchController = Undo.AddComponent<HotDynamiteOnlineMatchController>(gameObject);
+                EditorUtility.SetDirty(gameObject);
+            }
+        }
+
+#endif
 
         private void InitializeOnlineMatchController()
         {

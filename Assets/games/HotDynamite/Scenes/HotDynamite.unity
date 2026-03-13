@@ -1171,6 +1171,8 @@ GameObject:
   - component: {fileID: 699998918}
   - component: {fileID: 699998917}
   - component: {fileID: 699998921}
+  - component: {fileID: 699998923}
+  - component: {fileID: 699998922}
   m_Layer: 5
   m_Name: Canvas Lobby
   m_TagString: Untagged
@@ -1277,6 +1279,44 @@ MonoBehaviour:
   lobbyCanvas: {fileID: 699998916}
   gameContainer: {fileID: 368035262}
   gameManager: {fileID: 1475341650}
+  useNetworkLobby: 1
+  networkClient: {fileID: 699998923}
+  onlineMatchController: {fileID: 699998922}
+  startLocalGameWhenRoomReady: 0
+--- !u!114 &699998922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699998916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 181a9fdc72d95b342b1278e46a4929e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteOnlineMatchController
+  randomModeAutoStartSeconds: 4
+  privateModeAutoStartSeconds: 10
+  matchStartCountdownSeconds: 3
+  inputSendIntervalSeconds: 0.05
+  snapshotSendIntervalSeconds: 0.066
+--- !u!114 &699998923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699998916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
+  serverUrl: ws://10.0.15.178:39003
+  gameId: HotDynamite
+  roomCapacity: 4
+  connectOnStart: 0
+  roomMode: random
 --- !u!1 &751061348
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,6 +1935,8 @@ GameObject:
   - component: {fileID: 1088182737}
   - component: {fileID: 1088182736}
   - component: {fileID: 1088182740}
+  - component: {fileID: 1088182742}
+  - component: {fileID: 1088182741}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2002,6 +2044,44 @@ MonoBehaviour:
   lobbyCanvas: {fileID: 699998916}
   gameContainer: {fileID: 368035262}
   gameManager: {fileID: 1475341650}
+  useNetworkLobby: 1
+  networkClient: {fileID: 1088182742}
+  onlineMatchController: {fileID: 1088182741}
+  startLocalGameWhenRoomReady: 0
+--- !u!114 &1088182741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088182735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 181a9fdc72d95b342b1278e46a4929e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteOnlineMatchController
+  randomModeAutoStartSeconds: 4
+  privateModeAutoStartSeconds: 10
+  matchStartCountdownSeconds: 3
+  inputSendIntervalSeconds: 0.05
+  snapshotSendIntervalSeconds: 0.066
+--- !u!114 &1088182742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088182735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
+  serverUrl: ws://10.0.15.223:3000
+  gameId: HotDynamite
+  roomCapacity: 4
+  connectOnStart: 0
+  roomMode: random
 --- !u!1 &1128413484
 GameObject:
   m_ObjectHideFlags: 0
@@ -2389,10 +2469,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.0003324449
-    width: 1
-    height: 0.9993351
+    x: 0.00014433265
+    y: 0
+    width: 0.99971133
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
