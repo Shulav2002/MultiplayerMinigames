@@ -14,7 +14,7 @@ namespace HotDynamite.Networking
         [Header("Networking")]
         [SerializeField, Min(0.02f)] private float inputSendIntervalSeconds = 0.05f;
         [SerializeField, Min(0.02f)] private float snapshotSendIntervalSeconds = 0.066f;
-        [SerializeField] private bool verboseMatchDiagnostics = true;
+        [SerializeField] private bool verboseMatchDiagnostics = false;
 
         private HotDynamiteGameManager gameManager;
         private HotDynamiteLobbyNetworkClient networkClient;

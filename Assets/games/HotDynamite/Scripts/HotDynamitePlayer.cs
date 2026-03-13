@@ -41,9 +41,17 @@ namespace HotDynamite
         [Header("Appearance")]
         [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
+        [Header("Networking")]
+        [Tooltip("How quickly remote players move toward the latest authoritative snapshot position.")]
+        [SerializeField, Min(0f)] private float remotePositionSmoothness = 12f;
+        [Tooltip("How quickly remote players rotate toward the latest authoritative snapshot facing angle.")]
+        [SerializeField, Min(0f)] private float remoteFacingSmoothness = 18f;
+        [Tooltip("Distance at which authoritative corrections snap instead of smoothing.")]
+        [SerializeField, Min(0f)] private float networkSnapDistance = 1.25f;
 
         private const float MovementInputNormalizeThreshold = 1f;
         private const float VectorEpsilonSqr = 0.0001f;
+        private const float LocalAuthorityCorrectionMultiplier = 0.75f;
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
         private const float DefaultPlayerBounceSpeed = 4.8f;
@@ -69,6 +77,10 @@ namespace HotDynamite
         private int chairId = -1;
         private bool isBotParticipant;
         private HotDynamitePlayerControlMode controlMode;
+        private Vector2 authoritativePosition;
+        private float authoritativeFacingAngle;
+        private Vector2 authoritativeVelocity;
+        private bool hasAuthoritativeState;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
@@ -122,7 +134,11 @@ namespace HotDynamite
         {
             if (!CanSimulateMovement())
             {
-                estimatedVelocity = Vector2.zero;
+                if (!UsesAuthoritativeTransform())
+                {
+                    estimatedVelocity = Vector2.zero;
+                }
+
                 return;
             }
 
@@ -131,12 +147,14 @@ namespace HotDynamite
             UpdateRunAnimation(input);
             UpdateFacing(input);
             MoveByEstimatedVelocity();
+            ApplyAuthoritativeCorrection(Time.fixedDeltaTime);
             DecayBounceVelocity();
         }
 
         private void Update()
         {
             UpdateBombAnimationState();
+            UpdateSnapshotPresentation(Time.deltaTime);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -219,29 +237,26 @@ namespace HotDynamite
             isBotParticipant = snapshot.isBot;
             isAlive = snapshot.isAlive;
             hasBomb = snapshot.hasBomb;
-            estimatedVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
+            authoritativePosition = new Vector2(snapshot.x, snapshot.y);
+            authoritativeFacingAngle = snapshot.facingAngle;
+            authoritativeVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
 
-            if (body != null)
+            bool hadAuthoritativeState = hasAuthoritativeState;
+            hasAuthoritativeState = true;
+
+            if (UsesAuthoritativeTransform())
             {
-                body.position = new Vector2(snapshot.x, snapshot.y);
-            }
-            else
-            {
-                transform.position = new Vector3(snapshot.x, snapshot.y, transform.position.z);
+                estimatedVelocity = authoritativeVelocity;
+                if (!hadAuthoritativeState)
+                {
+                    ApplyAuthoritativeTransformImmediate();
+                }
             }
 
-            if (facingTransform != null)
-            {
-                facingTransform.localRotation = Quaternion.Euler(0f, 0f, snapshot.facingAngle);
-            }
-
-            if (body != null)
-            {
-                body.linearVelocity = Vector2.zero;
-            }
+            ResetPhysicsVelocity();
 
             UpdateBombVisual();
-            UpdateRunAnimation(estimatedVelocity);
+            UpdateRunAnimation(authoritativeVelocity);
             gameObject.SetActive(snapshot.isAlive);
         }
 
@@ -335,8 +350,36 @@ namespace HotDynamite
                 && settings != null
                 && body != null
                 && manager != null
-                && manager.LocalSimulationEnabled
+                && ShouldSimulateLocally()
                 && !manager.IsMatchStarting;
+        }
+
+        private bool ShouldSimulateLocally()
+        {
+            if (controlMode == HotDynamitePlayerControlMode.LocalHuman)
+            {
+                return true;
+            }
+
+            if (manager == null || !manager.LocalSimulationEnabled)
+            {
+                return false;
+            }
+
+            return controlMode == HotDynamitePlayerControlMode.Bot
+                || controlMode == HotDynamitePlayerControlMode.NetworkDriven;
+        }
+
+        private bool UsesAuthoritativeTransform()
+        {
+            return controlMode == HotDynamitePlayerControlMode.SnapshotOnly;
+        }
+
+        private bool ShouldReconcileWithAuthority()
+        {
+            return controlMode == HotDynamitePlayerControlMode.LocalHuman
+                && manager != null
+                && !manager.LocalSimulationEnabled;
         }
 
         private Vector2 GetNormalizedMoveInput()
@@ -385,6 +428,33 @@ namespace HotDynamite
             body.MovePosition(next);
         }
 
+        private void ApplyAuthoritativeCorrection(float deltaTime)
+        {
+            if (!ShouldReconcileWithAuthority() || !hasAuthoritativeState || body == null)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(body.position, authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                body.position = authoritativePosition;
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                body.position = Vector2.Lerp(body.position, authoritativePosition, interpolation);
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                float correctedAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, correctedAngle);
+            }
+        }
+
         private void DecayBounceVelocity()
         {
             if (bounceVelocity.sqrMagnitude > VectorEpsilonSqr)
@@ -409,6 +479,74 @@ namespace HotDynamite
 
             float facingAngle = Mathf.Atan2(movementInput.y, movementInput.x) * Mathf.Rad2Deg + facingAngleOffset;
             facingTransform.localRotation = Quaternion.Euler(0f, 0f, facingAngle);
+        }
+
+        private void UpdateSnapshotPresentation(float deltaTime)
+        {
+            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState || body == null)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(body.position, authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                body.position = authoritativePosition;
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness, deltaTime);
+                body.position = Vector2.Lerp(body.position, authoritativePosition, interpolation);
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness, deltaTime);
+                float nextAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, nextAngle);
+            }
+
+            estimatedVelocity = authoritativeVelocity;
+            UpdateRunAnimation(authoritativeVelocity);
+        }
+
+        private void ApplyAuthoritativeTransformImmediate()
+        {
+            if (body != null)
+            {
+                body.position = authoritativePosition;
+            }
+            else
+            {
+                transform.position = new Vector3(authoritativePosition.x, authoritativePosition.y, transform.position.z);
+            }
+
+            if (facingTransform != null)
+            {
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
+            }
+        }
+
+        private void ResetPhysicsVelocity()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+
+        private static float GetInterpolationFactor(float smoothness, float deltaTime)
+        {
+            if (smoothness <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f - Mathf.Exp(-smoothness * Mathf.Max(0f, deltaTime));
         }
 
         private void UpdateRunAnimation(Vector2 movementInput)
@@ -522,6 +660,10 @@ namespace HotDynamite
             isAlive = true;
             hasBomb = false;
             networkMoveVector = Vector2.zero;
+            authoritativePosition = Position;
+            authoritativeFacingAngle = FacingAngle;
+            authoritativeVelocity = Vector2.zero;
+            hasAuthoritativeState = false;
             ResetTemporarySpeed();
             ResetBounceState();
         }
@@ -647,7 +789,7 @@ namespace HotDynamite
                 return;
             }
 
-            body.simulated = manager.LocalSimulationEnabled;
+            body.simulated = ShouldSimulateLocally();
         }
     }
 }
