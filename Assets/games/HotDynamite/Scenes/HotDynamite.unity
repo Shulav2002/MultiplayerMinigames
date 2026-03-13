@@ -671,7 +671,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 699998921}
+      - m_Target: {fileID: 623211282}
         m_TargetAssemblyTypeName: HotDynamite.Lobby.HotDynamiteLobbyManager, HotDynamite
         m_MethodName: OnPlayButtonClicked
         m_Mode: 1
@@ -1028,6 +1028,95 @@ RectTransform:
   m_AnchoredPosition: {x: -50, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &623211281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 623211285}
+  - component: {fileID: 623211284}
+  - component: {fileID: 623211283}
+  - component: {fileID: 623211282}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &623211282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623211281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f8ec730d1c04f49b4bbcd76b68245a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Lobby.HotDynamiteLobbyManager
+  gameSceneName: HotDynamite
+  lobbyCanvas: {fileID: 699998916}
+  gameContainer: {fileID: 368035262}
+  gameManager: {fileID: 1475341650}
+  useNetworkLobby: 1
+  networkClient: {fileID: 623211284}
+  onlineMatchController: {fileID: 623211283}
+  startLocalGameWhenRoomReady: 0
+--- !u!114 &623211283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623211281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 181a9fdc72d95b342b1278e46a4929e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteOnlineMatchController
+  randomModeAutoStartSeconds: 4
+  privateModeAutoStartSeconds: 10
+  matchStartCountdownSeconds: 3
+  inputSendIntervalSeconds: 0.05
+  snapshotSendIntervalSeconds: 0.066
+  verboseMatchDiagnostics: 1
+--- !u!114 &623211284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623211281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
+  serverUrl: ws://10.0.15.178:39003
+  gameId: HotDynamite
+  roomCapacity: 4
+  connectOnStart: 0
+  roomMode: random
+--- !u!4 &623211285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623211281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.59027, y: 176.27078, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &664705049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1170,9 +1259,6 @@ GameObject:
   - component: {fileID: 699998919}
   - component: {fileID: 699998918}
   - component: {fileID: 699998917}
-  - component: {fileID: 699998921}
-  - component: {fileID: 699998923}
-  - component: {fileID: 699998922}
   m_Layer: 5
   m_Name: Canvas Lobby
   m_TagString: Untagged
@@ -1263,60 +1349,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &699998921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699998916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5f8ec730d1c04f49b4bbcd76b68245a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Lobby.HotDynamiteLobbyManager
-  gameSceneName: HotDynamite
-  lobbyCanvas: {fileID: 699998916}
-  gameContainer: {fileID: 368035262}
-  gameManager: {fileID: 1475341650}
-  useNetworkLobby: 1
-  networkClient: {fileID: 699998923}
-  onlineMatchController: {fileID: 699998922}
-  startLocalGameWhenRoomReady: 0
---- !u!114 &699998922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699998916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 181a9fdc72d95b342b1278e46a4929e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteOnlineMatchController
-  randomModeAutoStartSeconds: 4
-  privateModeAutoStartSeconds: 10
-  matchStartCountdownSeconds: 3
-  inputSendIntervalSeconds: 0.05
-  snapshotSendIntervalSeconds: 0.066
---- !u!114 &699998923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699998916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
-  serverUrl: ws://10.0.15.178:39003
-  gameId: HotDynamite
-  roomCapacity: 4
-  connectOnStart: 0
-  roomMode: random
 --- !u!1 &751061348
 GameObject:
   m_ObjectHideFlags: 0
@@ -2065,6 +2097,7 @@ MonoBehaviour:
   matchStartCountdownSeconds: 3
   inputSendIntervalSeconds: 0.05
   snapshotSendIntervalSeconds: 0.066
+  verboseMatchDiagnostics: 1
 --- !u!114 &1088182742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2469,10 +2502,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00014433265
-    y: 0
-    width: 0.99971133
-    height: 1
+    x: 0
+    y: 0.00007992983
+    width: 1
+    height: 0.99984014
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -3091,3 +3124,4 @@ SceneRoots:
   - {fileID: 699998920}
   - {fileID: 1434736893}
   - {fileID: 368035263}
+  - {fileID: 623211285}

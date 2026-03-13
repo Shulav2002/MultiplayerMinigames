@@ -14,6 +14,7 @@ namespace HotDynamite.Networking
         [Header("Networking")]
         [SerializeField, Min(0.02f)] private float inputSendIntervalSeconds = 0.05f;
         [SerializeField, Min(0.02f)] private float snapshotSendIntervalSeconds = 0.066f;
+        [SerializeField] private bool verboseMatchDiagnostics = true;
 
         private HotDynamiteGameManager gameManager;
         private HotDynamiteLobbyNetworkClient networkClient;
@@ -67,6 +68,7 @@ namespace HotDynamite.Networking
 
             if (networkClient.IsHost && !matchPreparing && !matchRunning && hostAutoStartAt > 0f && Time.time >= hostAutoStartAt)
             {
+                LogDiagnostic($"Host auto-start timer reached at t={Time.time:0.00}. Starting match preparation.");
                 StartHostMatchPreparation();
             }
 
@@ -74,8 +76,10 @@ namespace HotDynamite.Networking
             {
                 if (networkClient.IsHost)
                 {
+                    LogDiagnostic($"Host match loop active. t={Time.time:0.00}, nextSnapshotAt={nextSnapshotSendAt:0.00}, gameOver={gameManager.IsGameOver}.");
                     if (Time.time >= nextSnapshotSendAt)
                     {
+                        LogDiagnostic($"Host snapshot schedule fired at t={Time.time:0.00}. Calling BroadcastSnapshot().");
                         nextSnapshotSendAt = Time.time + snapshotSendIntervalSeconds;
                         BroadcastSnapshot();
                     }
@@ -138,15 +142,20 @@ namespace HotDynamite.Networking
         private void HandleJoinedRoom(HotDynamiteJoinedMessage joined)
         {
             ResetMatchState();
+            LogDiagnostic(
+                $"Joined room. localUser={networkClient.LocalUserId}, chair={networkClient.CurrentChairId}, host={networkClient.HostUserId}, capacity={networkClient.CurrentCapacity}.");
 
             if (networkClient.IsHost)
             {
                 hostAutoStartAt = Time.time + GetAutoStartDelaySeconds();
+                LogDiagnostic($"Host auto-start armed for {hostAutoStartAt:0.00} (in {GetAutoStartDelaySeconds():0.00}s).");
             }
         }
 
         private void HandleRoomOccupancyChanged(int occupiedSeats, int capacity, string[] chairs)
         {
+            LogDiagnostic($"Room occupancy update {occupiedSeats}/{capacity}. isHost={networkClient.IsHost}, matchPreparing={matchPreparing}, matchRunning={matchRunning}.");
+
             if (!networkClient.IsHost || matchPreparing || matchRunning)
             {
                 return;
@@ -154,12 +163,16 @@ namespace HotDynamite.Networking
 
             if (occupiedSeats >= capacity && capacity > 0)
             {
+                LogDiagnostic("Room full. Starting host match preparation immediately.");
                 StartHostMatchPreparation();
             }
         }
 
         private void HandleMatchPrepareReceived(string senderUserId, HotDynamiteMatchPreparePayload payload)
         {
+            LogDiagnostic(
+                $"Received match_prepare from={senderUserId}, room={(payload != null ? payload.roomId : "null")}, host={(payload != null ? payload.hostUserId : "null")}, trusted={(payload != null && IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))}.");
+
             if (networkClient.IsHost || payload == null || !IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))
             {
                 return;
@@ -171,10 +184,14 @@ namespace HotDynamite.Networking
             matchRunning = true;
             nextInputSendAt = Time.time;
             latestAppliedSnapshotTick = -1;
+            LogDiagnostic($"Client entered online match from match_prepare. localPlayer={DescribeLocalPlayer()}.");
         }
 
         private void HandleStateSnapshotReceived(string senderUserId, HotDynamiteStateSnapshotPayload payload)
         {
+            LogDiagnostic(
+                $"Received snapshot tick={(payload != null ? payload.tick : -1)}, from={senderUserId}, host={(payload != null ? payload.hostUserId : "null")}, trusted={(payload != null && IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))}.");
+
             if (networkClient.IsHost || payload == null || !IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))
             {
                 return;
@@ -187,6 +204,7 @@ namespace HotDynamite.Networking
 
             latestAppliedSnapshotTick = payload.tick;
             gameManager.ApplyStateSnapshot(payload);
+            LogDiagnostic($"Applied snapshot tick={payload.tick}. localPlayer={DescribeLocalPlayer()}.");
         }
 
         private void HandleMatchEndReceived(string senderUserId, HotDynamiteMatchEndPayload payload)
@@ -236,12 +254,15 @@ namespace HotDynamite.Networking
         {
             if (!isInitialized || !networkClient.IsHost || matchPreparing || matchRunning)
             {
+                LogDiagnostic(
+                    $"Skipped host match preparation. initialized={isInitialized}, isHost={networkClient.IsHost}, matchPreparing={matchPreparing}, matchRunning={matchRunning}.");
                 return;
             }
 
             HotDynamiteMatchPreparePayload payload = BuildMatchPreparePayload();
             if (payload == null)
             {
+                LogDiagnostic("BuildMatchPreparePayload returned null.");
                 return;
             }
 
@@ -252,10 +273,12 @@ namespace HotDynamite.Networking
             nextSnapshotSendAt = Time.time + 0.1f;
             snapshotTick = 0;
             hostAutoStartAt = -1f;
+            LogDiagnostic($"Host started match preparation. roster={DescribeRoster(payload.roster)}.");
 
             try
             {
                 await networkClient.BroadcastToOthersAsync(JsonUtility.ToJson(payload));
+                LogDiagnostic("Host broadcasted match_prepare.");
             }
             catch (Exception exception)
             {
@@ -311,12 +334,15 @@ namespace HotDynamite.Networking
                 return;
             }
 
+            LogDiagnostic($"Entered BroadcastSnapshot(). nextTick={snapshotTick}, room={networkClient.CurrentRoomId}, hostUser={networkClient.HostUserId}.");
+
             HotDynamiteStateSnapshotPayload snapshot = gameManager.BuildStateSnapshot(networkClient.HostUserId, snapshotTick++);
             snapshot.roomId = networkClient.CurrentRoomId;
 
             try
             {
                 await networkClient.BroadcastToOthersAsync(JsonUtility.ToJson(snapshot));
+                LogDiagnostic($"Host broadcasted snapshot tick={snapshot.tick}, bombHolderChair={snapshot.bombHolderChairId}, players={(snapshot.players != null ? snapshot.players.Length : 0)}.");
             }
             catch (Exception exception)
             {
@@ -346,8 +372,16 @@ namespace HotDynamite.Networking
         private async void SendLocalInput()
         {
             HotDynamitePlayer localPlayer = FindLocalPlayer();
-            if (localPlayer == null || !localPlayer.IsAlive || localPlayer.HumanInput == null || !localPlayer.gameObject.activeInHierarchy)
+            if (localPlayer == null)
             {
+                LogDiagnostic("SendLocalInput skipped because FindLocalPlayer returned null.");
+                return;
+            }
+
+            if (!localPlayer.IsAlive || localPlayer.HumanInput == null || !localPlayer.gameObject.activeInHierarchy)
+            {
+                LogDiagnostic(
+                    $"SendLocalInput skipped. alive={localPlayer.IsAlive}, hasInput={localPlayer.HumanInput != null}, active={localPlayer.gameObject.activeInHierarchy}, chair={localPlayer.ChairId}.");
                 return;
             }
 
@@ -384,6 +418,49 @@ namespace HotDynamite.Networking
             }
 
             return null;
+        }
+
+        private void LogDiagnostic(string message)
+        {
+            if (!verboseMatchDiagnostics)
+            {
+                return;
+            }
+
+            string side = networkClient == null
+                ? "unknown"
+                : (networkClient.IsHost ? "host" : "client");
+            Debug.Log($"HotDynamiteOnlineMatchController[{side}]: {message}");
+        }
+
+        private string DescribeLocalPlayer()
+        {
+            HotDynamitePlayer localPlayer = FindLocalPlayer();
+            if (localPlayer == null)
+            {
+                return "null";
+            }
+
+            return $"user={localPlayer.UserId}, chair={localPlayer.ChairId}, mode={localPlayer.ControlMode}, alive={localPlayer.IsAlive}, active={localPlayer.gameObject.activeInHierarchy}";
+        }
+
+        private static string DescribeRoster(HotDynamiteRosterEntry[] roster)
+        {
+            if (roster == null || roster.Length == 0)
+            {
+                return "empty";
+            }
+
+            string[] parts = new string[roster.Length];
+            for (int i = 0; i < roster.Length; i++)
+            {
+                HotDynamiteRosterEntry entry = roster[i];
+                parts[i] = entry == null
+                    ? "null"
+                    : $"[{entry.chairId}:{entry.userId}:bot={entry.isBot}:host={entry.isHost}]";
+            }
+
+            return string.Join(", ", parts);
         }
 
         private int FindWinningChair()
