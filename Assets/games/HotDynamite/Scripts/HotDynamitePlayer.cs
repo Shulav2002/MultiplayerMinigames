@@ -85,7 +85,7 @@ namespace HotDynamite
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
         public HotDynamitePlayerInput HumanInput => humanInput;
-        public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
+        public Vector2 Position => GetCurrentPosition();
         public Vector2 EstimatedVelocity => estimatedVelocity;
         public string UserId => userId;
         public int ChairId => chairId;
@@ -436,15 +436,15 @@ namespace HotDynamite
             }
 
             float snapDistance = Mathf.Max(0f, networkSnapDistance);
-            float positionError = Vector2.Distance(body.position, authoritativePosition);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
             if (positionError > snapDistance)
             {
-                body.position = authoritativePosition;
+                SetCurrentPosition(authoritativePosition);
             }
             else
             {
                 float interpolation = GetInterpolationFactor(remotePositionSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
-                body.position = Vector2.Lerp(body.position, authoritativePosition, interpolation);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
             }
 
             if (facingTransform != null)
@@ -483,21 +483,21 @@ namespace HotDynamite
 
         private void UpdateSnapshotPresentation(float deltaTime)
         {
-            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState || body == null)
+            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState)
             {
                 return;
             }
 
             float snapDistance = Mathf.Max(0f, networkSnapDistance);
-            float positionError = Vector2.Distance(body.position, authoritativePosition);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
             if (positionError > snapDistance)
             {
-                body.position = authoritativePosition;
+                SetCurrentPosition(authoritativePosition);
             }
             else
             {
                 float interpolation = GetInterpolationFactor(remotePositionSmoothness, deltaTime);
-                body.position = Vector2.Lerp(body.position, authoritativePosition, interpolation);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
             }
 
             if (facingTransform != null)
@@ -513,19 +513,33 @@ namespace HotDynamite
 
         private void ApplyAuthoritativeTransformImmediate()
         {
-            if (body != null)
-            {
-                body.position = authoritativePosition;
-            }
-            else
-            {
-                transform.position = new Vector3(authoritativePosition.x, authoritativePosition.y, transform.position.z);
-            }
+            SetCurrentPosition(authoritativePosition);
 
             if (facingTransform != null)
             {
                 facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
             }
+        }
+
+        private Vector2 GetCurrentPosition()
+        {
+            if (body != null && body.simulated)
+            {
+                return body.position;
+            }
+
+            return transform.position;
+        }
+
+        private void SetCurrentPosition(Vector2 position)
+        {
+            if (body != null && body.simulated)
+            {
+                body.position = position;
+                return;
+            }
+
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
         }
 
         private void ResetPhysicsVelocity()
