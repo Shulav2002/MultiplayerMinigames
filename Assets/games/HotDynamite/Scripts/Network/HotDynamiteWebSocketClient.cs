@@ -1,242 +1,165 @@
 using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 
-namespace HotDynamite.Network
+namespace HotDynamite.Networking
 {
-    public class HotDynamiteWebSocketClient : MonoBehaviour
+    public sealed class HotDynamiteWebSocketClient : IDisposable
     {
-        [SerializeField] private string serverUrl = "ws://localhost:8080/ws";
-        [SerializeField] private bool connectOnStart = true;
-        [SerializeField] private bool verboseLogging = false;
+        private readonly ConcurrentQueue<Action> mainThreadEvents = new ConcurrentQueue<Action>();
+        private readonly byte[] receiveBuffer = new byte[8192];
 
         private ClientWebSocket socket;
-        private CancellationTokenSource cts;
-        private Task receiveTask;
-        private readonly ConcurrentQueue<Action> mainThreadQueue = new ConcurrentQueue<Action>();
+        private CancellationTokenSource receiveLoopCts;
+        private Task receiveLoopTask;
 
         public event Action Connected;
         public event Action<string> MessageReceived;
-        public event Action<int, string> Closed;
-        public event Action<string> Error;
+        public event Action<string> ErrorReceived;
+        public event Action<WebSocketCloseStatus?, string> Disconnected;
 
         public bool IsConnected => socket != null && socket.State == WebSocketState.Open;
-        public string ServerUrl
-        {
-            get => serverUrl;
-            set => serverUrl = value;
-        }
 
-        private async void Start()
+        public async Task ConnectAsync(string url, CancellationToken cancellationToken = default)
         {
-            if (connectOnStart)
+            if (socket != null && (socket.State == WebSocketState.Open || socket.State == WebSocketState.Connecting))
             {
-                await ConnectAsync();
-            }
-        }
-
-        private void Update()
-        {
-            while (mainThreadQueue.TryDequeue(out Action action))
-            {
-                action?.Invoke();
-            }
-        }
-
-        public async Task ConnectAsync()
-        {
-            if (IsConnected)
-            {
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(serverUrl))
-            {
-                QueueError("WebSocket URL is empty.");
                 return;
             }
 
             CleanupSocket();
+
             socket = new ClientWebSocket();
-            cts = new CancellationTokenSource();
+            receiveLoopCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
             try
             {
-                await socket.ConnectAsync(new Uri(serverUrl), cts.Token);
-                QueueMainThread(() =>
-                {
-                    if (verboseLogging)
-                    {
-                        Debug.Log($"HotDynamiteWebSocketClient connected: {serverUrl}");
-                    }
-
-                    Connected?.Invoke();
-                });
-
-                receiveTask = Task.Run(() => ReceiveLoop(cts.Token), cts.Token);
+                await socket.ConnectAsync(new Uri(url), cancellationToken);
+                EnqueueMainThreadEvent(() => Connected?.Invoke());
+                receiveLoopTask = ReceiveLoopAsync(socket, receiveLoopCts.Token);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                QueueError($"WebSocket connect failed: {ex.Message}");
+                EnqueueMainThreadEvent(() => ErrorReceived?.Invoke(exception.Message));
                 CleanupSocket();
+                throw;
             }
         }
 
-        public async Task DisconnectAsync()
+        public async Task SendTextAsync(string text, CancellationToken cancellationToken = default)
+        {
+            if (!IsConnected)
+            {
+                throw new InvalidOperationException("WebSocket is not connected.");
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            ArraySegment<byte> payload = new ArraySegment<byte>(bytes);
+            await socket.SendAsync(payload, WebSocketMessageType.Text, true, cancellationToken);
+        }
+
+        public async Task CloseAsync(string statusDescription = "Client closing", CancellationToken cancellationToken = default)
         {
             if (socket == null)
             {
                 return;
             }
 
-            CancellationToken token = cts != null ? cts.Token : CancellationToken.None;
             try
             {
                 if (socket.State == WebSocketState.Open || socket.State == WebSocketState.CloseReceived)
                 {
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnect", token);
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, statusDescription, cancellationToken);
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                QueueError($"WebSocket disconnect error: {ex.Message}");
+                EnqueueMainThreadEvent(() => ErrorReceived?.Invoke(exception.Message));
             }
             finally
             {
                 CleanupSocket();
+                EnqueueMainThreadEvent(() => Disconnected?.Invoke(WebSocketCloseStatus.NormalClosure, statusDescription));
             }
         }
 
-        public async Task SendTextAsync(string text)
+        public void DispatchQueuedEvents()
         {
-            if (!IsConnected)
+            while (mainThreadEvents.TryDequeue(out Action queuedEvent))
             {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(text))
-            {
-                return;
-            }
-
-            try
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(text);
-                ArraySegment<byte> segment = new ArraySegment<byte>(bytes);
-                await socket.SendAsync(segment, WebSocketMessageType.Text, true, cts.Token);
-            }
-            catch (Exception ex)
-            {
-                QueueError($"WebSocket send failed: {ex.Message}");
+                queuedEvent?.Invoke();
             }
         }
 
-        private async Task ReceiveLoop(CancellationToken token)
+        public void Dispose()
         {
-            ArraySegment<byte> buffer = new ArraySegment<byte>(new byte[8192]);
-            MemoryStream messageBuffer = new MemoryStream();
+            CleanupSocket();
+        }
+
+        private async Task ReceiveLoopAsync(ClientWebSocket activeSocket, CancellationToken cancellationToken)
+        {
+            ArraySegment<byte> segment = new ArraySegment<byte>(receiveBuffer);
+            StringBuilder builder = new StringBuilder();
+
             try
             {
-                while (!token.IsCancellationRequested && socket != null && socket.State == WebSocketState.Open)
+                while (!cancellationToken.IsCancellationRequested && activeSocket.State == WebSocketState.Open)
                 {
-                    WebSocketReceiveResult result = await socket.ReceiveAsync(buffer, token);
+                    WebSocketReceiveResult result = await activeSocket.ReceiveAsync(segment, cancellationToken);
+
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        int closeCode = result.CloseStatus.HasValue ? (int)result.CloseStatus.Value : 0;
-                        string closeReason = result.CloseStatusDescription ?? "Closed";
-                        QueueClosed(closeCode, closeReason);
-                        break;
+                        WebSocketCloseStatus? closeStatus = result.CloseStatus;
+                        string description = result.CloseStatusDescription ?? string.Empty;
+                        CleanupSocket();
+                        EnqueueMainThreadEvent(() => Disconnected?.Invoke(closeStatus, description));
+                        return;
                     }
 
-                    if (result.Count > 0)
-                    {
-                        messageBuffer.Write(buffer.Array, 0, result.Count);
-                    }
+                    string chunk = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+                    builder.Append(chunk);
 
                     if (!result.EndOfMessage)
                     {
                         continue;
                     }
 
-                    string message = Encoding.UTF8.GetString(messageBuffer.ToArray());
-                    messageBuffer.SetLength(0);
-                    QueueMainThread(() =>
-                    {
-                        if (verboseLogging)
-                        {
-                            Debug.Log($"HotDynamiteWebSocketClient recv: {message}");
-                        }
-
-                        MessageReceived?.Invoke(message);
-                    });
+                    string message = builder.ToString();
+                    builder.Clear();
+                    EnqueueMainThreadEvent(() => MessageReceived?.Invoke(message));
                 }
             }
             catch (OperationCanceledException)
             {
-                // Expected during normal shutdown.
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                QueueError($"WebSocket receive failed: {ex.Message}");
-            }
-            finally
-            {
-                messageBuffer.Dispose();
+                EnqueueMainThreadEvent(() => ErrorReceived?.Invoke(exception.Message));
+                CleanupSocket();
+                EnqueueMainThreadEvent(() => Disconnected?.Invoke(activeSocket.CloseStatus, activeSocket.CloseStatusDescription ?? string.Empty));
             }
         }
 
-        private void QueueClosed(int closeCode, string reason)
+        private void EnqueueMainThreadEvent(Action queuedEvent)
         {
-            QueueMainThread(() =>
-            {
-                if (verboseLogging)
-                {
-                    Debug.Log($"HotDynamiteWebSocketClient closed ({closeCode}): {reason}");
-                }
-
-                Closed?.Invoke(closeCode, reason);
-            });
-        }
-
-        private void QueueError(string error)
-        {
-            QueueMainThread(() =>
-            {
-                Debug.LogError(error);
-                Error?.Invoke(error);
-            });
-        }
-
-        private void QueueMainThread(Action action)
-        {
-            if (action == null)
+            if (queuedEvent == null)
             {
                 return;
             }
 
-            mainThreadQueue.Enqueue(action);
+            mainThreadEvents.Enqueue(queuedEvent);
         }
 
         private void CleanupSocket()
         {
-            if (cts != null)
+            if (receiveLoopCts != null)
             {
-                try
-                {
-                    cts.Cancel();
-                }
-                catch
-                {
-                    // Ignore cancellation cleanup errors.
-                }
-
-                cts.Dispose();
-                cts = null;
+                receiveLoopCts.Cancel();
+                receiveLoopCts.Dispose();
+                receiveLoopCts = null;
             }
 
             if (socket != null)
@@ -245,12 +168,7 @@ namespace HotDynamite.Network
                 socket = null;
             }
 
-            receiveTask = null;
-        }
-
-        private async void OnDestroy()
-        {
-            await DisconnectAsync();
+            receiveLoopTask = null;
         }
     }
 }

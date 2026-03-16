@@ -1,4 +1,5 @@
 using UnityEngine;
+using HotDynamite.Networking;
 
 namespace HotDynamite
 {
@@ -40,12 +41,17 @@ namespace HotDynamite
         [Header("Appearance")]
         [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
-        [Header("Network")]
-        [Tooltip("Interpolation sharpness used when applying server positions.")]
-        [SerializeField, Min(0f)] private float networkPositionSmoothing = 18f;
+        [Header("Networking")]
+        [Tooltip("How quickly remote players move toward the latest authoritative snapshot position.")]
+        [SerializeField, Min(0f)] private float remotePositionSmoothness = 12f;
+        [Tooltip("How quickly remote players rotate toward the latest authoritative snapshot facing angle.")]
+        [SerializeField, Min(0f)] private float remoteFacingSmoothness = 18f;
+        [Tooltip("Distance at which authoritative corrections snap instead of smoothing.")]
+        [SerializeField, Min(0f)] private float networkSnapDistance = 1.25f;
 
         private const float MovementInputNormalizeThreshold = 1f;
         private const float VectorEpsilonSqr = 0.0001f;
+        private const float LocalAuthorityCorrectionMultiplier = 0.75f;
         private HotDynamiteGameManager manager;
         private HotDynamiteGameSettings settings;
         private const float DefaultPlayerBounceSpeed = 4.8f;
@@ -57,6 +63,7 @@ namespace HotDynamite
         private bool hasBomb;
         private bool isAlive = true;
         private Vector2 estimatedVelocity;
+        private Vector2 networkMoveVector;
         private GameObject bombInstance;
         private float temporarySpeedMultiplier = 1f;
         private float temporarySpeedUntil = -1f;
@@ -66,16 +73,26 @@ namespace HotDynamite
         private Vector2 bounceVelocity;
         private float bounceCooldownUntil = -1f;
         private float bounceInputSuppressionUntil = -1f;
-        private bool networkControlled;
-        private bool networkInputOwner;
-        private Vector2 networkTargetPosition;
-        private Vector2 networkTargetVelocity;
+        private string userId;
+        private int chairId = -1;
+        private bool isBotParticipant;
+        private HotDynamitePlayerControlMode controlMode;
+        private Vector2 authoritativePosition;
+        private float authoritativeFacingAngle;
+        private Vector2 authoritativeVelocity;
+        private bool hasAuthoritativeState;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
         public HotDynamitePlayerInput HumanInput => humanInput;
-        public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
+        public Vector2 Position => GetCurrentPosition();
         public Vector2 EstimatedVelocity => estimatedVelocity;
+        public string UserId => userId;
+        public int ChairId => chairId;
+        public bool IsBotParticipant => isBotParticipant;
+        public HotDynamitePlayerControlMode ControlMode => controlMode;
+        public int AppearanceIndex => appearanceIndex;
+        public float FacingAngle => facingTransform != null ? facingTransform.localEulerAngles.z : transform.localEulerAngles.z;
         private float PlayerBounceSpeed => settings != null ? settings.PlayerBounceSpeed : DefaultPlayerBounceSpeed;
         private float PlayerBounceMaxSpeed => settings != null ? settings.PlayerBounceMaxSpeed : DefaultPlayerBounceMaxSpeed;
         private float PlayerBounceDecay => settings != null ? settings.PlayerBounceDecay : DefaultPlayerBounceDecay;
@@ -86,30 +103,42 @@ namespace HotDynamite
 
         public void Initialize(HotDynamiteGameManager manager, HotDynamiteGameSettings settings, bool isHuman)
         {
+            Initialize(manager, settings, isHuman ? HotDynamitePlayerControlMode.LocalHuman : HotDynamitePlayerControlMode.Bot);
+        }
+
+        public void Initialize(
+            HotDynamiteGameManager manager,
+            HotDynamiteGameSettings settings,
+            HotDynamitePlayerControlMode controlMode,
+            string userId = null,
+            int chairId = -1,
+            bool isBotParticipant = false)
+        {
             this.manager = manager;
             this.settings = settings;
-            this.isHuman = isHuman;
+            this.controlMode = controlMode;
+            this.isHuman = controlMode == HotDynamitePlayerControlMode.LocalHuman;
+            this.userId = userId;
+            this.chairId = chairId;
+            this.isBotParticipant = isBotParticipant;
 
             CacheRequiredComponents();
             ApplyAppearanceVariant();
             ConfigureInputSources();
             ResetForNewRound();
             UpdateBombVisual();
-            networkTargetPosition = Position;
-            networkTargetVelocity = Vector2.zero;
+            RefreshPhysicsSimulationState();
         }
 
         private void FixedUpdate()
         {
-            if (networkControlled)
-            {
-                SimulateNetworkControlledMovement();
-                return;
-            }
-
             if (!CanSimulateMovement())
             {
-                estimatedVelocity = Vector2.zero;
+                if (!UsesAuthoritativeTransform())
+                {
+                    estimatedVelocity = Vector2.zero;
+                }
+
                 return;
             }
 
@@ -118,12 +147,14 @@ namespace HotDynamite
             UpdateRunAnimation(input);
             UpdateFacing(input);
             MoveByEstimatedVelocity();
+            ApplyAuthoritativeCorrection(Time.fixedDeltaTime);
             DecayBounceVelocity();
         }
 
         private void Update()
         {
             UpdateBombAnimationState();
+            UpdateSnapshotPresentation(Time.deltaTime);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -149,7 +180,7 @@ namespace HotDynamite
 
         private void TryPassBomb(Collider2D other)
         {
-            if (networkControlled || !hasBomb || !isAlive || manager == null || other == null)
+            if (!hasBomb || !isAlive || manager == null || other == null)
             {
                 return;
             }
@@ -180,96 +211,53 @@ namespace HotDynamite
             temporarySpeedUntil = Time.time + Mathf.Max(0f, durationSeconds);
         }
 
-        public void SetNetworkControlled(bool value, bool isLocalInputOwner = false)
-        {
-            bool desiredInputOwner = value && isLocalInputOwner;
-            if (networkControlled == value && networkInputOwner == desiredInputOwner)
-            {
-                return;
-            }
-
-            networkControlled = value;
-            networkInputOwner = desiredInputOwner;
-
-            if (networkControlled)
-            {
-                if (botInput != null)
-                {
-                    botInput.enabled = false;
-                }
-
-                if (humanInput != null)
-                {
-                    humanInput.enabled = networkInputOwner;
-                }
-
-                ResetTemporarySpeed();
-                ResetBounceState();
-                return;
-            }
-
-            ConfigureInputSources();
-        }
-
-        public void ApplyNetworkState(Vector2 position, Vector2 velocity, bool alive, bool hasBombState, int appearance)
-        {
-            if (appearance != appearanceIndex)
-            {
-                SetAppearanceIndex(appearance);
-            }
-
-            networkTargetPosition = position;
-            networkTargetVelocity = velocity;
-
-            bool wasAlive = isAlive;
-            if (alive)
-            {
-                if (!gameObject.activeSelf)
-                {
-                    gameObject.SetActive(true);
-                }
-
-                isAlive = true;
-                if (body == null)
-                {
-                    transform.position = position;
-                }
-                else if (!wasAlive)
-                {
-                    body.position = position;
-                }
-            }
-            else
-            {
-                if (isAlive)
-                {
-                    this.hasBomb = false;
-                    UpdateBombVisual();
-                }
-
-                isAlive = false;
-                estimatedVelocity = Vector2.zero;
-                ResetTemporarySpeed();
-                ResetBounceState();
-                UpdateRunAnimation(Vector2.zero);
-                if (body != null)
-                {
-                    body.linearVelocity = Vector2.zero;
-                }
-
-                if (gameObject.activeSelf)
-                {
-                    gameObject.SetActive(false);
-                }
-            }
-
-            SetHasBomb(alive && hasBombState);
-        }
-
         public void SetAppearanceIndex(int index)
         {
             appearanceIndex = Mathf.Max(0, index);
             ApplyAppearanceVariant();
+        }
+
+        public void SetNetworkMoveInput(Vector2 moveInput)
+        {
+            networkMoveVector = Vector2.ClampMagnitude(moveInput, 1f);
+        }
+
+        public void ApplyStateSnapshot(HotDynamitePlayerStateSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            if (appearanceIndex != snapshot.appearanceIndex)
+            {
+                SetAppearanceIndex(snapshot.appearanceIndex);
+            }
+
+            isBotParticipant = snapshot.isBot;
+            isAlive = snapshot.isAlive;
+            hasBomb = snapshot.hasBomb;
+            authoritativePosition = new Vector2(snapshot.x, snapshot.y);
+            authoritativeFacingAngle = snapshot.facingAngle;
+            authoritativeVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
+
+            bool hadAuthoritativeState = hasAuthoritativeState;
+            hasAuthoritativeState = true;
+
+            if (UsesAuthoritativeTransform())
+            {
+                estimatedVelocity = authoritativeVelocity;
+                if (!hadAuthoritativeState)
+                {
+                    ApplyAuthoritativeTransformImmediate();
+                }
+            }
+
+            ResetPhysicsVelocity();
+
+            UpdateBombVisual();
+            UpdateRunAnimation(authoritativeVelocity);
+            gameObject.SetActive(snapshot.isAlive);
         }
 
         public Color GetAppearanceColor()
@@ -313,7 +301,7 @@ namespace HotDynamite
 
         private void TryBounceOnPlayerCollision(Collision2D collision)
         {
-            if (networkControlled || collision == null || !isAlive || body == null || Time.time < bounceCooldownUntil)
+            if (collision == null || !isAlive || body == null || Time.time < bounceCooldownUntil)
             {
                 return;
             }
@@ -339,32 +327,7 @@ namespace HotDynamite
 
             ApplyBounceImpulse(-direction);
             otherPlayer.ApplyBounceImpulse(direction);
-        }
-
-        private void SimulateNetworkControlledMovement()
-        {
-            if (!isAlive)
-            {
-                estimatedVelocity = Vector2.zero;
-                return;
-            }
-
-            if (body == null)
-            {
-                estimatedVelocity = networkTargetVelocity;
-                return;
-            }
-
-            float smoothing = Mathf.Max(0f, networkPositionSmoothing);
-            float interpolation = smoothing <= 0f
-                ? 1f
-                : 1f - Mathf.Exp(-smoothing * Time.fixedDeltaTime);
-            Vector2 nextPosition = Vector2.Lerp(body.position, networkTargetPosition, interpolation);
-            body.MovePosition(nextPosition);
-
-            estimatedVelocity = networkTargetVelocity;
-            UpdateRunAnimation(networkTargetVelocity);
-            UpdateFacing(networkTargetVelocity);
+            manager.NotifyPlayerCollision();
         }
 
         private void ApplyBounceImpulse(Vector2 direction)
@@ -383,7 +346,40 @@ namespace HotDynamite
 
         private bool CanSimulateMovement()
         {
-            return isAlive && settings != null && body != null;
+            return isAlive
+                && settings != null
+                && body != null
+                && manager != null
+                && ShouldSimulateLocally()
+                && !manager.IsMatchStarting;
+        }
+
+        private bool ShouldSimulateLocally()
+        {
+            if (controlMode == HotDynamitePlayerControlMode.LocalHuman)
+            {
+                return true;
+            }
+
+            if (manager == null || !manager.LocalSimulationEnabled)
+            {
+                return false;
+            }
+
+            return controlMode == HotDynamitePlayerControlMode.Bot
+                || controlMode == HotDynamitePlayerControlMode.NetworkDriven;
+        }
+
+        private bool UsesAuthoritativeTransform()
+        {
+            return controlMode == HotDynamitePlayerControlMode.SnapshotOnly;
+        }
+
+        private bool ShouldReconcileWithAuthority()
+        {
+            return controlMode == HotDynamitePlayerControlMode.LocalHuman
+                && manager != null
+                && !manager.LocalSimulationEnabled;
         }
 
         private Vector2 GetNormalizedMoveInput()
@@ -432,6 +428,33 @@ namespace HotDynamite
             body.MovePosition(next);
         }
 
+        private void ApplyAuthoritativeCorrection(float deltaTime)
+        {
+            if (!ShouldReconcileWithAuthority() || !hasAuthoritativeState || body == null)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                SetCurrentPosition(authoritativePosition);
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                float correctedAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, correctedAngle);
+            }
+        }
+
         private void DecayBounceVelocity()
         {
             if (bounceVelocity.sqrMagnitude > VectorEpsilonSqr)
@@ -456,6 +479,88 @@ namespace HotDynamite
 
             float facingAngle = Mathf.Atan2(movementInput.y, movementInput.x) * Mathf.Rad2Deg + facingAngleOffset;
             facingTransform.localRotation = Quaternion.Euler(0f, 0f, facingAngle);
+        }
+
+        private void UpdateSnapshotPresentation(float deltaTime)
+        {
+            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                SetCurrentPosition(authoritativePosition);
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness, deltaTime);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness, deltaTime);
+                float nextAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, nextAngle);
+            }
+
+            estimatedVelocity = authoritativeVelocity;
+            UpdateRunAnimation(authoritativeVelocity);
+        }
+
+        private void ApplyAuthoritativeTransformImmediate()
+        {
+            SetCurrentPosition(authoritativePosition);
+
+            if (facingTransform != null)
+            {
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
+            }
+        }
+
+        private Vector2 GetCurrentPosition()
+        {
+            if (body != null && body.simulated)
+            {
+                return body.position;
+            }
+
+            return transform.position;
+        }
+
+        private void SetCurrentPosition(Vector2 position)
+        {
+            if (body != null && body.simulated)
+            {
+                body.position = position;
+                return;
+            }
+
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
+        }
+
+        private void ResetPhysicsVelocity()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+
+        private static float GetInterpolationFactor(float smoothness, float deltaTime)
+        {
+            if (smoothness <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f - Mathf.Exp(-smoothness * Mathf.Max(0f, deltaTime));
         }
 
         private void UpdateRunAnimation(Vector2 movementInput)
@@ -550,13 +655,17 @@ namespace HotDynamite
         {
             if (humanInput != null)
             {
-                humanInput.enabled = isHuman;
+                humanInput.enabled = controlMode == HotDynamitePlayerControlMode.LocalHuman;
             }
 
             if (botInput != null)
             {
-                botInput.enabled = !isHuman;
-                botInput.Initialize(manager, settings, this);
+                bool enableBot = controlMode == HotDynamitePlayerControlMode.Bot;
+                botInput.enabled = enableBot;
+                if (enableBot)
+                {
+                    botInput.Initialize(manager, settings, this);
+                }
             }
         }
 
@@ -564,6 +673,11 @@ namespace HotDynamite
         {
             isAlive = true;
             hasBomb = false;
+            networkMoveVector = Vector2.zero;
+            authoritativePosition = Position;
+            authoritativeFacingAngle = FacingAngle;
+            authoritativeVelocity = Vector2.zero;
+            hasAuthoritativeState = false;
             ResetTemporarySpeed();
             ResetBounceState();
         }
@@ -583,14 +697,19 @@ namespace HotDynamite
 
         private Vector2 ReadMoveInput()
         {
-            if (isHuman && humanInput != null)
+            if (controlMode == HotDynamitePlayerControlMode.LocalHuman && humanInput != null)
             {
                 return humanInput.MoveVector;
             }
 
-            if (!isHuman && botInput != null)
+            if (controlMode == HotDynamitePlayerControlMode.Bot && botInput != null)
             {
                 return botInput.MoveVector;
+            }
+
+            if (controlMode == HotDynamitePlayerControlMode.NetworkDriven)
+            {
+                return networkMoveVector;
             }
 
             return Vector2.zero;
@@ -675,6 +794,16 @@ namespace HotDynamite
         private void OnDestroy()
         {
             DestroyBombVisual();
+        }
+
+        private void RefreshPhysicsSimulationState()
+        {
+            if (body == null || manager == null)
+            {
+                return;
+            }
+
+            body.simulated = ShouldSimulateLocally();
         }
     }
 }
