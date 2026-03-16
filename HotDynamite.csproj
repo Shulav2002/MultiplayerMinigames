@@ -54,7 +54,6 @@
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerControlMode.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteOnlineMatchController.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\ShaderPlayToggle.cs" />
-    <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteLobbyManager.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamiteBombSettings.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\HotDynamitePlayerInput.cs" />
     <Compile Include="Assets\games\HotDynamite\Scripts\Network\HotDynamiteNetworkMessages.cs" />
