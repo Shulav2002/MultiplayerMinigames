@@ -34,6 +34,7 @@ namespace HotDynamite.Networking
         public event Action<string, HotDynamiteMatchPreparePayload> MatchPrepareReceived;
         public event Action<string, HotDynamiteMatchStartPayload> MatchStartReceived;
         public event Action<string, HotDynamiteStateSnapshotPayload> StateSnapshotReceived;
+        public event Action<string, HotDynamiteExplosionPayload> ExplosionReceived;
         public event Action<string, HotDynamiteMatchEndPayload> MatchEndReceived;
 
         public string ServerUrl => serverUrl;
@@ -294,6 +295,9 @@ namespace HotDynamite.Networking
                 case HotDynamitePayloadKinds.StateSnapshot:
                     HandleStateSnapshotPayload(senderUserId, payloadJson);
                     break;
+                case HotDynamitePayloadKinds.Explosion:
+                    HandleExplosionPayload(senderUserId, payloadJson);
+                    break;
                 case HotDynamitePayloadKinds.MatchEnd:
                     HandleMatchEndPayload(senderUserId, payloadJson);
                     break;
@@ -448,6 +452,17 @@ namespace HotDynamite.Networking
             StateSnapshotReceived?.Invoke(senderUserId, payload);
         }
 
+        private void HandleExplosionPayload(string senderUserId, string payloadJson)
+        {
+            HotDynamiteExplosionPayload payload = JsonUtility.FromJson<HotDynamiteExplosionPayload>(payloadJson);
+            if (payload == null)
+            {
+                return;
+            }
+
+            ExplosionReceived?.Invoke(senderUserId, payload);
+        }
+
         private void HandleMatchEndPayload(string senderUserId, string payloadJson)
         {
             HotDynamiteMatchEndPayload payload = JsonUtility.FromJson<HotDynamiteMatchEndPayload>(payloadJson);
@@ -517,7 +532,6 @@ namespace HotDynamite.Networking
                 HostStatusChanged?.Invoke(IsHost, HostUserId, HostChairId);
             }
         }
-
         private void SetLobbyPhase(HotDynamiteLobbyPhase nextPhase)
         {
             if (LobbyPhase == nextPhase)

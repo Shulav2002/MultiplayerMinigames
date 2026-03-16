@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using HotDynamite.Networking;
@@ -57,6 +58,7 @@ namespace HotDynamite
         public bool LocalSimulationEnabled => localSimulationEnabled;
         public IReadOnlyList<HotDynamitePlayer> Players => allPlayers;
         public bool IsGameOver => gameOver;
+        public event Action<Vector2, Color> ExplosionOccurred;
 
         public float BombUrgency01
         {
@@ -278,7 +280,7 @@ namespace HotDynamite
                 return;
             }
 
-            HotDynamitePlayer randomHolder = alivePlayers[Random.Range(0, alivePlayers.Count)];
+            HotDynamitePlayer randomHolder = alivePlayers[UnityEngine.Random.Range(0, alivePlayers.Count)];
             SetBombHolder(randomHolder);
             bombTimer = bombFuseSeconds;
             bombPassLockUntil = Time.time + settings.PassCooldownSeconds;
@@ -347,7 +349,10 @@ namespace HotDynamite
                 return;
             }
 
-            SpawnExplosionAtBombHolder();
+            Vector2 explosionPosition = bombHolder.Position;
+            Color explosionColor = bombHolder.GetAppearanceColor();
+            ExplosionOccurred?.Invoke(explosionPosition, explosionColor);
+            SpawnExplosion(explosionPosition, explosionColor);
             EliminatePlayer(bombHolder);
 
             if (alivePlayers.Count <= 1)
@@ -359,28 +364,34 @@ namespace HotDynamite
             AssignBombToRandomAlivePlayer();
         }
 
-        private void SpawnExplosionAtBombHolder()
+        public void PlayExplosionEffect(Vector2 explosionPosition, Color explosionColor)
         {
-            if (explosionPrefab == null || bombHolder == null)
+            SpawnExplosion(explosionPosition, explosionColor);
+        }
+
+        private void SpawnExplosion(Vector2 explosionPosition, Color explosionColor)
+        {
+            if (explosionPrefab == null)
             {
                 return;
             }
 
-            Vector3 explosionPosition = new Vector3(bombHolder.Position.x, bombHolder.Position.y, 0f);
-            GameObject explosionInstance = Instantiate(explosionPrefab, explosionPosition, Quaternion.identity);
+            GameObject explosionInstance = Instantiate(
+                explosionPrefab,
+                new Vector3(explosionPosition.x, explosionPosition.y, 0f),
+                Quaternion.identity);
             if (explosionInstance == null)
             {
                 return;
             }
 
-            float oneShotDuration = ConfigureExplosionParticleSystems(explosionInstance.transform, bombHolder.GetAppearanceColor());
+            float oneShotDuration = ConfigureExplosionParticleSystems(explosionInstance.transform, explosionColor);
             float destroyDelay = explosionLifetimeSeconds > 0f ? explosionLifetimeSeconds : oneShotDuration;
             if (destroyDelay > 0f)
             {
                 Destroy(explosionInstance, destroyDelay);
             }
         }
-
         private static float ConfigureExplosionParticleSystems(Transform explosionRoot, Color holderColor)
         {
             float oneShotDuration = 0f;
@@ -458,7 +469,7 @@ namespace HotDynamite
                 }
 
                 seen++;
-                if (Random.Range(0, seen) == 0)
+                if (UnityEngine.Random.Range(0, seen) == 0)
                 {
                     picked = candidate;
                 }
@@ -551,6 +562,13 @@ namespace HotDynamite
                 bombHolderChairId = bombHolderChairId,
                 isMatchStarting = isMatchStarting,
                 matchStartDelayRemaining = MatchStartDelayRemaining,
+                explosionEventId = 0,
+                explosionX = 0f,
+                explosionY = 0f,
+                explosionColorR = 1f,
+                explosionColorG = 1f,
+                explosionColorB = 1f,
+                explosionColorA = 1f,
                 players = snapshots
             };
         }
@@ -758,3 +776,4 @@ namespace HotDynamite
         }
     }
 }
+

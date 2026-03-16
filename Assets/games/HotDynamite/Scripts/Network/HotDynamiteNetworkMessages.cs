@@ -29,6 +29,7 @@ namespace HotDynamite.Networking
         public const string MatchStart = "match_start";
         public const string PlayerInput = "player_input";
         public const string StateSnapshot = "state_snapshot";
+        public const string Explosion = "explosion";
         public const string MatchEnd = "match_end";
     }
 
@@ -182,6 +183,13 @@ namespace HotDynamite.Networking
         public int bombHolderChairId = -1;
         public bool isMatchStarting;
         public float matchStartDelayRemaining;
+        public int explosionEventId;
+        public float explosionX;
+        public float explosionY;
+        public float explosionColorR = 1f;
+        public float explosionColorG = 1f;
+        public float explosionColorB = 1f;
+        public float explosionColorA = 1f;
         public HotDynamitePlayerStateSnapshot[] players;
     }
 
@@ -192,6 +200,21 @@ namespace HotDynamite.Networking
         public string roomId;
         public string hostUserId;
         public int winningChairId = -1;
+    }
+
+    [Serializable]
+    public class HotDynamiteExplosionPayload
+    {
+        public string kind = HotDynamitePayloadKinds.Explosion;
+        public string roomId;
+        public string hostUserId;
+        public int eventId;
+        public float x;
+        public float y;
+        public float colorR = 1f;
+        public float colorG = 1f;
+        public float colorB = 1f;
+        public float colorA = 1f;
     }
 
     [Serializable]
@@ -208,3 +231,6 @@ namespace HotDynamite.Networking
         public string type = "leave";
     }
 }
+
+
+

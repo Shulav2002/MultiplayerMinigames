@@ -32,7 +32,8 @@ namespace HotDynamite.Networking
         private int snapshotTick;
         private int latestAppliedSnapshotTick = -1;
         private int localInputSequence;
-
+        private int nextExplosionEventId = 1;
+        private int latestAppliedExplosionEventId;
         public void Initialize(
             HotDynamiteGameManager gameManager,
             GameObject lobbyCanvas,
@@ -45,7 +46,13 @@ namespace HotDynamite.Networking
                 return;
             }
 
+            if (this.gameManager != null)
+            {
+                this.gameManager.ExplosionOccurred -= HandleHostExplosionOccurred;
+            }
+
             this.gameManager = gameManager;
+            this.gameManager.ExplosionOccurred += HandleHostExplosionOccurred;
             this.lobbyCanvas = lobbyCanvas;
             this.gameContainer = gameContainer;
 
@@ -100,6 +107,11 @@ namespace HotDynamite.Networking
 
         private void OnDestroy()
         {
+            if (gameManager != null)
+            {
+                gameManager.ExplosionOccurred -= HandleHostExplosionOccurred;
+            }
+
             Unsubscribe();
         }
 
@@ -114,6 +126,7 @@ namespace HotDynamite.Networking
             networkClient.RoomOccupancyChanged += HandleRoomOccupancyChanged;
             networkClient.MatchPrepareReceived += HandleMatchPrepareReceived;
             networkClient.StateSnapshotReceived += HandleStateSnapshotReceived;
+            networkClient.ExplosionReceived += HandleExplosionReceived;
             networkClient.MatchEndReceived += HandleMatchEndReceived;
             networkClient.RoomMessageReceived += HandleRoomMessageReceived;
             networkClient.Disconnected += HandleDisconnected;
@@ -132,6 +145,7 @@ namespace HotDynamite.Networking
             networkClient.RoomOccupancyChanged -= HandleRoomOccupancyChanged;
             networkClient.MatchPrepareReceived -= HandleMatchPrepareReceived;
             networkClient.StateSnapshotReceived -= HandleStateSnapshotReceived;
+            networkClient.ExplosionReceived -= HandleExplosionReceived;
             networkClient.MatchEndReceived -= HandleMatchEndReceived;
             networkClient.RoomMessageReceived -= HandleRoomMessageReceived;
             networkClient.Disconnected -= HandleDisconnected;
@@ -205,6 +219,24 @@ namespace HotDynamite.Networking
             latestAppliedSnapshotTick = payload.tick;
             gameManager.ApplyStateSnapshot(payload);
             LogDiagnostic($"Applied snapshot tick={payload.tick}. localPlayer={DescribeLocalPlayer()}.");
+        }
+
+        private void HandleExplosionReceived(string senderUserId, HotDynamiteExplosionPayload payload)
+        {
+            if (networkClient.IsHost || payload == null || !IsTrustedHostMessage(senderUserId, payload.roomId, payload.hostUserId))
+            {
+                return;
+            }
+
+            if (payload.eventId <= latestAppliedExplosionEventId)
+            {
+                return;
+            }
+
+            latestAppliedExplosionEventId = payload.eventId;
+            gameManager.PlayExplosionEffect(
+                new Vector2(payload.x, payload.y),
+                new Color(payload.colorR, payload.colorG, payload.colorB, payload.colorA));
         }
 
         private void HandleMatchEndReceived(string senderUserId, HotDynamiteMatchEndPayload payload)
@@ -369,6 +401,35 @@ namespace HotDynamite.Networking
             }
         }
 
+        private async void HandleHostExplosionOccurred(Vector2 explosionPosition, Color explosionColor)
+        {
+            if (!isInitialized || networkClient == null || !networkClient.IsHost || !matchRunning)
+            {
+                return;
+            }
+
+            HotDynamiteExplosionPayload payload = new HotDynamiteExplosionPayload
+            {
+                roomId = networkClient.CurrentRoomId,
+                hostUserId = networkClient.HostUserId,
+                eventId = nextExplosionEventId++,
+                x = explosionPosition.x,
+                y = explosionPosition.y,
+                colorR = explosionColor.r,
+                colorG = explosionColor.g,
+                colorB = explosionColor.b,
+                colorA = explosionColor.a
+            };
+
+            try
+            {
+                await networkClient.BroadcastToOthersAsync(JsonUtility.ToJson(payload));
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"HotDynamiteOnlineMatchController: Failed to broadcast explosion. {exception.Message}");
+            }
+        }
         private async void SendLocalInput()
         {
             HotDynamitePlayer localPlayer = FindLocalPlayer();
@@ -502,6 +563,8 @@ namespace HotDynamite.Networking
             snapshotTick = 0;
             latestAppliedSnapshotTick = -1;
             localInputSequence = 0;
+            nextExplosionEventId = 1;
+            latestAppliedExplosionEventId = 0;
         }
 
         private float GetAutoStartDelaySeconds()
