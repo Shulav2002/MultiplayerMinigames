@@ -93,6 +93,7 @@ namespace HotDynamite
         public HotDynamitePlayerControlMode ControlMode => controlMode;
         public int AppearanceIndex => appearanceIndex;
         public float FacingAngle => facingTransform != null ? facingTransform.localEulerAngles.z : transform.localEulerAngles.z;
+        public float BombAnimationCountdownSeconds => Mathf.Max(0f, bombAnimationCountdownSeconds);
         private float PlayerBounceSpeed => settings != null ? settings.PlayerBounceSpeed : DefaultPlayerBounceSpeed;
         private float PlayerBounceMaxSpeed => settings != null ? settings.PlayerBounceMaxSpeed : DefaultPlayerBounceMaxSpeed;
         private float PlayerBounceDecay => settings != null ? settings.PlayerBounceDecay : DefaultPlayerBounceDecay;

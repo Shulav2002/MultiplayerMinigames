@@ -28,9 +28,13 @@ namespace HotDynamite
 
         [SerializeField] private AudioClip startWhistleClip;
         [SerializeField] private AudioClip playerCollisionClip;
+        [SerializeField] private AudioClip bombTimerLoopClip;
+        [SerializeField] private AudioClip explosionClip;
         [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
         [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
         [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.7f;
+        [SerializeField, Range(0f, 1f)] private float bombTimerLoopVolume = 0.75f;
+        [SerializeField, Range(0f, 1f)] private float explosionVolume = 0.95f;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
         private readonly List<HotDynamitePlayer> allPlayers = new List<HotDynamitePlayer>();
@@ -46,6 +50,7 @@ namespace HotDynamite
         private bool isMatchStarting;
         private AudioSource musicSource;
         private AudioSource sfxSource;
+        private AudioSource bombTimerLoopSource;
         private float lastCollisionSfxTime = float.NegativeInfinity;
         private HotDynamiteGameSettings baseSettings;
         private bool localSimulationEnabled = true;
@@ -152,6 +157,8 @@ namespace HotDynamite
 
         private void Update()
         {
+            UpdateBombTimerLoopState();
+
             if (!localSimulationEnabled)
             {
                 return;
@@ -164,6 +171,7 @@ namespace HotDynamite
                 {
                     isMatchStarting = false;
                     PlayStartWhistle();
+                    UpdateBombTimerLoopState();
                 }
                 return;
             }
@@ -174,6 +182,11 @@ namespace HotDynamite
             }
 
             TickBombTimer();
+        }
+
+        private void OnDisable()
+        {
+            StopBombTimerLoop();
         }
 
         private bool TryInitializeGame()
@@ -361,6 +374,7 @@ namespace HotDynamite
 
             Vector2 explosionPosition = bombHolder.Position;
             Color explosionColor = bombHolder.GetAppearanceColor();
+            StopBombTimerLoop();
             ExplosionOccurred?.Invoke(explosionPosition, explosionColor);
             SpawnExplosion(explosionPosition, explosionColor);
             EliminatePlayer(bombHolder);
@@ -376,11 +390,14 @@ namespace HotDynamite
 
         public void PlayExplosionEffect(Vector2 explosionPosition, Color explosionColor)
         {
+            StopBombTimerLoop();
             SpawnExplosion(explosionPosition, explosionColor);
         }
 
         private void SpawnExplosion(Vector2 explosionPosition, Color explosionColor)
         {
+            PlayExplosionSfx();
+
             if (explosionPrefab == null)
             {
                 return;
@@ -620,6 +637,8 @@ namespace HotDynamite
             {
                 PlayStartWhistle();
             }
+
+            UpdateBombTimerLoopState();
         }
 
         public void NotifyPlayerCollision()
@@ -670,6 +689,11 @@ namespace HotDynamite
             {
                 sfxSource = CreateAudioSource(loop: false);
             }
+
+            if (bombTimerLoopSource == null)
+            {
+                bombTimerLoopSource = CreateAudioSource(loop: true);
+            }
         }
 
         private AudioSource CreateAudioSource(bool loop)
@@ -716,6 +740,71 @@ namespace HotDynamite
             sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
         }
 
+        private void PlayExplosionSfx()
+        {
+            if (explosionClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(explosionClip, explosionVolume);
+        }
+
+        private void UpdateBombTimerLoopState()
+        {
+            if (!ShouldPlayBombTimerLoop())
+            {
+                StopBombTimerLoop();
+                return;
+            }
+
+            EnsureAudioSources();
+            if (bombTimerLoopSource == null)
+            {
+                return;
+            }
+
+            if (bombTimerLoopSource.clip != bombTimerLoopClip)
+            {
+                bombTimerLoopSource.clip = bombTimerLoopClip;
+            }
+
+            bombTimerLoopSource.volume = bombTimerLoopVolume;
+            if (!bombTimerLoopSource.isPlaying)
+            {
+                bombTimerLoopSource.Play();
+            }
+        }
+
+        private bool ShouldPlayBombTimerLoop()
+        {
+            if (bombTimerLoopClip == null || gameOver || isMatchStarting || bombHolder == null)
+            {
+                return false;
+            }
+
+            float countdownThreshold = bombHolder.BombAnimationCountdownSeconds;
+            return countdownThreshold > 0f
+                && BombTimeRemaining > 0f
+                && BombTimeRemaining <= countdownThreshold;
+        }
+
+        private void StopBombTimerLoop()
+        {
+            if (bombTimerLoopSource == null || !bombTimerLoopSource.isPlaying)
+            {
+                return;
+            }
+
+            bombTimerLoopSource.Stop();
+        }
+
         private void PrepareRuntimeSettings(int totalPlayers, int humanPlayers)
         {
             if (baseSettings == null)
@@ -747,6 +836,7 @@ namespace HotDynamite
             gameOver = false;
             isMatchStarting = false;
             matchStartDelayTimer = 0f;
+            StopBombTimerLoop();
         }
 
         private static int CountHumanParticipants(HotDynamiteRosterEntry[] roster)

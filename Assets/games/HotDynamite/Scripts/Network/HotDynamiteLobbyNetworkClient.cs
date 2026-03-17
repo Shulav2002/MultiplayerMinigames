@@ -118,11 +118,37 @@ namespace HotDynamite.Networking
 
         public Task JoinAsync(CancellationToken cancellationToken = default)
         {
+            return JoinAsync(null, HotDynamiteRoomModes.Random, false, cancellationToken);
+        }
+
+        public Task JoinPrivateAsync(string roomId, bool createRoom, CancellationToken cancellationToken = default)
+        {
+            return JoinAsync(roomId, HotDynamiteRoomModes.Private, createRoom, cancellationToken);
+        }
+
+        private Task JoinAsync(string roomId, string requestedRoomMode, bool createRoom, CancellationToken cancellationToken)
+        {
             SetLobbyPhase(HotDynamiteLobbyPhase.JoiningRoom);
+
+            string normalizedRoomMode = string.IsNullOrWhiteSpace(requestedRoomMode)
+                ? HotDynamiteRoomModes.Random
+                : requestedRoomMode.Trim().ToLowerInvariant();
+            string normalizedRoomId = string.IsNullOrWhiteSpace(roomId)
+                ? null
+                : roomId.Trim();
+
+            roomMode = normalizedRoomMode;
+
             HotDynamiteJoinRequest request = new HotDynamiteJoinRequest
             {
                 capacity = roomCapacity,
-                game_id = gameId
+                game_id = gameId,
+                room_mode = normalizedRoomMode,
+                room_id = normalizedRoomId,
+                create_room = createRoom,
+                roomMode = normalizedRoomMode,
+                roomId = normalizedRoomId,
+                createRoom = createRoom
             };
 
             string payload = JsonUtility.ToJson(request);
@@ -775,3 +801,4 @@ namespace HotDynamite.Networking
         }
     }
 }
+

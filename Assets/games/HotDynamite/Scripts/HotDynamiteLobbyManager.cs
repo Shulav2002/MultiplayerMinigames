@@ -1,17 +1,25 @@
+using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using HotDynamite.Networking;
 
 #if UNITY_EDITOR
-
 using UnityEditor;
-
 #endif
 
 namespace HotDynamite.Lobby
 {
     public class HotDynamiteLobbyManager : MonoBehaviour
     {
+        private enum RoomPanelMode
+        {
+            Hidden = 0,
+            JoinEntry = 1,
+            PrivateWaitingHost = 2,
+            PrivateWaitingGuest = 3
+        }
+
         [Header("Scene Loading")]
         [Tooltip("The name of the scene to load. E.g., 'HotDynamite'")]
         [SerializeField] private string gameSceneName = "HotDynamite";
@@ -23,36 +31,46 @@ namespace HotDynamite.Lobby
         [Tooltip("The parent GameObject containing the game elements (GameManager, Level, etc) to turn on.")]
         [SerializeField] private GameObject gameContainer;
 
+        [Tooltip("Panel reused for join entry and private-room waiting.")]
+        [SerializeField] private GameObject joinRoomPopupPanel;
+
+        [Tooltip("Input or text component used to enter and display room ids.")]
+        [SerializeField] private Component roomIdInputField;
+
+        [Tooltip("Primary popup action label component.")]
+        [SerializeField] private Component roomPopupActionLabel;
+
+        [Tooltip("Primary popup action button component.")]
+        [SerializeField] private Component roomPopupPrimaryButton;
+
+        [Header("Room Popup Labels")]
+        [SerializeField] private string joinRoomConfirmLabel = "Join";
+        [SerializeField] private string hostStartLabel = "Start";
+        [SerializeField] private string guestWaitingLabel = "Waiting...";
+
         [Header("Game Manager Reference")]
-        [Tooltip("Reference to the GameManager to call StartGame() on.")]
         [SerializeField] private HotDynamiteGameManager gameManager;
 
         [Header("Networking")]
-        [Tooltip("When enabled, Play connects to the backend and joins a room instead of starting local immediately.")]
         [SerializeField] private bool useNetworkLobby = true;
-
-        [Tooltip("Network client used for backend lobby communication.")]
         [SerializeField] private HotDynamiteLobbyNetworkClient networkClient;
-
-        [Tooltip("Coordinates the host-authoritative online match flow once a room is joined.")]
         [SerializeField] private HotDynamiteOnlineMatchController onlineMatchController;
-
-        [Tooltip("Starts the local game automatically once the room is full. Leave disabled until gameplay sync is implemented.")]
         [SerializeField] private bool startLocalGameWhenRoomReady = false;
 
         [Header("Offline With Bots")]
-        [Tooltip("Total participants for offline play. One human and the rest bots is the default setup.")]
         [SerializeField, Min(2)] private int offlineTotalPlayers = 4;
-
-        [Tooltip("Number of local human players for offline play.")]
         [SerializeField, Min(1)] private int offlineHumanPlayers = 1;
 
         private bool joinRequestInFlight;
+        private RoomPanelMode roomPanelMode;
+        private int currentOccupiedSeats;
+        private int currentCapacity;
 
         private void Start()
         {
             EnsureNetworkClient();
             EnsureOnlineMatchController();
+            EnsureRoomUiReferences();
 
             if (useNetworkLobby && (networkClient == null || onlineMatchController == null))
             {
@@ -63,12 +81,17 @@ namespace HotDynamite.Lobby
             SubscribeToNetworkEvents();
             InitializeOnlineMatchController();
 
-            // Ensure proper initial state
             if (lobbyCanvas != null)
+            {
                 lobbyCanvas.SetActive(true);
+            }
 
             if (gameContainer != null)
+            {
                 gameContainer.SetActive(false);
+            }
+
+            HideRoomPanel();
         }
 
         private void OnDestroy()
@@ -76,10 +99,6 @@ namespace HotDynamite.Lobby
             UnsubscribeFromNetworkEvents();
         }
 
-        /// <summary>
-        /// Call this function from your "Play" UI Button.
-        /// It hides the lobby, turns on the game container, and starts the game.
-        /// </summary>
         public async void OnPlayButtonClicked()
         {
             if (!useNetworkLobby)
@@ -88,6 +107,74 @@ namespace HotDynamite.Lobby
                 return;
             }
 
+            await BeginOnlineJoinAsync(null, createRoom: false, usePrivateRoom: false);
+        }
+
+        public void OnPlayWithBotsButtonClicked()
+        {
+            int totalPlayers = Mathf.Max(2, offlineTotalPlayers);
+            int humanPlayers = Mathf.Clamp(offlineHumanPlayers, 1, totalPlayers);
+            StartGameLocalFlow(totalPlayers, humanPlayers);
+        }
+
+        public void OnOpenJoinRoomPopupClicked()
+        {
+            EnsureRoomUiReferences();
+            ShowJoinEntryPanel();
+        }
+
+        public async void OnOpenCreateRoomPopupClicked()
+        {
+            if (!useNetworkLobby)
+            {
+                return;
+            }
+
+            string roomId = GenerateRoomId();
+            await BeginOnlineJoinAsync(roomId, createRoom: true, usePrivateRoom: true);
+        }
+
+        public void OnRoomPopupConfirmButtonClicked()
+        {
+            switch (roomPanelMode)
+            {
+                case RoomPanelMode.JoinEntry:
+                    SubmitJoinRoomRequest();
+                    break;
+                case RoomPanelMode.PrivateWaitingHost:
+                    StartHostedPrivateMatch();
+                    break;
+            }
+        }
+
+        public void OnCloseJoinRoomPopupClicked()
+        {
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                HideRoomPanel();
+            }
+        }
+
+        public void LoadGameScene()
+        {
+            Debug.Log($"Loading game scene: {gameSceneName}");
+            SceneManager.LoadScene(gameSceneName);
+        }
+
+        private async void SubmitJoinRoomRequest()
+        {
+            string roomId = GetTrimmedRoomId();
+            if (string.IsNullOrEmpty(roomId))
+            {
+                Debug.LogError("HotDynamiteLobbyManager: Room id is required to join a private room.");
+                return;
+            }
+
+            await BeginOnlineJoinAsync(roomId, createRoom: false, usePrivateRoom: true);
+        }
+
+        private async System.Threading.Tasks.Task BeginOnlineJoinAsync(string roomId, bool createRoom, bool usePrivateRoom)
+        {
             EnsureNetworkClient();
             if (networkClient == null)
             {
@@ -110,38 +197,47 @@ namespace HotDynamite.Lobby
                     await networkClient.ConnectAsync();
                 }
 
-                if (!networkClient.IsInRoom)
+                if (networkClient.IsInRoom)
                 {
-                    Debug.Log($"HotDynamiteLobbyManager: Joining room for game `{networkClient.GameId}` (capacity {networkClient.RoomCapacity})...");
+                    Debug.Log($"HotDynamiteLobbyManager: Already in room `{networkClient.CurrentRoomId}`.");
+                    joinRequestInFlight = false;
+                    return;
+                }
+
+                if (usePrivateRoom)
+                {
+                    string action = createRoom ? "Creating" : "Joining";
+                    Debug.Log($"HotDynamiteLobbyManager: {action} private room `{roomId}` for game `{networkClient.GameId}`.");
+                    await networkClient.JoinPrivateAsync(roomId, createRoom);
+                }
+                else
+                {
+                    Debug.Log($"HotDynamiteLobbyManager: Joining random room for game `{networkClient.GameId}` (capacity {networkClient.RoomCapacity})...");
                     await networkClient.JoinAsync();
                 }
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
                 joinRequestInFlight = false;
                 Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
             }
         }
 
-        /// <summary>
-        /// Call this function from the "Play With Bots" UI Button.
-        /// It always starts an offline match, regardless of online lobby settings.
-        /// </summary>
-        public void OnPlayWithBotsButtonClicked()
+        private void StartHostedPrivateMatch()
         {
-            int totalPlayers = Mathf.Max(2, offlineTotalPlayers);
-            int humanPlayers = Mathf.Clamp(offlineHumanPlayers, 1, totalPlayers);
-            StartGameLocalFlow(totalPlayers, humanPlayers);
-        }
+            if (onlineMatchController == null)
+            {
+                return;
+            }
 
-        /// <summary>
-        /// Call this function from your "Play" UI Button if you are using separate scenes.
-        /// It will load the specified Game Scene.
-        /// </summary>
-        public void LoadGameScene()
-        {
-            Debug.Log($"Loading game scene: {gameSceneName}");
-            SceneManager.LoadScene(gameSceneName);
+            if (!onlineMatchController.CanHostStartMatch)
+            {
+                Debug.Log("HotDynamiteLobbyManager: Waiting for another player before starting the room.");
+                return;
+            }
+
+            HideRoomPanel();
+            onlineMatchController.StartHostedMatchNow();
         }
 
         private void EnsureNetworkClient()
@@ -164,14 +260,290 @@ namespace HotDynamite.Lobby
             onlineMatchController = GetComponent<HotDynamiteOnlineMatchController>();
         }
 
-#if UNITY_EDITOR
+        private void EnsureRoomUiReferences()
+        {
+            if (joinRoomPopupPanel == null)
+            {
+                Transform popupPanel = FindInActiveScene("JoinPopUpPanel");
+                if (popupPanel != null)
+                {
+                    joinRoomPopupPanel = popupPanel.gameObject;
+                }
+            }
 
+            if (roomIdInputField == null)
+            {
+                Transform inputTransform = FindInActiveScene("RoomIdInputField");
+                if (inputTransform != null)
+                {
+                    roomIdInputField = FindComponentByTypeName(inputTransform.gameObject, "TMP_InputField");
+                }
+            }
+
+            if (roomPopupPrimaryButton == null && joinRoomPopupPanel != null)
+            {
+                Transform popupPrimaryButtonTransform = FindInChildren(joinRoomPopupPanel.transform, "Join");
+                if (popupPrimaryButtonTransform != null)
+                {
+                    roomPopupPrimaryButton = FindComponentByTypeName(popupPrimaryButtonTransform.gameObject, "Button");
+                }
+            }
+
+            if (roomPopupActionLabel == null && joinRoomPopupPanel != null)
+            {
+                Transform popupPrimaryButtonTransform = FindInChildren(joinRoomPopupPanel.transform, "Join");
+                if (popupPrimaryButtonTransform != null)
+                {
+                    roomPopupActionLabel = FindTextComponent(popupPrimaryButtonTransform.gameObject);
+                }
+            }
+        }
+
+        private void ShowJoinEntryPanel()
+        {
+            roomPanelMode = RoomPanelMode.JoinEntry;
+            SetJoinRoomPopupVisible(true);
+            SetRoomIdFieldReadOnly(false);
+            SetRoomIdFieldText(string.Empty);
+            SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
+            SetComponentInteractable(roomPopupPrimaryButton, true);
+        }
+
+        private void ShowPrivateWaitingPanel(bool isHost, string roomId)
+        {
+            roomPanelMode = isHost ? RoomPanelMode.PrivateWaitingHost : RoomPanelMode.PrivateWaitingGuest;
+            SetJoinRoomPopupVisible(true);
+            SetRoomIdFieldReadOnly(true);
+            SetRoomIdFieldText(roomId);
+            RefreshPrivateWaitingUi();
+        }
+
+        private void RefreshPrivateWaitingUi()
+        {
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost)
+            {
+                bool canStart = onlineMatchController != null
+                    && onlineMatchController.CanHostStartMatch
+                    && currentOccupiedSeats >= 2;
+                string label = canStart
+                    ? hostStartLabel
+                    : $"Waiting ({currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)})";
+                SetComponentText(roomPopupActionLabel, label);
+                SetComponentInteractable(roomPopupPrimaryButton, canStart);
+            }
+            else if (roomPanelMode == RoomPanelMode.PrivateWaitingGuest)
+            {
+                string label = $"Waiting ({currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)})";
+                SetComponentText(roomPopupActionLabel, label);
+                SetComponentInteractable(roomPopupPrimaryButton, false);
+            }
+        }
+
+        private void HideRoomPanel()
+        {
+            roomPanelMode = RoomPanelMode.Hidden;
+            SetJoinRoomPopupVisible(false);
+        }
+
+        private void SetJoinRoomPopupVisible(bool visible)
+        {
+            EnsureRoomUiReferences();
+            if (joinRoomPopupPanel != null)
+            {
+                joinRoomPopupPanel.SetActive(visible);
+            }
+        }
+
+        private string GetTrimmedRoomId()
+        {
+            string value = GetComponentText(roomIdInputField);
+            return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+        }
+
+        private void SetRoomIdFieldText(string value)
+        {
+            SetComponentText(roomIdInputField, value ?? string.Empty);
+        }
+
+        private void SetRoomIdFieldReadOnly(bool isReadOnly)
+        {
+            SetComponentBoolProperty(roomIdInputField, "readOnly", isReadOnly);
+        }
+
+        private static string GenerateRoomId()
+        {
+            return Guid.NewGuid().ToString("N").Substring(0, 6).ToUpperInvariant();
+        }
+
+        private static Transform FindInActiveScene(string name)
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            if (!scene.IsValid())
+            {
+                return null;
+            }
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                Transform found = FindInChildren(roots[i].transform, name);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Transform FindInChildren(Transform root, string name)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root.name == name)
+            {
+                return root;
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindInChildren(root.GetChild(i), name);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Component FindComponentByTypeName(GameObject target, string typeName)
+        {
+            if (target == null || string.IsNullOrEmpty(typeName))
+            {
+                return null;
+            }
+
+            Component[] components = target.GetComponents<Component>();
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component component = components[i];
+                if (component != null && component.GetType().Name == typeName)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        private static Component FindTextComponent(GameObject root)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            Component[] components = root.GetComponentsInChildren<Component>(true);
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component component = components[i];
+                if (component == null)
+                {
+                    continue;
+                }
+
+                if (GetTextProperty(component.GetType()) != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        private static string GetComponentText(Component component)
+        {
+            if (component == null)
+            {
+                return string.Empty;
+            }
+
+            PropertyInfo property = GetTextProperty(component.GetType());
+            if (property == null)
+            {
+                return string.Empty;
+            }
+
+            object value = property.GetValue(component, null);
+            return value as string ?? string.Empty;
+        }
+
+        private static void SetComponentText(Component component, string value)
+        {
+            if (component == null)
+            {
+                return;
+            }
+
+            PropertyInfo property = GetTextProperty(component.GetType());
+            if (property == null || !property.CanWrite)
+            {
+                return;
+            }
+
+            property.SetValue(component, value, null);
+        }
+
+        private static PropertyInfo GetTextProperty(Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            PropertyInfo property = type.GetProperty("text", BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(string) || !property.CanRead)
+            {
+                return null;
+            }
+
+            return property;
+        }
+
+        private static void SetComponentInteractable(Component component, bool value)
+        {
+            SetComponentBoolProperty(component, "interactable", value);
+        }
+
+        private static void SetComponentBoolProperty(Component component, string propertyName, bool value)
+        {
+            if (component == null || string.IsNullOrEmpty(propertyName))
+            {
+                return;
+            }
+
+            PropertyInfo property = component.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(bool) || !property.CanWrite)
+            {
+                return;
+            }
+
+            property.SetValue(component, value, null);
+        }
+
+#if UNITY_EDITOR
         private void OnValidate()
         {
             if (Application.isPlaying)
             {
                 return;
             }
+
+            EnsureRoomUiReferences();
 
             if (!useNetworkLobby)
             {
@@ -209,7 +581,6 @@ namespace HotDynamite.Lobby
                 EditorUtility.SetDirty(gameObject);
             }
         }
-
 #endif
 
         private void InitializeOnlineMatchController()
@@ -269,12 +640,25 @@ namespace HotDynamite.Lobby
         private void HandleJoinedRoom(HotDynamiteJoinedMessage joined)
         {
             joinRequestInFlight = false;
+            currentCapacity = joined.capacity;
+            currentOccupiedSeats = CountOccupiedSeats(joined.chairs);
             Debug.Log($"HotDynamiteLobbyManager: Joined room `{joined.roomId}` as chair {joined.chairId}.");
+
+            if (networkClient != null && networkClient.RoomMode == HotDynamiteRoomModes.Private)
+            {
+                ShowPrivateWaitingPanel(networkClient.IsHost, joined.roomId);
+                return;
+            }
+
+            HideRoomPanel();
         }
 
         private void HandleRoomOccupancyChanged(int occupiedSeats, int capacity, string[] chairs)
         {
+            currentOccupiedSeats = occupiedSeats;
+            currentCapacity = capacity;
             Debug.Log($"HotDynamiteLobbyManager: Room occupancy {occupiedSeats}/{capacity}.");
+            RefreshPrivateWaitingUi();
         }
 
         private void HandleRoomReady(string[] chairs)
@@ -302,7 +686,27 @@ namespace HotDynamite.Lobby
         private void HandleDisconnected(WebSocketCloseReason closeReason)
         {
             joinRequestInFlight = false;
+            HideRoomPanel();
             Debug.Log($"HotDynamiteLobbyManager: Disconnected from backend. Status: {closeReason.Status}, Description: {closeReason.Description}");
+        }
+
+        private static int CountOccupiedSeats(string[] chairs)
+        {
+            if (chairs == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            for (int i = 0; i < chairs.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(chairs[i]))
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         private void StartGameLocalFlow()
@@ -314,15 +718,16 @@ namespace HotDynamite.Lobby
 
         private void StartGameLocalFlow(int totalPlayers, int humanPlayers)
         {
-            // 1. Hide Lobby UI
             if (lobbyCanvas != null)
+            {
                 lobbyCanvas.SetActive(false);
+            }
 
-            // 2. Show Game Objects
             if (gameContainer != null)
+            {
                 gameContainer.SetActive(true);
+            }
 
-            // 3. Tell the Game Manager to start the game flow
             if (gameManager != null)
             {
                 gameManager.StartGameLocal(totalPlayers, humanPlayers);

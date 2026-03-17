@@ -9,7 +9,7 @@ namespace HotDynamite.Networking
     {
         [Header("Match Flow")]
         [SerializeField, Min(1f)] private float randomModeAutoStartSeconds = 4f;
-        [SerializeField, Min(1f)] private float privateModeAutoStartSeconds = 10f;
+
         [SerializeField, Min(0.1f)] private float matchStartCountdownSeconds = 3f;
         [Header("Networking")]
         [SerializeField, Min(0.02f)] private float inputSendIntervalSeconds = 0.05f;
@@ -34,6 +34,14 @@ namespace HotDynamite.Networking
         private int localInputSequence;
         private int nextExplosionEventId = 1;
         private int latestAppliedExplosionEventId;
+
+        public bool CanHostStartMatch => isInitialized
+            && networkClient != null
+            && networkClient.IsHost
+            && networkClient.IsInRoom
+            && networkClient.RoomMode == HotDynamiteRoomModes.Private
+            && !matchPreparing
+            && !matchRunning;
         public void Initialize(
             HotDynamiteGameManager gameManager,
             GameObject lobbyCanvas,
@@ -161,8 +169,16 @@ namespace HotDynamite.Networking
 
             if (networkClient.IsHost)
             {
-                hostAutoStartAt = Time.time + GetAutoStartDelaySeconds();
-                LogDiagnostic($"Host auto-start armed for {hostAutoStartAt:0.00} (in {GetAutoStartDelaySeconds():0.00}s).");
+                if (networkClient.RoomMode == HotDynamiteRoomModes.Private)
+                {
+                    hostAutoStartAt = -1f;
+                    LogDiagnostic("Private room joined by host. Waiting for manual start.");
+                }
+                else
+                {
+                    hostAutoStartAt = Time.time + randomModeAutoStartSeconds;
+                    LogDiagnostic($"Host auto-start armed for {hostAutoStartAt:0.00} (in {randomModeAutoStartSeconds:0.00}s).");
+                }
             }
         }
 
@@ -172,6 +188,12 @@ namespace HotDynamite.Networking
 
             if (!networkClient.IsHost || matchPreparing || matchRunning)
             {
+                return;
+            }
+
+            if (networkClient.RoomMode == HotDynamiteRoomModes.Private)
+            {
+                LogDiagnostic("Private room occupancy changed. Waiting for host manual start.");
                 return;
             }
 
@@ -282,6 +304,16 @@ namespace HotDynamite.Networking
             ResetMatchState();
         }
 
+        public void StartHostedMatchNow()
+        {
+            if (!CanHostStartMatch)
+            {
+                LogDiagnostic("Manual host start ignored because the host is not in a startable state.");
+                return;
+            }
+
+            StartHostMatchPreparation();
+        }
         private async void StartHostMatchPreparation()
         {
             if (!isInitialized || !networkClient.IsHost || matchPreparing || matchRunning)
@@ -567,13 +599,6 @@ namespace HotDynamite.Networking
             latestAppliedExplosionEventId = 0;
         }
 
-        private float GetAutoStartDelaySeconds()
-        {
-            return networkClient.RoomMode == HotDynamiteRoomModes.Private
-                ? privateModeAutoStartSeconds
-                : randomModeAutoStartSeconds;
-        }
-
         private bool IsTrustedHostMessage(string senderUserId, string roomId, string hostUserId)
         {
             if (networkClient == null)
@@ -601,3 +626,6 @@ namespace HotDynamite.Networking
         }
     }
 }
+
+
+

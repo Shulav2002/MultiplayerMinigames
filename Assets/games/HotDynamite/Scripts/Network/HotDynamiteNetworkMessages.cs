@@ -223,6 +223,12 @@ namespace HotDynamite.Networking
         public string type = "join";
         public int capacity;
         public string game_id;
+        public string room_mode;
+        public string room_id;
+        public bool create_room;
+        public string roomMode;
+        public string roomId;
+        public bool createRoom;
     }
 
     [Serializable]
@@ -231,6 +237,7 @@ namespace HotDynamite.Networking
         public string type = "leave";
     }
 }
+
 
 
 
