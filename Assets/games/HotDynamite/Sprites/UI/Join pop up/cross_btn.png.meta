@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6dcbbe97def52f747a991dd4f348625f
+guid: 3ac716fda58f1974aafcb50412bb6a26
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -302114269839562345
-    second: Mockup2_0
+      213: 3454878487551440887
+    second: cross_btn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Mockup2_0
+      name: cross_btn_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1280
-        height: 720
+        width: 70
+        height: 70
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 799e2a81cacaecbf0800000000000000
-      internalID: -302114269839562345
+      spriteID: 7f774a00ea132ff20800000000000000
+      internalID: 3454878487551440887
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Mockup2_0: -302114269839562345
+      cross_btn_0: 3454878487551440887
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 36eb6157c7374674d8d5093ae2102b07
+guid: 00b8c9a0846c30249801b0812363d946
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4671545126597430872
-    second: Resume_menu_0
+      213: 6848631630940714629
+    second: seting_btn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 47
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Resume_menu_0
+      name: seting_btn_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 650
-        height: 515
+        x: 1
+        y: 2
+        width: 61
+        height: 61
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 85e0c0faa89a4d040800000000000000
-      internalID: 4671545126597430872
+      spriteID: 586b9b7ce2a3b0f50800000000000000
+      internalID: 6848631630940714629
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Resume_menu_0: 4671545126597430872
+      seting_btn_0: 6848631630940714629
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d26812e3980605e4884f6da7bf1faa7e
+guid: 4fe4fea29174e30468458bfd8ee04886
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6529909481953654932
-    second: Rock1_0
+      213: -2263947187166930929
+    second: joining_btn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 47
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Rock1_0
+      name: joining_btn_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 8
-        height: 8
+        x: 11
+        y: 19
+        width: 235
+        height: 93
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4987d4fa316ee9a50800000000000000
-      internalID: 6529909481953654932
+      spriteID: f089ba63708d490e0800000000000000
+      internalID: -2263947187166930929
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Rock1_0: 6529909481953654932
+      joining_btn_0: -2263947187166930929
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
