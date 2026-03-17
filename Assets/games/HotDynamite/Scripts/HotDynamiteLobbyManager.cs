@@ -40,6 +40,13 @@ namespace HotDynamite.Lobby
         [Tooltip("Starts the local game automatically once the room is full. Leave disabled until gameplay sync is implemented.")]
         [SerializeField] private bool startLocalGameWhenRoomReady = false;
 
+        [Header("Offline With Bots")]
+        [Tooltip("Total participants for offline play. One human and the rest bots is the default setup.")]
+        [SerializeField, Min(2)] private int offlineTotalPlayers = 4;
+
+        [Tooltip("Number of local human players for offline play.")]
+        [SerializeField, Min(1)] private int offlineHumanPlayers = 1;
+
         private bool joinRequestInFlight;
 
         private void Start()
@@ -114,6 +121,17 @@ namespace HotDynamite.Lobby
                 joinRequestInFlight = false;
                 Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
             }
+        }
+
+        /// <summary>
+        /// Call this function from the "Play With Bots" UI Button.
+        /// It always starts an offline match, regardless of online lobby settings.
+        /// </summary>
+        public void OnPlayWithBotsButtonClicked()
+        {
+            int totalPlayers = Mathf.Max(2, offlineTotalPlayers);
+            int humanPlayers = Mathf.Clamp(offlineHumanPlayers, 1, totalPlayers);
+            StartGameLocalFlow(totalPlayers, humanPlayers);
         }
 
         /// <summary>
@@ -289,6 +307,13 @@ namespace HotDynamite.Lobby
 
         private void StartGameLocalFlow()
         {
+            StartGameLocalFlow(
+                offlineTotalPlayers > 0 ? offlineTotalPlayers : 4,
+                offlineHumanPlayers > 0 ? offlineHumanPlayers : 1);
+        }
+
+        private void StartGameLocalFlow(int totalPlayers, int humanPlayers)
+        {
             // 1. Hide Lobby UI
             if (lobbyCanvas != null)
                 lobbyCanvas.SetActive(false);
@@ -300,7 +325,7 @@ namespace HotDynamite.Lobby
             // 3. Tell the Game Manager to start the game flow
             if (gameManager != null)
             {
-                gameManager.StartGameLocal();
+                gameManager.StartGameLocal(totalPlayers, humanPlayers);
             }
             else
             {

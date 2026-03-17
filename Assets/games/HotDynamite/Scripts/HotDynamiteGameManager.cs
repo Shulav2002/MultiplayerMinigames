@@ -87,7 +87,17 @@ namespace HotDynamite
 
         public void StartGameLocal()
         {
-            PrepareRuntimeSettings(baseSettings != null ? baseSettings.ClampedTotalPlayers : 4, baseSettings != null ? baseSettings.ClampedHumanPlayers : 1);
+            StartGameLocal(
+                baseSettings != null ? baseSettings.ClampedTotalPlayers : 4,
+                baseSettings != null ? baseSettings.ClampedHumanPlayers : 1);
+        }
+
+        public void StartGameLocal(int totalPlayers, int humanPlayers)
+        {
+            totalPlayers = Mathf.Max(2, totalPlayers);
+            humanPlayers = Mathf.Clamp(humanPlayers, 1, totalPlayers);
+
+            PrepareRuntimeSettings(totalPlayers, humanPlayers);
             localSimulationEnabled = true;
             if (!TryInitializeGame())
             {
