@@ -64,6 +64,7 @@ namespace HotDynamite
         public IReadOnlyList<HotDynamitePlayer> Players => allPlayers;
         public bool IsGameOver => gameOver;
         public event Action<Vector2, Color> ExplosionOccurred;
+        public event Action<int> GameEnded;
 
         public float BombUrgency01
         {
@@ -267,10 +268,14 @@ namespace HotDynamite
                 Transform parent = playerParent != null ? playerParent : transform;
                 HotDynamitePlayer player = Instantiate(playerPrefab, position, Quaternion.identity, parent);
                 bool isHuman = i < humans;
-                player.Initialize(this, settings, isHuman);
+                HotDynamitePlayerControlMode controlMode = isHuman
+                    ? HotDynamitePlayerControlMode.LocalHuman
+                    : HotDynamitePlayerControlMode.Bot;
+                player.Initialize(this, settings, controlMode, chairId: i, isBotParticipant: !isHuman);
                 player.SetAppearanceIndex(i);
                 alivePlayers.Add(player);
                 allPlayers.Add(player);
+                playersByChair[i] = player;
             }
         }
 
@@ -382,6 +387,7 @@ namespace HotDynamite
             if (alivePlayers.Count <= 1)
             {
                 gameOver = true;
+                GameEnded?.Invoke(FindWinningChairFromAlivePlayers());
                 return;
             }
 
@@ -458,6 +464,20 @@ namespace HotDynamite
             }
         }
 
+
+        private int FindWinningChairFromAlivePlayers()
+        {
+            for (int i = 0; i < alivePlayers.Count; i++)
+            {
+                HotDynamitePlayer player = alivePlayers[i];
+                if (player != null && player.IsAlive)
+                {
+                    return player.ChairId;
+                }
+            }
+
+            return -1;
+        }
         public HotDynamitePlayer GetClosestAlivePlayer(HotDynamitePlayer from)
         {
             HotDynamitePlayer closest = null;
@@ -876,4 +896,6 @@ namespace HotDynamite
         }
     }
 }
+
+
 

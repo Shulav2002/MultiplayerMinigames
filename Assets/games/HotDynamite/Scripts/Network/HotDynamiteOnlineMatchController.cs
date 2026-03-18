@@ -35,6 +35,8 @@ namespace HotDynamite.Networking
         private int nextExplosionEventId = 1;
         private int latestAppliedExplosionEventId;
 
+        public event Action<int> MatchEnded;
+
         public bool CanHostStartMatch => isInitialized
             && networkClient != null
             && networkClient.IsHost
@@ -101,8 +103,12 @@ namespace HotDynamite.Networking
 
                     if (gameManager.IsGameOver && !matchEndSent)
                     {
+                        int winningChairId = FindWinningChair();
                         matchEndSent = true;
-                        BroadcastMatchEnd();
+                        matchRunning = false;
+                        matchPreparing = false;
+                        BroadcastMatchEnd(winningChairId);
+                        MatchEnded?.Invoke(winningChairId);
                     }
                 }
                 else if (Time.time >= nextInputSendAt)
@@ -270,6 +276,7 @@ namespace HotDynamite.Networking
 
             matchRunning = false;
             matchPreparing = false;
+            MatchEnded?.Invoke(payload != null ? payload.winningChairId : -1);
         }
 
         private void HandleRoomMessageReceived(string fromUserId, string payloadJson)
@@ -414,13 +421,13 @@ namespace HotDynamite.Networking
             }
         }
 
-        private async void BroadcastMatchEnd()
+        private async void BroadcastMatchEnd(int winningChairId)
         {
             HotDynamiteMatchEndPayload payload = new HotDynamiteMatchEndPayload
             {
                 roomId = networkClient.CurrentRoomId,
                 hostUserId = networkClient.HostUserId,
-                winningChairId = FindWinningChair()
+                winningChairId = winningChairId
             };
 
             try
@@ -626,6 +633,8 @@ namespace HotDynamite.Networking
         }
     }
 }
+
+
 
 
 
