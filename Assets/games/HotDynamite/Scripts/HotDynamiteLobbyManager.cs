@@ -130,8 +130,7 @@ namespace HotDynamite.Lobby
                 return;
             }
 
-            string roomId = GenerateRoomId();
-            await BeginOnlineJoinAsync(roomId, createRoom: true, usePrivateRoom: true);
+            await BeginOnlineJoinAsync(null, createRoom: true, usePrivateRoom: true);
         }
 
         public void OnRoomPopupConfirmButtonClicked()
@@ -207,7 +206,8 @@ namespace HotDynamite.Lobby
                 if (usePrivateRoom)
                 {
                     string action = createRoom ? "Creating" : "Joining";
-                    Debug.Log($"HotDynamiteLobbyManager: {action} private room `{roomId}` for game `{networkClient.GameId}`.");
+                    string roomDescription = string.IsNullOrEmpty(roomId) ? "<server-generated>" : roomId;
+                    Debug.Log($"HotDynamiteLobbyManager: {action} private room `{roomDescription}` for game `{networkClient.GameId}`.");
                     await networkClient.JoinPrivateAsync(roomId, createRoom);
                 }
                 else
@@ -739,3 +739,4 @@ namespace HotDynamite.Lobby
         }
     }
 }
+
