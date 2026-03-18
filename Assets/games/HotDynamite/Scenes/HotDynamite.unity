@@ -623,6 +623,110 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &276032859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 276032860}
+  - component: {fileID: 276032862}
+  - component: {fileID: 276032863}
+  m_Layer: 5
+  m_Name: Countdown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &276032860
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276032859}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 256, y: 256, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1088182739}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 541.96, y: 619.96}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &276032862
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276032859}
+  m_CullTransparentMesh: 1
+--- !u!212 &276032863
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276032859}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 10
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 39efc1faff81fea4ea66ae59729b10e2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 256, y: 256}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
 --- !u!1 &316669546
 GameObject:
   m_ObjectHideFlags: 0
@@ -3459,9 +3563,6 @@ GameObject:
   - component: {fileID: 1088182738}
   - component: {fileID: 1088182737}
   - component: {fileID: 1088182736}
-  - component: {fileID: 1088182740}
-  - component: {fileID: 1088182742}
-  - component: {fileID: 1088182741}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3544,6 +3645,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 276032860}
   - {fileID: 1277442046}
   - {fileID: 355346246}
   m_Father: {fileID: 0}
@@ -3553,93 +3655,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1088182740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088182735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5f8ec730d1c04f49b4bbcd76b68245a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Lobby.HotDynamiteLobbyManager
-  gameSceneName: HotDynamite
-  lobbyCanvas: {fileID: 699998916}
-  gameContainer: {fileID: 368035262}
-  joinRoomPopupPanel: {fileID: 2020697306}
-  roomIdInputField: {fileID: 1955226591}
-  roomPopupActionLabel: {fileID: 0}
-  roomPopupPrimaryButton: {fileID: 211299647}
-  createRoomPopupPanel: {fileID: 7784218}
-  createRoomIdLabel: {fileID: 1150170031}
-  createRoomOccupancyLabel: {fileID: 950954164}
-  createRoomStartButton: {fileID: 1271692600}
-  lobbyRoot: {fileID: 975997867}
-  gameEndPanel: {fileID: 472513065}
-  waitingForPlayersPanel: {fileID: 316669546}
-  networkIssueRoot: {fileID: 1345867315}
-  networkIssuePanel: {fileID: 1210074716}
-  networkIssueTitleLabel: {fileID: 629739058}
-  networkIssueMessageLabel: {fileID: 679009129}
-  networkIssueCloseButton: {fileID: 1653555708}
-  blueWinnerPanel: {fileID: 852034258}
-  greenWinnerPanel: {fileID: 1257743719}
-  redWinnerPanel: {fileID: 1819650679}
-  yellowWinnerPanel: {fileID: 2137123249}
-  playAgainButton: {fileID: 972337200}
-  backToHomeButton: {fileID: 1335074681}
-  joinRoomConfirmLabel: Join
-  hostStartLabel: Start
-  guestWaitingLabel: Waiting...
-  networkIssueTitle: Network Error
-  networkIssueConnectMessage: Unable to connect to the server. Please check your
-    internet connection and try again.
-  networkIssueDisconnectMessage: Connection to the server was lost. Please check
-    your internet connection and try again.
-  gameManager: {fileID: 1475341650}
-  useNetworkLobby: 1
-  networkClient: {fileID: 1088182742}
-  onlineMatchController: {fileID: 1088182741}
-  startLocalGameWhenRoomReady: 0
-  offlineTotalPlayers: 4
-  offlineHumanPlayers: 1
-  gameEndDelaySeconds: 0.5
---- !u!114 &1088182741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088182735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 181a9fdc72d95b342b1278e46a4929e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteOnlineMatchController
-  randomModeAutoStartSeconds: 4
-  matchStartCountdownSeconds: 3
-  inputSendIntervalSeconds: 0.05
-  snapshotSendIntervalSeconds: 0.066
-  verboseMatchDiagnostics: 1
---- !u!114 &1088182742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088182735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
-  serverUrl: ws://10.0.15.223:3000
-  gameId: HotDynamite
-  roomCapacity: 4
-  connectOnStart: 0
-  roomMode: random
 --- !u!1 &1128413484
 GameObject:
   m_ObjectHideFlags: 0
@@ -4959,15 +4974,26 @@ MonoBehaviour:
   explosionLifetimeSeconds: 2
   hardModeBots: 0
   backgroundMusic: {fileID: 8300000, guid: 5a85dd04653b6c34ca14b67580a42551, type: 3}
-  startWhistleClip: {fileID: 8300000, guid: 463a6797f00255743a516c2d24c3aa68, type: 3}
+  startWhistleClip: {fileID: 8300000, guid: d6b1c9d2b569e1149a8f17bb14559511, type: 3}
+  countdownTickClip: {fileID: 8300000, guid: 00e4b32518682eb41b4a10a45b183bfd, type: 3}
   playerCollisionClip: {fileID: 8300000, guid: abf7360e396d3fa40be0762d9cdd678c, type: 3}
   bombTimerLoopClip: {fileID: 8300000, guid: 19615483aae018b46a94cfb457238244, type: 3}
   explosionClip: {fileID: 8300000, guid: 43715514f79335f4084e0db400120ccd, type: 3}
   backgroundMusicVolume: 0.45
   startWhistleVolume: 0.9
+  countdownTickVolume: 0.95
   playerCollisionVolume: 0.7
   bombTimerLoopVolume: 0.75
   explosionVolume: 0.95
+  countdownRenderer: {fileID: 276032863}
+  countdownThreeSprite: {fileID: 21300000, guid: f815cae2623e73d4ea2e729f9be28e23, type: 3}
+  countdownTwoSprite: {fileID: 21300000, guid: 32f1a4b0a8764bb4caca43d973a2130e, type: 3}
+  countdownOneSprite: {fileID: 21300000, guid: 9d6a09a0644d2134a877ba686246f730, type: 3}
+  countdownGoSprite: {fileID: 21300000, guid: 39efc1faff81fea4ea66ae59729b10e2, type: 3}
+  countdownGoDisplaySeconds: 0.5
+  countdownStepTweenDuration: 0.8
+  countdownStartScale: {x: 1.45, y: 1.45, z: 1}
+  countdownEndScale: {x: 1, y: 1, z: 1}
 --- !u!4 &1475341651
 Transform:
   m_ObjectHideFlags: 0

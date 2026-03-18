@@ -102,6 +102,7 @@ namespace HotDynamite.Lobby
         private int currentOccupiedSeats;
         private int currentCapacity;
         private Coroutine showGameEndCoroutine;
+        private bool dismissPrivateRoomRequested;
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
@@ -201,7 +202,20 @@ namespace HotDynamite.Lobby
             if (roomPanelMode == RoomPanelMode.JoinEntry)
             {
                 HideRoomPanel();
+                return;
             }
+
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost || roomPanelMode == RoomPanelMode.PrivateWaitingGuest)
+            {
+                OnCloseCreateRoomPopupClicked();
+            }
+        }
+
+        public async void OnCloseCreateRoomPopupClicked()
+        {
+            dismissPrivateRoomRequested = true;
+            HideRoomPanel();
+            await DismissPrivateRoomAsync();
         }
 
         public void LoadGameScene()
@@ -1001,8 +1015,33 @@ namespace HotDynamite.Lobby
 
         private async Task ReturnToHomeAsync()
         {
+            dismissPrivateRoomRequested = false;
             await LeaveCurrentRoomIfNeededAsync();
             ShowLobbyHome();
+        }
+
+        private async Task DismissPrivateRoomAsync()
+        {
+            if (!useNetworkLobby || networkClient == null)
+            {
+                dismissPrivateRoomRequested = false;
+                ShowLobbyHome();
+                return;
+            }
+
+            if (networkClient.IsConnected && networkClient.IsInRoom)
+            {
+                await LeaveCurrentRoomIfNeededAsync();
+                dismissPrivateRoomRequested = false;
+                ShowLobbyHome();
+                return;
+            }
+
+            if (!joinRequestInFlight)
+            {
+                dismissPrivateRoomRequested = false;
+                ShowLobbyHome();
+            }
         }
 
         private async Task LeaveCurrentRoomIfNeededAsync()
@@ -1361,6 +1400,12 @@ namespace HotDynamite.Lobby
             currentOccupiedSeats = CountOccupiedSeats(joined.chairs);
             Debug.Log($"HotDynamiteLobbyManager: Joined room `{joined.roomId}` as chair {joined.chairId}.");
 
+            if (dismissPrivateRoomRequested && networkClient != null && networkClient.RoomMode == HotDynamiteRoomModes.Private)
+            {
+                DismissJoinedPrivateRoomAfterClose();
+                return;
+            }
+
             if (networkClient != null && networkClient.RoomMode == HotDynamiteRoomModes.Private)
             {
                 ShowPrivateWaitingPanel(networkClient.IsHost, joined.roomId, currentOccupiedSeats, currentCapacity);
@@ -1400,6 +1445,7 @@ namespace HotDynamite.Lobby
         private void HandleBackendError(HotDynamiteErrorMessage error)
         {
             joinRequestInFlight = false;
+            dismissPrivateRoomRequested = false;
             if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
             {
                 HideCreateRoomPopup();
@@ -1416,6 +1462,7 @@ namespace HotDynamite.Lobby
         private void HandleConnectionError(string errorMessage)
         {
             joinRequestInFlight = false;
+            dismissPrivateRoomRequested = false;
             if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
             {
                 HideCreateRoomPopup();
@@ -1432,12 +1479,20 @@ namespace HotDynamite.Lobby
         private void HandleDisconnected(WebSocketCloseReason closeReason)
         {
             joinRequestInFlight = false;
+            dismissPrivateRoomRequested = false;
             HideRoomPanel();
             if (networkClient != null && (networkClient.RoomMode == HotDynamiteRoomModes.Random || currentOccupiedSeats > 0 || roomPanelMode != RoomPanelMode.Hidden))
             {
                 ShowNetworkIssue(networkIssueDisconnectMessage);
             }
             Debug.Log($"HotDynamiteLobbyManager: Disconnected from backend. Status: {closeReason.Status}, Description: {closeReason.Description}");
+        }
+
+        private async void DismissJoinedPrivateRoomAfterClose()
+        {
+            await LeaveCurrentRoomIfNeededAsync();
+            dismissPrivateRoomRequested = false;
+            ShowLobbyHome();
         }
 
         private static int CountOccupiedSeats(string[] chairs)

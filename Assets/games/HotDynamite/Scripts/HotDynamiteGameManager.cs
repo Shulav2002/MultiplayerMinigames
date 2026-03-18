@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using HotDynamite.Networking;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace HotDynamite
 {
@@ -9,6 +14,7 @@ namespace HotDynamite
     {
         private const float MinBombFuseSeconds = 0.1f;
         private const float CollisionSfxCooldownSeconds = 0.05f;
+        private const string CountdownSpriteFolder = "Assets/games/HotDynamite/Sprites/UI/GameStartCountdown/";
 
         [SerializeField] private HotDynamiteGameSettings settings;
         [SerializeField] private HotDynamitePlayer playerPrefab;
@@ -27,14 +33,27 @@ namespace HotDynamite
         [SerializeField] private AudioClip backgroundMusic;
 
         [SerializeField] private AudioClip startWhistleClip;
+        [SerializeField] private AudioClip countdownTickClip;
         [SerializeField] private AudioClip playerCollisionClip;
         [SerializeField] private AudioClip bombTimerLoopClip;
         [SerializeField] private AudioClip explosionClip;
         [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
         [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
+        [SerializeField, Range(0f, 1f)] private float countdownTickVolume = 0.95f;
         [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.7f;
         [SerializeField, Range(0f, 1f)] private float bombTimerLoopVolume = 0.75f;
         [SerializeField, Range(0f, 1f)] private float explosionVolume = 0.95f;
+
+        [Header("Start Countdown")]
+        [SerializeField] private SpriteRenderer countdownRenderer;
+        [SerializeField] private Sprite countdownThreeSprite;
+        [SerializeField] private Sprite countdownTwoSprite;
+        [SerializeField] private Sprite countdownOneSprite;
+        [SerializeField] private Sprite countdownGoSprite;
+        [SerializeField, Min(0f)] private float countdownGoDisplaySeconds = 0.5f;
+        [SerializeField, Min(0.05f)] private float countdownStepTweenDuration = 0.8f;
+        [SerializeField] private Vector3 countdownStartScale = new Vector3(1.45f, 1.45f, 1f);
+        [SerializeField] private Vector3 countdownEndScale = Vector3.one;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
         private readonly List<HotDynamitePlayer> allPlayers = new List<HotDynamitePlayer>();
@@ -54,6 +73,12 @@ namespace HotDynamite
         private float lastCollisionSfxTime = float.NegativeInfinity;
         private HotDynamiteGameSettings baseSettings;
         private bool localSimulationEnabled = true;
+        private float countdownGoTimer;
+        private float countdownTweenTimer;
+        private float countdownTweenDuration;
+        private CountdownVisualState countdownVisualState;
+        private Vector3 countdownBaseScale = Vector3.one;
+        private Color countdownBaseColor = Color.white;
 
         public HotDynamitePlayer BombHolder => bombHolder;
         public bool HardModeBots => hardModeBots;
@@ -65,6 +90,15 @@ namespace HotDynamite
         public bool IsGameOver => gameOver;
         public event Action<Vector2, Color> ExplosionOccurred;
         public event Action<int> GameEnded;
+
+        private enum CountdownVisualState
+        {
+            Hidden = 0,
+            Three = 1,
+            Two = 2,
+            One = 3,
+            Go = 4
+        }
 
         public float BombUrgency01
         {
@@ -83,7 +117,9 @@ namespace HotDynamite
         private void Awake()
         {
             baseSettings = settings;
+            EnsureCountdownRendererReferences();
             EnsureAudioSources();
+            SetCountdownVisualState(CountdownVisualState.Hidden);
         }
 
         private void Start()
@@ -117,6 +153,7 @@ namespace HotDynamite
             StartBackgroundMusic();
 
             // Set up match start delay
+            ResetCountdownVisuals();
             isMatchStarting = true;
             matchStartDelayTimer = 3f;
         }
@@ -152,12 +189,23 @@ namespace HotDynamite
 
             gameOver = false;
             StartBackgroundMusic();
+            ResetCountdownVisuals();
             isMatchStarting = startDelaySeconds > 0f;
             matchStartDelayTimer = Mathf.Max(0f, startDelaySeconds);
         }
 
         private void Update()
         {
+            if (localSimulationEnabled && isMatchStarting)
+            {
+                matchStartDelayTimer -= Time.deltaTime;
+                if (matchStartDelayTimer <= 0f)
+                {
+                    CompleteMatchStartCountdown();
+                }
+            }
+
+            UpdateCountdownVisuals(Time.deltaTime);
             UpdateBombTimerLoopState();
 
             if (!localSimulationEnabled)
@@ -167,13 +215,6 @@ namespace HotDynamite
 
             if (isMatchStarting)
             {
-                matchStartDelayTimer -= Time.deltaTime;
-                if (matchStartDelayTimer <= 0f)
-                {
-                    isMatchStarting = false;
-                    PlayStartWhistle();
-                    UpdateBombTimerLoopState();
-                }
                 return;
             }
 
@@ -188,6 +229,7 @@ namespace HotDynamite
         private void OnDisable()
         {
             StopBombTimerLoop();
+            SetCountdownVisualState(CountdownVisualState.Hidden);
         }
 
         private bool TryInitializeGame()
@@ -655,10 +697,218 @@ namespace HotDynamite
 
             if (wasMatchStarting && !isMatchStarting)
             {
-                PlayStartWhistle();
+                TriggerGoCountdownWithWhistle();
             }
 
             UpdateBombTimerLoopState();
+        }
+
+        private void ResetCountdownVisuals()
+        {
+            countdownGoTimer = 0f;
+            countdownTweenTimer = 0f;
+            SetCountdownVisualState(CountdownVisualState.Hidden);
+        }
+
+        private void CompleteMatchStartCountdown()
+        {
+            isMatchStarting = false;
+            matchStartDelayTimer = 0f;
+            TriggerGoCountdownWithWhistle();
+            UpdateBombTimerLoopState();
+        }
+
+        private void TriggerGoCountdownWithWhistle()
+        {
+            TriggerGoCountdown();
+            PlayStartWhistle();
+        }
+
+        private void TriggerGoCountdown()
+        {
+            countdownGoTimer = Mathf.Max(0f, countdownGoDisplaySeconds);
+            SetCountdownVisualState(countdownGoTimer > 0f ? CountdownVisualState.Go : CountdownVisualState.Hidden);
+        }
+
+        private void UpdateCountdownVisuals(float deltaTime)
+        {
+            if (countdownGoTimer > 0f)
+            {
+                countdownGoTimer = Mathf.Max(0f, countdownGoTimer - deltaTime);
+                countdownTweenTimer += deltaTime;
+                SetCountdownVisualState(CountdownVisualState.Go);
+                UpdateCountdownTweenVisual();
+                if (countdownGoTimer <= 0f)
+                {
+                    SetCountdownVisualState(CountdownVisualState.Hidden);
+                }
+
+                return;
+            }
+
+            if (!isMatchStarting)
+            {
+                SetCountdownVisualState(CountdownVisualState.Hidden);
+                return;
+            }
+
+            countdownTweenTimer += deltaTime;
+
+            int countdownValue = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(0f, matchStartDelayTimer)), 1, 3);
+            switch (countdownValue)
+            {
+                case 3:
+                    SetCountdownVisualState(CountdownVisualState.Three);
+                    break;
+                case 2:
+                    SetCountdownVisualState(CountdownVisualState.Two);
+                    break;
+                default:
+                    SetCountdownVisualState(CountdownVisualState.One);
+                    break;
+            }
+
+            UpdateCountdownTweenVisual();
+        }
+
+        private void SetCountdownVisualState(CountdownVisualState newState)
+        {
+            if (countdownVisualState == newState)
+            {
+                return;
+            }
+
+            countdownVisualState = newState;
+            countdownTweenTimer = 0f;
+            countdownTweenDuration = newState == CountdownVisualState.Go
+                ? Mathf.Max(0.05f, countdownGoDisplaySeconds)
+                : Mathf.Max(0.05f, countdownStepTweenDuration);
+            PlayCountdownTickForState(newState);
+
+            if (countdownRenderer == null)
+            {
+                return;
+            }
+
+            Sprite nextSprite = GetCountdownSprite(newState);
+            bool visible = newState != CountdownVisualState.Hidden && nextSprite != null;
+
+            countdownRenderer.sprite = nextSprite;
+            countdownRenderer.enabled = visible;
+
+            GameObject countdownObject = countdownRenderer.gameObject;
+            if (countdownObject != null)
+            {
+                countdownObject.SetActive(visible);
+            }
+
+            countdownRenderer.transform.localScale = visible
+                ? GetCountdownTweenScale(countdownStartScale)
+                : countdownBaseScale;
+
+            Color nextColor = countdownBaseColor;
+            nextColor.a = 0f;
+            countdownRenderer.color = nextColor;
+        }
+
+        private void UpdateCountdownTweenVisual()
+        {
+            if (countdownRenderer == null || countdownVisualState == CountdownVisualState.Hidden || countdownRenderer.sprite == null)
+            {
+                return;
+            }
+
+            float duration = Mathf.Max(0.05f, countdownTweenDuration);
+            float t = Mathf.Clamp01(countdownTweenTimer / duration);
+            float easedScale = EaseOutBack(t);
+            float scaleT = Mathf.LerpUnclamped(0f, 1f, easedScale);
+            float alpha = countdownVisualState == CountdownVisualState.Go ? EvaluateGoAlpha(t) : EvaluateStepAlpha(t);
+
+            Vector3 fromScale = GetCountdownTweenScale(countdownStartScale);
+            Vector3 toScale = GetCountdownTweenScale(countdownEndScale);
+            countdownRenderer.transform.localScale = Vector3.LerpUnclamped(fromScale, toScale, scaleT);
+
+            Color color = countdownBaseColor;
+            color.a = alpha;
+            countdownRenderer.color = color;
+        }
+
+        private Sprite GetCountdownSprite(CountdownVisualState state)
+        {
+            switch (state)
+            {
+                case CountdownVisualState.Three:
+                    return countdownThreeSprite;
+                case CountdownVisualState.Two:
+                    return countdownTwoSprite;
+                case CountdownVisualState.One:
+                    return countdownOneSprite;
+                case CountdownVisualState.Go:
+                    return countdownGoSprite;
+                default:
+                    return null;
+            }
+        }
+
+        private static float EvaluateStepAlpha(float t)
+        {
+            if (t <= 0.15f)
+            {
+                return Mathf.Clamp01(t / 0.15f);
+            }
+
+            if (t >= 0.82f)
+            {
+                return Mathf.Clamp01(1f - ((t - 0.82f) / 0.18f));
+            }
+
+            return 1f;
+        }
+
+        private static float EvaluateGoAlpha(float t)
+        {
+            if (t <= 0.12f)
+            {
+                return Mathf.Clamp01(t / 0.12f);
+            }
+
+            if (t >= 0.7f)
+            {
+                return Mathf.Clamp01(1f - ((t - 0.7f) / 0.3f));
+            }
+
+            return 1f;
+        }
+
+        private static float EaseOutBack(float t)
+        {
+            float c1 = 1.70158f;
+            float c3 = c1 + 1f;
+            float x = t - 1f;
+            return 1f + (c3 * x * x * x) + (c1 * x * x);
+        }
+
+        private void PlayCountdownTickForState(CountdownVisualState state)
+        {
+            if (state != CountdownVisualState.Three
+                && state != CountdownVisualState.Two
+                && state != CountdownVisualState.One)
+            {
+                return;
+            }
+
+            if (countdownTickClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(countdownTickClip, countdownTickVolume);
         }
 
         public void NotifyPlayerCollision()
@@ -715,6 +965,154 @@ namespace HotDynamite
                 bombTimerLoopSource = CreateAudioSource(loop: true);
             }
         }
+
+        private void EnsureCountdownRendererReferences()
+        {
+            if (countdownRenderer == null)
+            {
+                countdownRenderer = FindCountdownRenderer();
+            }
+
+            if (countdownRenderer != null)
+            {
+                NormalizeCountdownRenderer();
+                countdownBaseScale = countdownRenderer.transform.localScale;
+                countdownBaseColor = countdownRenderer.color;
+            }
+
+            AutoAssignCountdownSprites();
+
+            if (countdownThreeSprite == null)
+            {
+                countdownThreeSprite = FindCountdownSpriteByName("3");
+            }
+
+            if (countdownTwoSprite == null)
+            {
+                countdownTwoSprite = FindCountdownSpriteByName("2");
+            }
+
+            if (countdownOneSprite == null)
+            {
+                countdownOneSprite = FindCountdownSpriteByName("1");
+            }
+
+            if (countdownGoSprite == null)
+            {
+                countdownGoSprite = FindCountdownSpriteByName("Go");
+            }
+        }
+
+        private SpriteRenderer FindCountdownRenderer()
+        {
+            Scene scene = gameObject.scene.IsValid() ? gameObject.scene : SceneManager.GetActiveScene();
+            if (!scene.IsValid())
+            {
+                return null;
+            }
+
+            string[] preferredNames =
+            {
+                "GameStartCountdown",
+                "Countdown",
+                "CountDown",
+                "CountdownImage",
+                "StartCountdown",
+                "GoCountdown"
+            };
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                SpriteRenderer[] renderers = roots[i].GetComponentsInChildren<SpriteRenderer>(true);
+                for (int j = 0; j < renderers.Length; j++)
+                {
+                    SpriteRenderer renderer = renderers[j];
+                    if (renderer == null)
+                    {
+                        continue;
+                    }
+
+                    for (int k = 0; k < preferredNames.Length; k++)
+                    {
+                        if (string.Equals(renderer.gameObject.name, preferredNames[k], StringComparison.OrdinalIgnoreCase))
+                        {
+                            return renderer;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private void NormalizeCountdownRenderer()
+        {
+            if (countdownRenderer == null)
+            {
+                return;
+            }
+
+            countdownRenderer.drawMode = SpriteDrawMode.Simple;
+        }
+
+        private Vector3 GetCountdownTweenScale(Vector3 scaleMultiplier)
+        {
+            return new Vector3(
+                countdownBaseScale.x * scaleMultiplier.x,
+                countdownBaseScale.y * scaleMultiplier.y,
+                countdownBaseScale.z * scaleMultiplier.z);
+        }
+
+        private Sprite FindCountdownSpriteByName(string spriteName)
+        {
+            if (string.IsNullOrEmpty(spriteName))
+            {
+                return null;
+            }
+
+            Sprite[] loadedSprites = Resources.FindObjectsOfTypeAll<Sprite>();
+            for (int i = 0; i < loadedSprites.Length; i++)
+            {
+                Sprite sprite = loadedSprites[i];
+                if (sprite != null && string.Equals(sprite.name, spriteName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return sprite;
+                }
+            }
+
+            return null;
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            EnsureCountdownRendererReferences();
+            AutoAssignCountdownSprites();
+        }
+
+        private void AutoAssignCountdownSprites()
+        {
+            countdownThreeSprite = countdownThreeSprite != null ? countdownThreeSprite : LoadCountdownSpriteAsset("3.png");
+            countdownTwoSprite = countdownTwoSprite != null ? countdownTwoSprite : LoadCountdownSpriteAsset("2.png");
+            countdownOneSprite = countdownOneSprite != null ? countdownOneSprite : LoadCountdownSpriteAsset("1.png");
+            countdownGoSprite = countdownGoSprite != null ? countdownGoSprite : LoadCountdownSpriteAsset("Go.png");
+        }
+
+        private static Sprite LoadCountdownSpriteAsset(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return null;
+            }
+
+            return AssetDatabase.LoadAssetAtPath<Sprite>(CountdownSpriteFolder + fileName);
+        }
+#else
+        private void AutoAssignCountdownSprites()
+        {
+        }
+#endif
 
         private AudioSource CreateAudioSource(bool loop)
         {
