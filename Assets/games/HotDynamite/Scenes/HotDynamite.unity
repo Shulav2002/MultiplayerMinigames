@@ -761,7 +761,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &368035263
 Transform:
   m_ObjectHideFlags: 0
@@ -3895,11 +3895,11 @@ MonoBehaviour:
   explosionPrefab: {fileID: 7259869876648334111, guid: fd1000b184de5de49954f01599f95f65, type: 3}
   explosionLifetimeSeconds: 2
   hardModeBots: 0
-  backgroundMusic: {fileID: 8300000, guid: 7624819599f139f48ae4c40e24b2e04d, type: 3}
-  startWhistleClip: {fileID: 8300000, guid: f5acb313549335a44829bf292199edc3, type: 3}
-  playerCollisionClip: {fileID: 8300000, guid: 32351cc7e46a2a1468512c88ca4175c5, type: 3}
-  bombTimerLoopClip: {fileID: 8300000, guid: ad43d117733514545b22bd13e62a191a, type: 3}
-  explosionClip: {fileID: 8300000, guid: f8654929b59fa9549b6731e1cebdc63b, type: 3}
+  backgroundMusic: {fileID: 8300000, guid: 5a85dd04653b6c34ca14b67580a42551, type: 3}
+  startWhistleClip: {fileID: 8300000, guid: 463a6797f00255743a516c2d24c3aa68, type: 3}
+  playerCollisionClip: {fileID: 8300000, guid: abf7360e396d3fa40be0762d9cdd678c, type: 3}
+  bombTimerLoopClip: {fileID: 8300000, guid: 19615483aae018b46a94cfb457238244, type: 3}
+  explosionClip: {fileID: 8300000, guid: 43715514f79335f4084e0db400120ccd, type: 3}
   backgroundMusicVolume: 0.45
   startWhistleVolume: 0.9
   playerCollisionVolume: 0.7
