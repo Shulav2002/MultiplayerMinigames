@@ -31,17 +31,17 @@ namespace HotDynamite.Lobby
         [Tooltip("The parent GameObject containing the game elements (GameManager, Level, etc) to turn on.")]
         [SerializeField] private GameObject gameContainer;
 
-        [Tooltip("Panel reused for join entry and private-room waiting.")]
+        [Header("Join Popup")]
         [SerializeField] private GameObject joinRoomPopupPanel;
-
-        [Tooltip("Input or text component used to enter and display room ids.")]
         [SerializeField] private Component roomIdInputField;
-
-        [Tooltip("Primary popup action label component.")]
         [SerializeField] private Component roomPopupActionLabel;
-
-        [Tooltip("Primary popup action button component.")]
         [SerializeField] private Component roomPopupPrimaryButton;
+
+        [Header("Create Popup")]
+        [SerializeField] private GameObject createRoomPopupPanel;
+        [SerializeField] private Component createRoomIdLabel;
+        [SerializeField] private Component createRoomOccupancyLabel;
+        [SerializeField] private Component createRoomStartButton;
 
         [Header("Room Popup Labels")]
         [SerializeField] private string joinRoomConfirmLabel = "Join";
@@ -130,6 +130,8 @@ namespace HotDynamite.Lobby
                 return;
             }
 
+            EnsureRoomUiReferences();
+            ShowPrivateWaitingPanel(isHost: true, roomId: "Creating...", occupiedSeats: 1, capacity: Mathf.Max(2, networkClient != null ? networkClient.RoomCapacity : 4));
             await BeginOnlineJoinAsync(null, createRoom: true, usePrivateRoom: true);
         }
 
@@ -220,6 +222,10 @@ namespace HotDynamite.Lobby
             {
                 joinRequestInFlight = false;
                 Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
+                if (createRoom)
+                {
+                    HideCreateRoomPopup();
+                }
             }
         }
 
@@ -271,6 +277,15 @@ namespace HotDynamite.Lobby
                 }
             }
 
+            if (createRoomPopupPanel == null)
+            {
+                Transform popupPanel = FindInActiveScene("CreatePopUpPanel");
+                if (popupPanel != null)
+                {
+                    createRoomPopupPanel = popupPanel.gameObject;
+                }
+            }
+
             if (roomIdInputField == null)
             {
                 Transform inputTransform = FindInActiveScene("RoomIdInputField");
@@ -297,11 +312,39 @@ namespace HotDynamite.Lobby
                     roomPopupActionLabel = FindTextComponent(popupPrimaryButtonTransform.gameObject);
                 }
             }
+
+            if (createRoomIdLabel == null && createRoomPopupPanel != null)
+            {
+                Transform roomIdTransform = FindInChildren(createRoomPopupPanel.transform, "RoomID");
+                if (roomIdTransform != null)
+                {
+                    createRoomIdLabel = FindTextComponent(roomIdTransform.gameObject);
+                }
+            }
+
+            if (createRoomOccupancyLabel == null && createRoomPopupPanel != null)
+            {
+                Transform occupancyTransform = FindInChildren(createRoomPopupPanel.transform, "JoinedPlayersCount");
+                if (occupancyTransform != null)
+                {
+                    createRoomOccupancyLabel = FindTextComponent(occupancyTransform.gameObject);
+                }
+            }
+
+            if (createRoomStartButton == null && createRoomPopupPanel != null)
+            {
+                Transform startTransform = FindInChildren(createRoomPopupPanel.transform, "Start");
+                if (startTransform != null)
+                {
+                    createRoomStartButton = FindComponentByTypeName(startTransform.gameObject, "Button");
+                }
+            }
         }
 
         private void ShowJoinEntryPanel()
         {
             roomPanelMode = RoomPanelMode.JoinEntry;
+            HideCreateRoomPopup();
             SetJoinRoomPopupVisible(true);
             SetRoomIdFieldReadOnly(false);
             SetRoomIdFieldText(string.Empty);
@@ -309,12 +352,14 @@ namespace HotDynamite.Lobby
             SetComponentInteractable(roomPopupPrimaryButton, true);
         }
 
-        private void ShowPrivateWaitingPanel(bool isHost, string roomId)
+        private void ShowPrivateWaitingPanel(bool isHost, string roomId, int occupiedSeats, int capacity)
         {
             roomPanelMode = isHost ? RoomPanelMode.PrivateWaitingHost : RoomPanelMode.PrivateWaitingGuest;
-            SetJoinRoomPopupVisible(true);
-            SetRoomIdFieldReadOnly(true);
-            SetRoomIdFieldText(roomId);
+            currentOccupiedSeats = occupiedSeats;
+            currentCapacity = capacity;
+            HideJoinRoomPopup();
+            SetCreateRoomPopupVisible(true);
+            SetComponentText(createRoomIdLabel, roomId ?? string.Empty);
             RefreshPrivateWaitingUi();
         }
 
@@ -325,24 +370,31 @@ namespace HotDynamite.Lobby
                 bool canStart = onlineMatchController != null
                     && onlineMatchController.CanHostStartMatch
                     && currentOccupiedSeats >= 2;
-                string label = canStart
-                    ? hostStartLabel
-                    : $"Waiting ({currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)})";
-                SetComponentText(roomPopupActionLabel, label);
-                SetComponentInteractable(roomPopupPrimaryButton, canStart);
+                SetComponentText(createRoomOccupancyLabel, $"{currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)} joined");
+                SetComponentInteractable(createRoomStartButton, canStart);
             }
             else if (roomPanelMode == RoomPanelMode.PrivateWaitingGuest)
             {
-                string label = $"Waiting ({currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)})";
-                SetComponentText(roomPopupActionLabel, label);
-                SetComponentInteractable(roomPopupPrimaryButton, false);
+                SetComponentText(createRoomOccupancyLabel, $"{currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)} joined");
+                SetComponentInteractable(createRoomStartButton, false);
             }
         }
 
         private void HideRoomPanel()
         {
             roomPanelMode = RoomPanelMode.Hidden;
+            HideJoinRoomPopup();
+            HideCreateRoomPopup();
+        }
+
+        private void HideJoinRoomPopup()
+        {
             SetJoinRoomPopupVisible(false);
+        }
+
+        private void HideCreateRoomPopup()
+        {
+            SetCreateRoomPopupVisible(false);
         }
 
         private void SetJoinRoomPopupVisible(bool visible)
@@ -351,6 +403,15 @@ namespace HotDynamite.Lobby
             if (joinRoomPopupPanel != null)
             {
                 joinRoomPopupPanel.SetActive(visible);
+            }
+        }
+
+        private void SetCreateRoomPopupVisible(bool visible)
+        {
+            EnsureRoomUiReferences();
+            if (createRoomPopupPanel != null)
+            {
+                createRoomPopupPanel.SetActive(visible);
             }
         }
 
@@ -368,11 +429,6 @@ namespace HotDynamite.Lobby
         private void SetRoomIdFieldReadOnly(bool isReadOnly)
         {
             SetComponentBoolProperty(roomIdInputField, "readOnly", isReadOnly);
-        }
-
-        private static string GenerateRoomId()
-        {
-            return Guid.NewGuid().ToString("N").Substring(0, 6).ToUpperInvariant();
         }
 
         private static Transform FindInActiveScene(string name)
@@ -646,7 +702,7 @@ namespace HotDynamite.Lobby
 
             if (networkClient != null && networkClient.RoomMode == HotDynamiteRoomModes.Private)
             {
-                ShowPrivateWaitingPanel(networkClient.IsHost, joined.roomId);
+                ShowPrivateWaitingPanel(networkClient.IsHost, joined.roomId, currentOccupiedSeats, currentCapacity);
                 return;
             }
 
@@ -674,12 +730,20 @@ namespace HotDynamite.Lobby
         private void HandleBackendError(HotDynamiteErrorMessage error)
         {
             joinRequestInFlight = false;
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
+            {
+                HideCreateRoomPopup();
+            }
             Debug.LogError($"HotDynamiteLobbyManager: Backend error: {error.message}");
         }
 
         private void HandleConnectionError(string errorMessage)
         {
             joinRequestInFlight = false;
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
+            {
+                HideCreateRoomPopup();
+            }
             Debug.LogError($"HotDynamiteLobbyManager: Connection error: {errorMessage}");
         }
 
@@ -739,4 +803,3 @@ namespace HotDynamite.Lobby
         }
     }
 }
-

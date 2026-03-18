@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7784219
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1484,6 +1484,10 @@ MonoBehaviour:
   roomIdInputField: {fileID: 1955226591}
   roomPopupActionLabel: {fileID: 0}
   roomPopupPrimaryButton: {fileID: 211299647}
+  createRoomPopupPanel: {fileID: 7784218}
+  createRoomIdLabel: {fileID: 1150170029}
+  createRoomOccupancyLabel: {fileID: 950954162}
+  createRoomStartButton: {fileID: 1271692600}
   joinRoomConfirmLabel: Join
   hostStartLabel: Start
   guestWaitingLabel: Waiting...
@@ -2776,6 +2780,10 @@ MonoBehaviour:
   roomIdInputField: {fileID: 1955226591}
   roomPopupActionLabel: {fileID: 0}
   roomPopupPrimaryButton: {fileID: 211299647}
+  createRoomPopupPanel: {fileID: 7784218}
+  createRoomIdLabel: {fileID: 1150170029}
+  createRoomOccupancyLabel: {fileID: 950954162}
+  createRoomStartButton: {fileID: 1271692600}
   joinRoomConfirmLabel: Join
   hostStartLabel: Start
   guestWaitingLabel: Waiting...
@@ -2995,10 +3003,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 44.5
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
