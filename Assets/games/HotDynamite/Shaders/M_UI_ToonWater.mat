@@ -51,7 +51,7 @@ Material:
     - _RippleDensity: 0.41
     - _RippleScale: 12.33
     - _RippleSpeed: 0.18
-    - _RippleThickness: 0.033
+    - _RippleThickness: 0.01
     - _RippleWarp: -2.66
     - _Stencil: 0
     - _StencilComp: 8
@@ -68,6 +68,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 0.92}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _WaveColor: {r: 0, g: 0.93361354, b: 0.9811321, a: 1}
+    - _WaveColor: {r: 0, g: 1, b: 0.9906862, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
