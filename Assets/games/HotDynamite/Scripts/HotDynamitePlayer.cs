@@ -41,6 +41,21 @@ namespace HotDynamite
         [Header("Appearance")]
         [Tooltip("Run animation clips used as appearance variants. Chosen by appearance index.")]
         [SerializeField] private AnimationClip[] runAnimationVariants;
+        [Header("Local Player Indicator")]
+        [Tooltip("Optional existing sprite renderer used to show which player is locally controlled.")]
+        [SerializeField] private SpriteRenderer localPlayerIndicatorRenderer;
+        [Tooltip("Sprite used for the local-player arrow if a renderer is created or needs a sprite assigned.")]
+        [SerializeField] private Sprite localPlayerIndicatorSprite;
+        [Tooltip("Local offset for the player indicator above the character.")]
+        [SerializeField] private Vector3 localPlayerIndicatorOffset = new Vector3(0f, 1.65f, 0f);
+        [Tooltip("Base local scale multiplier for the player indicator.")]
+        [SerializeField] private Vector3 localPlayerIndicatorScale = Vector3.one;
+        [Tooltip("How much the player indicator pulses around its base scale.")]
+        [SerializeField, Min(0f)] private float localPlayerIndicatorPulseAmount = 0.14f;
+        [Tooltip("How quickly the player indicator pulses.")]
+        [SerializeField, Min(0f)] private float localPlayerIndicatorPulseSpeed = 3.25f;
+        [Tooltip("Extra sorting order added on top of the player renderer for the indicator.")]
+        [SerializeField] private int localPlayerIndicatorSortingOrderOffset = 20;
         [Header("Networking")]
         [Tooltip("How quickly remote players move toward the latest authoritative snapshot position.")]
         [SerializeField, Min(0f)] private float remotePositionSmoothness = 12f;
@@ -81,6 +96,8 @@ namespace HotDynamite
         private float authoritativeFacingAngle;
         private Vector2 authoritativeVelocity;
         private bool hasAuthoritativeState;
+        private Transform localPlayerIndicatorTransform;
+        private Vector3 localPlayerIndicatorBaseScale = Vector3.one;
 
         public bool IsAlive => isAlive;
         public bool HasBomb => hasBomb;
@@ -128,6 +145,7 @@ namespace HotDynamite
             ConfigureInputSources();
             ResetForNewRound();
             UpdateBombVisual();
+            RefreshLocalPlayerIndicator();
             RefreshPhysicsSimulationState();
         }
 
@@ -156,6 +174,7 @@ namespace HotDynamite
         {
             UpdateBombAnimationState();
             UpdateSnapshotPresentation(Time.deltaTime);
+            UpdateLocalPlayerIndicator(Time.deltaTime);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -296,6 +315,7 @@ namespace HotDynamite
             ResetTemporarySpeed();
             ResetBounceState();
             UpdateRunAnimation(Vector2.zero);
+            SetLocalPlayerIndicatorVisible(false);
 
             gameObject.SetActive(false);
         }
@@ -681,6 +701,7 @@ namespace HotDynamite
             hasAuthoritativeState = false;
             ResetTemporarySpeed();
             ResetBounceState();
+            RefreshLocalPlayerIndicator();
         }
 
         private void ResetTemporarySpeed()
@@ -768,6 +789,119 @@ namespace HotDynamite
             bombAnimator = null;
         }
 
+        private void RefreshLocalPlayerIndicator()
+        {
+            EnsureLocalPlayerIndicator();
+
+            if (localPlayerIndicatorTransform != null)
+            {
+                localPlayerIndicatorTransform.localPosition = localPlayerIndicatorOffset;
+            }
+
+            SetLocalPlayerIndicatorVisible(isAlive && controlMode == HotDynamitePlayerControlMode.LocalHuman);
+        }
+
+        private void EnsureLocalPlayerIndicator()
+        {
+            if (localPlayerIndicatorRenderer == null)
+            {
+                Transform existingChild = transform.Find("LocalPlayerIndicator");
+                if (existingChild != null)
+                {
+                    localPlayerIndicatorRenderer = existingChild.GetComponent<SpriteRenderer>();
+                }
+            }
+
+            if (localPlayerIndicatorRenderer == null && localPlayerIndicatorSprite != null)
+            {
+                GameObject indicatorObject = new GameObject("LocalPlayerIndicator");
+                indicatorObject.transform.SetParent(transform, false);
+                localPlayerIndicatorRenderer = indicatorObject.AddComponent<SpriteRenderer>();
+            }
+
+            if (localPlayerIndicatorRenderer == null)
+            {
+                localPlayerIndicatorTransform = null;
+                return;
+            }
+
+            localPlayerIndicatorTransform = localPlayerIndicatorRenderer.transform;
+            localPlayerIndicatorTransform.SetParent(transform, false);
+            localPlayerIndicatorTransform.localPosition = localPlayerIndicatorOffset;
+            Vector3 authoredIndicatorScale = localPlayerIndicatorTransform.localScale;
+
+            if (localPlayerIndicatorSprite != null)
+            {
+                localPlayerIndicatorRenderer.sprite = localPlayerIndicatorSprite;
+            }
+
+            if (localPlayerIndicatorRenderer.sprite == null)
+            {
+                localPlayerIndicatorTransform = null;
+                return;
+            }
+
+            localPlayerIndicatorRenderer.color = Color.white;
+            localPlayerIndicatorRenderer.drawMode = SpriteDrawMode.Simple;
+            if (facingRenderer != null)
+            {
+                localPlayerIndicatorRenderer.sortingLayerID = facingRenderer.sortingLayerID;
+                localPlayerIndicatorRenderer.sortingOrder = facingRenderer.sortingOrder + localPlayerIndicatorSortingOrderOffset;
+            }
+
+            localPlayerIndicatorBaseScale = new Vector3(
+                authoredIndicatorScale.x * localPlayerIndicatorScale.x,
+                authoredIndicatorScale.y * localPlayerIndicatorScale.y,
+                authoredIndicatorScale.z * localPlayerIndicatorScale.z);
+            localPlayerIndicatorTransform.localScale = localPlayerIndicatorBaseScale;
+        }
+
+        private void UpdateLocalPlayerIndicator(float deltaTime)
+        {
+            bool shouldShow = ShouldShowLocalPlayerIndicator();
+            SetLocalPlayerIndicatorVisible(shouldShow);
+
+            if (!shouldShow || localPlayerIndicatorTransform == null || localPlayerIndicatorRenderer == null || !localPlayerIndicatorRenderer.enabled)
+            {
+                return;
+            }
+
+            localPlayerIndicatorTransform.localPosition = localPlayerIndicatorOffset;
+
+            if (localPlayerIndicatorPulseSpeed <= 0f || localPlayerIndicatorPulseAmount <= 0f)
+            {
+                localPlayerIndicatorTransform.localScale = localPlayerIndicatorBaseScale;
+                return;
+            }
+
+            float pulse = (Mathf.Sin(Time.unscaledTime * localPlayerIndicatorPulseSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
+            float scaleMultiplier = 1f + (localPlayerIndicatorPulseAmount * pulse);
+            localPlayerIndicatorTransform.localScale = localPlayerIndicatorBaseScale * scaleMultiplier;
+        }
+
+        private void SetLocalPlayerIndicatorVisible(bool visible)
+        {
+            if (localPlayerIndicatorRenderer == null)
+            {
+                return;
+            }
+
+            bool shouldShow = visible && localPlayerIndicatorRenderer.sprite != null;
+            localPlayerIndicatorRenderer.enabled = shouldShow;
+            if (localPlayerIndicatorTransform != null)
+            {
+                localPlayerIndicatorTransform.localScale = shouldShow ? localPlayerIndicatorBaseScale : Vector3.zero;
+            }
+        }
+
+        private bool ShouldShowLocalPlayerIndicator()
+        {
+            return isAlive
+                && controlMode == HotDynamitePlayerControlMode.LocalHuman
+                && manager != null
+                && manager.IsMatchStarting;
+        }
+
         private void UpdateBombAnimationState()
         {
             if (bombAnimator == null)
@@ -795,6 +929,13 @@ namespace HotDynamite
         private void OnDestroy()
         {
             DestroyBombVisual();
+            if (localPlayerIndicatorRenderer != null
+                && localPlayerIndicatorRenderer.gameObject != null
+                && localPlayerIndicatorRenderer.gameObject.name == "LocalPlayerIndicator"
+                && localPlayerIndicatorRenderer.transform.parent == transform)
+            {
+                Destroy(localPlayerIndicatorRenderer.gameObject);
+            }
         }
 
         private void RefreshPhysicsSimulationState()
