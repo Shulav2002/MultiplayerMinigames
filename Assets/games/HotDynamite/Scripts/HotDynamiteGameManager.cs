@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using HotDynamite.Networking;
@@ -50,10 +51,17 @@ namespace HotDynamite
         [SerializeField] private Sprite countdownTwoSprite;
         [SerializeField] private Sprite countdownOneSprite;
         [SerializeField] private Sprite countdownGoSprite;
+        [SerializeField, Min(0.1f)] private float matchStartDelaySeconds = 4f;
+        [SerializeField, Min(0.1f)] private float numericCountdownLeadSeconds = 3f;
         [SerializeField, Min(0f)] private float countdownGoDisplaySeconds = 0.5f;
         [SerializeField, Min(0.05f)] private float countdownStepTweenDuration = 0.8f;
         [SerializeField] private Vector3 countdownStartScale = new Vector3(1.45f, 1.45f, 1f);
         [SerializeField] private Vector3 countdownEndScale = Vector3.one;
+        [Header("How To Play")]
+        [SerializeField] private Component howToPlayLabel;
+        [SerializeField, TextArea(2, 4)] private string howToPlayMessage = "Controls:\nUse the joystick at the bottom of the screen to move your player.";
+        [SerializeField, Min(0f)] private float howToPlayDisplaySeconds = 4f;
+        [SerializeField, Min(0f)] private float howToPlayTweenSpeed = 2.25f;
 
         private readonly List<HotDynamitePlayer> alivePlayers = new List<HotDynamitePlayer>();
         private readonly List<HotDynamitePlayer> allPlayers = new List<HotDynamitePlayer>();
@@ -79,6 +87,9 @@ namespace HotDynamite
         private CountdownVisualState countdownVisualState;
         private Vector3 countdownBaseScale = Vector3.one;
         private Color countdownBaseColor = Color.white;
+        private float howToPlayTimer;
+        private Transform howToPlayTransform;
+        private Vector3 howToPlayBaseScale = Vector3.one;
 
         public HotDynamitePlayer BombHolder => bombHolder;
         public bool HardModeBots => hardModeBots;
@@ -118,8 +129,10 @@ namespace HotDynamite
         {
             baseSettings = settings;
             EnsureCountdownRendererReferences();
+            EnsureHowToPlayReferences();
             EnsureAudioSources();
             SetCountdownVisualState(CountdownVisualState.Hidden);
+            SetHowToPlayVisible(false);
         }
 
         private void Start()
@@ -155,10 +168,11 @@ namespace HotDynamite
             // Set up match start delay
             ResetCountdownVisuals();
             isMatchStarting = true;
-            matchStartDelayTimer = 3f;
+            matchStartDelayTimer = Mathf.Max(0.1f, matchStartDelaySeconds);
+            ResetHowToPlayVisuals(matchStartDelayTimer);
         }
 
-        public void StartOnlineGame(HotDynamiteRosterEntry[] roster, string localUserId, bool simulationAuthority, float startDelaySeconds = 3f)
+        public void StartOnlineGame(HotDynamiteRosterEntry[] roster, string localUserId, bool simulationAuthority, float startDelaySeconds = 4f)
         {
             if (roster == null || roster.Length == 0)
             {
@@ -192,6 +206,7 @@ namespace HotDynamite
             ResetCountdownVisuals();
             isMatchStarting = startDelaySeconds > 0f;
             matchStartDelayTimer = Mathf.Max(0f, startDelaySeconds);
+            ResetHowToPlayVisuals(matchStartDelayTimer);
         }
 
         private void Update()
@@ -206,6 +221,7 @@ namespace HotDynamite
             }
 
             UpdateCountdownVisuals(Time.deltaTime);
+            UpdateHowToPlayVisuals(Time.deltaTime);
             UpdateBombTimerLoopState();
 
             if (!localSimulationEnabled)
@@ -230,6 +246,7 @@ namespace HotDynamite
         {
             StopBombTimerLoop();
             SetCountdownVisualState(CountdownVisualState.Hidden);
+            SetHowToPlayVisible(false);
         }
 
         private bool TryInitializeGame()
@@ -710,6 +727,12 @@ namespace HotDynamite
             SetCountdownVisualState(CountdownVisualState.Hidden);
         }
 
+        private void ResetHowToPlayVisuals(float preStartDurationSeconds)
+        {
+            howToPlayTimer = Mathf.Min(Mathf.Max(0f, howToPlayDisplaySeconds), Mathf.Max(0f, preStartDurationSeconds));
+            SetHowToPlayVisible(isMatchStarting && howToPlayTimer > 0f);
+        }
+
         private void CompleteMatchStartCountdown()
         {
             isMatchStarting = false;
@@ -752,6 +775,12 @@ namespace HotDynamite
                 return;
             }
 
+            if (matchStartDelayTimer > Mathf.Max(0.1f, numericCountdownLeadSeconds))
+            {
+                SetCountdownVisualState(CountdownVisualState.Hidden);
+                return;
+            }
+
             countdownTweenTimer += deltaTime;
 
             int countdownValue = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(0f, matchStartDelayTimer)), 1, 3);
@@ -769,6 +798,19 @@ namespace HotDynamite
             }
 
             UpdateCountdownTweenVisual();
+        }
+
+        private void UpdateHowToPlayVisuals(float deltaTime)
+        {
+            if (!isMatchStarting || howToPlayTimer <= 0f)
+            {
+                SetHowToPlayVisible(false);
+                return;
+            }
+
+            howToPlayTimer = Mathf.Max(0f, howToPlayTimer - deltaTime);
+            SetHowToPlayVisible(howToPlayTimer > 0f);
+            UpdateHowToPlayScaleTween();
         }
 
         private void SetCountdownVisualState(CountdownVisualState newState)
@@ -1003,6 +1045,32 @@ namespace HotDynamite
             }
         }
 
+        private void EnsureHowToPlayReferences()
+        {
+            if (howToPlayLabel == null)
+            {
+                howToPlayLabel = FindNamedTextComponentInScene(
+                    "HowToPlayText",
+                    "HowToPlay",
+                    "How To Play",
+                    "Text",
+                    "HowToPlayLabel",
+                    "InstructionText",
+                    "Instructions");
+            }
+
+            if (howToPlayLabel != null)
+            {
+                howToPlayTransform = howToPlayLabel.transform;
+                if (howToPlayTransform != null)
+                {
+                    howToPlayBaseScale = howToPlayTransform.localScale;
+                }
+
+                SetTextComponentText(howToPlayLabel, howToPlayMessage);
+            }
+        }
+
         private SpriteRenderer FindCountdownRenderer()
         {
             Scene scene = gameObject.scene.IsValid() ? gameObject.scene : SceneManager.GetActiveScene();
@@ -1064,6 +1132,160 @@ namespace HotDynamite
                 countdownBaseScale.z * scaleMultiplier.z);
         }
 
+        private void SetHowToPlayVisible(bool visible)
+        {
+            EnsureHowToPlayReferences();
+
+            if (howToPlayLabel != null)
+            {
+                SetTextComponentText(howToPlayLabel, howToPlayMessage);
+                howToPlayLabel.gameObject.SetActive(visible);
+            }
+
+            if (!visible)
+            {
+                ResetHowToPlayScaleTween();
+            }
+        }
+
+        private void UpdateHowToPlayScaleTween()
+        {
+            if (howToPlayTransform == null)
+            {
+                return;
+            }
+
+            if (howToPlayTweenSpeed <= 0f)
+            {
+                howToPlayTransform.localScale = howToPlayBaseScale;
+                return;
+            }
+
+            float scaleMultiplier = Mathf.PingPong(Time.unscaledTime * howToPlayTweenSpeed, 0.2f) + 0.8f;
+            howToPlayTransform.localScale = howToPlayBaseScale * scaleMultiplier;
+        }
+
+        private void ResetHowToPlayScaleTween()
+        {
+            if (howToPlayTransform == null)
+            {
+                return;
+            }
+
+            howToPlayTransform.localScale = howToPlayBaseScale;
+        }
+
+        private Component FindNamedTextComponentInScene(params string[] names)
+        {
+            Scene scene = gameObject.scene.IsValid() ? gameObject.scene : SceneManager.GetActiveScene();
+            if (!scene.IsValid() || names == null || names.Length == 0)
+            {
+                return null;
+            }
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                Transform found = FindNamedChildRecursive(roots[i].transform, names);
+                if (found == null)
+                {
+                    continue;
+                }
+
+                Component textComponent = FindTextComponent(found.gameObject);
+                if (textComponent != null)
+                {
+                    return textComponent;
+                }
+            }
+
+            return null;
+        }
+
+        private static Transform FindNamedChildRecursive(Transform root, params string[] names)
+        {
+            if (root == null || names == null || names.Length == 0)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (string.Equals(root.name, names[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return root;
+                }
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindNamedChildRecursive(root.GetChild(i), names);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Component FindTextComponent(GameObject root)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            Component[] components = root.GetComponentsInChildren<Component>(true);
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component component = components[i];
+                if (component == null)
+                {
+                    continue;
+                }
+
+                if (GetTextProperty(component.GetType()) != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        private static void SetTextComponentText(Component component, string value)
+        {
+            if (component == null)
+            {
+                return;
+            }
+
+            PropertyInfo property = GetTextProperty(component.GetType());
+            if (property == null || !property.CanWrite)
+            {
+                return;
+            }
+
+            property.SetValue(component, value ?? string.Empty, null);
+        }
+
+        private static PropertyInfo GetTextProperty(Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            PropertyInfo property = type.GetProperty("text", BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(string) || !property.CanRead)
+            {
+                return null;
+            }
+
+            return property;
+        }
+
         private Sprite FindCountdownSpriteByName(string spriteName)
         {
             if (string.IsNullOrEmpty(spriteName))
@@ -1088,6 +1310,7 @@ namespace HotDynamite
         private void OnValidate()
         {
             EnsureCountdownRendererReferences();
+            EnsureHowToPlayReferences();
             AutoAssignCountdownSprites();
         }
 
@@ -1254,7 +1477,9 @@ namespace HotDynamite
             gameOver = false;
             isMatchStarting = false;
             matchStartDelayTimer = 0f;
+            howToPlayTimer = 0f;
             StopBombTimerLoop();
+            SetHowToPlayVisible(false);
         }
 
         private static int CountHumanParticipants(HotDynamiteRosterEntry[] roster)
