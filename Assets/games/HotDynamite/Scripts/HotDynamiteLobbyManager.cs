@@ -103,6 +103,7 @@ namespace HotDynamite.Lobby
         private int currentCapacity;
         private Coroutine showGameEndCoroutine;
         private bool dismissPrivateRoomRequested;
+        private bool privateRoomDismissInFlight;
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
@@ -178,6 +179,12 @@ namespace HotDynamite.Lobby
             }
 
             lastMatchWasOffline = false;
+            dismissPrivateRoomRequested = false;
+
+            if (!await EnsureReadyForPrivateRoomCreateAsync())
+            {
+                return;
+            }
 
             EnsureRoomUiReferences();
             ShowPrivateWaitingPanel(isHost: true, roomId: "Creating...", occupiedSeats: 1, capacity: Mathf.Max(2, networkClient != null ? networkClient.RoomCapacity : 4));
@@ -213,9 +220,22 @@ namespace HotDynamite.Lobby
 
         public async void OnCloseCreateRoomPopupClicked()
         {
+            if (privateRoomDismissInFlight)
+            {
+                return;
+            }
+
+            privateRoomDismissInFlight = true;
             dismissPrivateRoomRequested = true;
             HideRoomPanel();
-            await DismissPrivateRoomAsync();
+            try
+            {
+                await DismissPrivateRoomAsync();
+            }
+            finally
+            {
+                privateRoomDismissInFlight = false;
+            }
         }
 
         public void LoadGameScene()
@@ -312,7 +332,21 @@ namespace HotDynamite.Lobby
 
                 if (networkClient.IsInRoom)
                 {
+                    if (usePrivateRoom && createRoom)
+                    {
+                        Debug.Log("HotDynamiteLobbyManager: Leaving existing room before creating a new private room.");
+                        await LeaveCurrentRoomIfNeededAsync();
+                    }
+                }
+
+                if (networkClient.IsInRoom)
+                {
                     Debug.Log($"HotDynamiteLobbyManager: Already in room `{networkClient.CurrentRoomId}`.");
+                    if (createRoom)
+                    {
+                        HideCreateRoomPopup();
+                    }
+
                     joinRequestInFlight = false;
                     return;
                 }
@@ -1020,6 +1054,29 @@ namespace HotDynamite.Lobby
             ShowLobbyHome();
         }
 
+        private async Task<bool> EnsureReadyForPrivateRoomCreateAsync()
+        {
+            EnsureNetworkClient();
+            if (networkClient == null)
+            {
+                return false;
+            }
+
+            if (privateRoomDismissInFlight || joinRequestInFlight)
+            {
+                Debug.Log("HotDynamiteLobbyManager: Waiting for the previous private-room request to finish.");
+                return false;
+            }
+
+            if (!networkClient.IsConnected || !networkClient.IsInRoom)
+            {
+                return true;
+            }
+
+            await LeaveCurrentRoomIfNeededAsync();
+            return !networkClient.IsInRoom;
+        }
+
         private async Task DismissPrivateRoomAsync()
         {
             if (!useNetworkLobby || networkClient == null)
@@ -1027,6 +1084,15 @@ namespace HotDynamite.Lobby
                 dismissPrivateRoomRequested = false;
                 ShowLobbyHome();
                 return;
+            }
+
+            if (joinRequestInFlight)
+            {
+                float timeoutAt = Time.realtimeSinceStartup + 3f;
+                while (joinRequestInFlight && Time.realtimeSinceStartup < timeoutAt)
+                {
+                    await Task.Yield();
+                }
             }
 
             if (networkClient.IsConnected && networkClient.IsInRoom)
