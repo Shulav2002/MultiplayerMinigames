@@ -13,17 +13,19 @@ namespace StayAlive
         private enum MatchPhase
         {
             None = 0,
-            Spinning = 1,
-            Warning = 2,
-            Explosion = 3,
-            Collapse = 4,
-            RefillDelay = 5,
-            Refill = 6,
-            GameOver = 7
+            Countdown = 1,
+            Spinning = 2,
+            Warning = 3,
+            Explosion = 4,
+            Collapse = 5,
+            RefillDelay = 6,
+            Refill = 7,
+            GameOver = 8
         }
 
         private const string DefaultSettingsPath = "Assets/games/StayAlive/Data/StayAliveGameSettings.asset";
         private const string DefaultPlayerPrefabPath = "Assets/games/StayAlive/Prefabs/Player.prefab";
+        private const int RequiredSafeSpriteCount = 4;
         private const float MinCellSize = 0.2f;
         private const float MinSwapInterval = 0.02f;
 
@@ -41,7 +43,9 @@ namespace StayAlive
         [SerializeField, Min(0f)] private float cellGap = 0f;
         [SerializeField] private Vector2 boardCenter = Vector2.zero;
         [SerializeField] private Sprite[] symbolSprites;
+        [SerializeField] private Sprite[] blurredSymbolSprites;
         [SerializeField] private Sprite bombSprite;
+        [SerializeField] private Sprite blurredBombSprite;
         [SerializeField] private Color bombFallbackColor = Color.red;
         [SerializeField] private Color idleCellColor = new Color(0.95f, 0.95f, 0.98f, 1f);
         [SerializeField] private Color warningCellColor = new Color(1f, 0.6f, 0.1f, 1f);
@@ -58,8 +62,9 @@ namespace StayAlive
         [SerializeField] private bool spawnPlayers = true;
         [SerializeField, Min(1)] private int totalPlayers = 1;
         [SerializeField, Min(1)] private int humanPlayers = 1;
+        [SerializeField, Min(0f)] private float startCountdownSeconds = 3f;
         [SerializeField, Min(0.1f)] private float spinDurationSeconds = 4f;
-        [SerializeField, Min(MinSwapInterval)] private float symbolSwapIntervalSeconds = 0.08f;
+        [SerializeField, Min(MinSwapInterval)] private float symbolSwapIntervalSeconds = 0.04f;
         [SerializeField, Min(0.1f)] private float warningDurationSeconds = 4f;
         [SerializeField, Min(0.1f)] private float explosionDurationSeconds = 0.5f;
         [SerializeField, Min(0.1f)] private float collapseDurationSeconds = 0.5f;
@@ -86,6 +91,7 @@ namespace StayAlive
         [SerializeField, Min(0f)] private float playerBounceDecay = 8f;
         [SerializeField, Min(0f)] private float playerBounceCooldownSeconds = 0.16f;
         [SerializeField, Min(0f)] private float playerBounceInputSuppressionSeconds = 0.08f;
+        [SerializeField, Range(0f, 1f)] private float bombHitRequiredBodyCoverage = 0.2f;
 
         [Header("Bots")]
         [SerializeField, Min(0.02f)] private float botDecisionInterval = 0.08f;
@@ -163,15 +169,22 @@ namespace StayAlive
 
         private void OnGUI()
         {
-            if (!showSpinButton || phase == MatchPhase.GameOver || phase == MatchPhase.Warning || phase == MatchPhase.Explosion || phase == MatchPhase.Collapse || phase == MatchPhase.RefillDelay || phase == MatchPhase.Refill)
+            if (phase != MatchPhase.Countdown)
             {
                 return;
             }
 
-            if (GUI.Button(spinButtonRect, spinButtonLabel))
+            GUIStyle style = new GUIStyle(GUI.skin.label)
             {
-                StartSpinButton();
-            }
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 56,
+                fontStyle = FontStyle.Bold,
+                normal = { textColor = Color.white }
+            };
+
+            Rect rect = new Rect(0f, 0f, Screen.width, Screen.height);
+            int displayNumber = Mathf.Max(1, Mathf.CeilToInt(phaseTimer));
+            GUI.Label(rect, displayNumber.ToString(), style);
         }
 
         private void Update()
@@ -187,6 +200,13 @@ namespace StayAlive
             {
                 case MatchPhase.Spinning:
                     UpdateSpinningPhase();
+                    break;
+
+                case MatchPhase.Countdown:
+                    if (phaseTimer <= 0f)
+                    {
+                        BeginSpinPhase();
+                    }
                     break;
 
                 case MatchPhase.Warning:
@@ -230,10 +250,7 @@ namespace StayAlive
 
             completedSpinCount = 0;
             InitializeIdleBoardState();
-            if (AutoStartSpinOnPlayEnabled)
-            {
-                BeginSpinPhase();
-            }
+            BeginCountdownPhase();
         }
 
         public void StartSpinButton()
@@ -244,7 +261,7 @@ namespace StayAlive
             }
 
             InitializeIdleBoardState();
-            BeginSpinPhase();
+            BeginCountdownPhase();
         }
 
         public Vector2 ClampToBoard(Vector2 position)
@@ -432,9 +449,19 @@ namespace StayAlive
 
             activeBombCellIndices.Clear();
             queuedBombCellIndices.Clear();
-            phase = MatchPhase.None;
-            phaseTimer = 0f;
             RefreshBoardVisualsForIdle();
+            BeginSpinPhase();
+        }
+
+        private void BeginCountdownPhase()
+        {
+            phase = MatchPhase.Countdown;
+            phaseTimer = Mathf.Max(0f, startCountdownSeconds);
+            symbolSwapTimer = 0f;
+            if (phaseTimer <= 0f)
+            {
+                BeginSpinPhase();
+            }
         }
 
         private void BeginSpinPhase()
@@ -537,6 +564,8 @@ namespace StayAlive
                 int column = i % Columns;
                 int row = i / Columns;
                 cell.Initialize(i, column, row);
+                cell.SetNormalWorldSize(Vector2.one * CellSize);
+                cell.SetSpinningWorldSize(Vector2.one * CellSize);
                 cell.transform.localPosition = GetLocalCellPosition(column, row);
                 cells.Add(cell);
             }
@@ -624,15 +653,36 @@ namespace StayAlive
         private bool IsPlayerTouchingBombCell(StayAlivePlayer player)
         {
             Bounds bounds = player.WorldBounds;
+            Rect playerRect = new Rect(bounds.min.x, bounds.min.y, bounds.size.x, bounds.size.y);
+            float playerArea = Mathf.Max(0.0001f, playerRect.width * playerRect.height);
+            Vector2 playerCenter = bounds.center;
+
             foreach (int cellIndex in activeBombCellIndices)
             {
-                Rect rect = GetCellRect(cellIndex);
-                if (bounds.max.x < rect.xMin || bounds.min.x > rect.xMax || bounds.max.y < rect.yMin || bounds.min.y > rect.yMax)
+                Rect cellRect = GetCellRect(cellIndex);
+                if (!cellRect.Overlaps(playerRect))
                 {
                     continue;
                 }
 
-                return true;
+                if (cellRect.Contains(playerCenter))
+                {
+                    return true;
+                }
+
+                float overlapWidth = Mathf.Min(playerRect.xMax, cellRect.xMax) - Mathf.Max(playerRect.xMin, cellRect.xMin);
+                float overlapHeight = Mathf.Min(playerRect.yMax, cellRect.yMax) - Mathf.Max(playerRect.yMin, cellRect.yMin);
+                if (overlapWidth <= 0f || overlapHeight <= 0f)
+                {
+                    continue;
+                }
+
+                float overlapArea = overlapWidth * overlapHeight;
+                float overlapRatio = overlapArea / playerArea;
+                if (overlapRatio >= Mathf.Clamp01(bombHitRequiredBodyCoverage))
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -828,7 +878,7 @@ namespace StayAlive
                     continue;
                 }
 
-                cell.ShowSpinning(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                cell.ShowSpinning(GetSymbolSprite(symbolIndices[i], true), GetSymbolColor(symbolIndices[i]));
             }
         }
 
@@ -842,7 +892,7 @@ namespace StayAlive
                     continue;
                 }
 
-                cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
             }
         }
 
@@ -859,13 +909,13 @@ namespace StayAlive
                 bool isBombCell = activeBombCellIndices.Contains(i);
                 if (isBombCell)
                 {
-                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i]);
+                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i], false);
                     Color color = bombSprite != null ? Color.white : bombFallbackColor;
                     cell.ShowWarning(sprite, color, warningCellColor);
                 }
                 else
                 {
-                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
         }
@@ -883,12 +933,12 @@ namespace StayAlive
                 bool isBombCell = activeBombCellIndices.Contains(i);
                 if (isBombCell)
                 {
-                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i]);
+                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i], false);
                     cell.ShowExplosion(sprite, explosionCellColor, Color.white);
                 }
                 else
                 {
-                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
         }
@@ -906,13 +956,13 @@ namespace StayAlive
                 bool isBombCell = activeBombCellIndices.Contains(i);
                 if (isBombCell)
                 {
-                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i]);
+                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i], false);
                     Color color = bombSprite != null ? Color.white : bombFallbackColor;
                     cell.ShowCollapse(sprite, color, collapseCellColor, CollapseDurationSeconds);
                 }
                 else
                 {
-                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
         }
@@ -932,14 +982,14 @@ namespace StayAlive
                 {
                     Color targetColor = GetSymbolColor(symbolIndices[i]);
                     cell.ShowRefill(
-                        GetSymbolSprite(symbolIndices[i]),
+                        GetSymbolSprite(symbolIndices[i], false),
                         targetColor,
                         WithAlpha(targetColor, 0f),
                         RefillDurationSeconds);
                 }
                 else
                 {
-                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
         }
@@ -957,11 +1007,11 @@ namespace StayAlive
                 bool isRefillingCell = activeBombCellIndices.Contains(i);
                 if (isRefillingCell)
                 {
-                    cell.ShowHidden(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowHidden(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
                 else
                 {
-                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i]), GetSymbolColor(symbolIndices[i]));
+                    cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
         }
@@ -1105,16 +1155,31 @@ namespace StayAlive
             return nearestEdge >= threshold ? 0f : (threshold - nearestEdge) * 1.5f;
         }
 
-        private Sprite GetSymbolSprite(int symbolIndex)
+        private Sprite GetSymbolSprite(int symbolIndex, bool useBlurredVariant = false)
         {
             if (IsBombSymbol(symbolIndex))
             {
+                if (useBlurredVariant && blurredBombSprite != null)
+                {
+                    return blurredBombSprite;
+                }
+
                 return bombSprite != null ? bombSprite : fallbackCellSprite;
             }
 
-            if (symbolSprites != null && symbolSprites.Length > 0)
+            int safeIndex = Mathf.Abs(symbolIndex) % GetSafeSymbolCount();
+            if (useBlurredVariant
+                && blurredSymbolSprites != null
+                && safeIndex >= 0
+                && safeIndex < blurredSymbolSprites.Length
+                && blurredSymbolSprites[safeIndex] != null)
             {
-                return symbolSprites[Mathf.Abs(symbolIndex) % symbolSprites.Length];
+                return blurredSymbolSprites[safeIndex];
+            }
+
+            if (symbolSprites != null && safeIndex >= 0 && safeIndex < symbolSprites.Length && symbolSprites[safeIndex] != null)
+            {
+                return symbolSprites[safeIndex];
             }
 
             return fallbackCellSprite;
@@ -1127,17 +1192,7 @@ namespace StayAlive
                 return bombSprite != null ? Color.white : bombFallbackColor;
             }
 
-            if (symbolSprites != null && symbolSprites.Length > 0)
-            {
-                return Color.white;
-            }
-
-            if (fallbackSymbolColors == null || fallbackSymbolColors.Length == 0)
-            {
-                return Color.white;
-            }
-
-            return fallbackSymbolColors[Mathf.Abs(symbolIndex) % fallbackSymbolColors.Length];
+            return Color.white;
         }
 
         private int GetSymbolCount()
@@ -1147,10 +1202,7 @@ namespace StayAlive
 
         private int GetSafeSymbolCount()
         {
-            int configuredSafeCount = symbolSprites != null && symbolSprites.Length > 0
-                ? symbolSprites.Length
-                : (fallbackSymbolColors != null ? fallbackSymbolColors.Length : 0);
-            return Mathf.Max(3, configuredSafeCount);
+            return RequiredSafeSpriteCount;
         }
 
         private bool IsBombSymbol(int symbolIndex)
@@ -1361,6 +1413,8 @@ namespace StayAlive
 
                 StayAliveCell cell = cellObject.AddComponent<StayAliveCell>();
                 cell.Initialize(i, column, row);
+                cell.SetNormalWorldSize(Vector2.one * CellSize);
+                cell.SetSpinningWorldSize(Vector2.one * CellSize);
             }
 
             CacheBoardCells();
@@ -1371,8 +1425,41 @@ namespace StayAlive
             }
         }
 
+        internal static void NotifySettingsChanged(StayAliveGameSettings changedSettings)
+        {
+            if (changedSettings == null)
+            {
+                return;
+            }
+
+            EditorApplication.delayCall += () =>
+            {
+                StayAliveGameManager[] managers = Resources.FindObjectsOfTypeAll<StayAliveGameManager>();
+                for (int i = 0; i < managers.Length; i++)
+                {
+                    StayAliveGameManager manager = managers[i];
+                    if (manager == null || EditorUtility.IsPersistent(manager) || manager.settings != changedSettings)
+                    {
+                        continue;
+                    }
+
+                    manager.RefreshEditorFromSettings();
+                }
+            };
+        }
+
         private void OnValidate()
         {
+            if (symbolSprites == null || symbolSprites.Length != RequiredSafeSpriteCount)
+            {
+                Array.Resize(ref symbolSprites, RequiredSafeSpriteCount);
+            }
+
+            if (blurredSymbolSprites == null || blurredSymbolSprites.Length != RequiredSafeSpriteCount)
+            {
+                Array.Resize(ref blurredSymbolSprites, RequiredSafeSpriteCount);
+            }
+
             columns = Mathf.Max(2, columns);
             rows = Mathf.Max(2, rows);
             totalPlayers = Mathf.Max(1, totalPlayers);
@@ -1395,6 +1482,17 @@ namespace StayAlive
                 basePlayerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DefaultPlayerPrefabPath);
             }
 
+            RefreshEditorFromSettings();
+        }
+
+        private void RefreshEditorFromSettings()
+        {
+            if (Application.isPlaying)
+            {
+                return;
+            }
+
+            ApplySettingsToSerializedFallbacks();
             EnsureEditorParentsExist();
             EnsureEditorSpawnPointsExist();
             int requiredCellCount = Mathf.Max(2, Columns) * Mathf.Max(2, Rows);
@@ -1407,6 +1505,59 @@ namespace StayAlive
             {
                 CacheBoardCells();
             }
+
+            EditorUtility.SetDirty(gameObject);
+            if (cellParent != null)
+            {
+                EditorUtility.SetDirty(cellParent.gameObject);
+            }
+
+            SceneView.RepaintAll();
+        }
+
+        private void ApplySettingsToSerializedFallbacks()
+        {
+            if (settings == null)
+            {
+                return;
+            }
+
+            columns = settings.Columns;
+            rows = settings.Rows;
+            cellSize = settings.CellSize;
+            cellGap = settings.CellGap;
+            boardCenter = settings.BoardCenter;
+
+            spawnPlayers = settings.SpawnPlayers;
+            totalPlayers = settings.TotalPlayers;
+            humanPlayers = settings.HumanPlayers;
+
+            spinDurationSeconds = settings.SpinDurationSeconds;
+            symbolSwapIntervalSeconds = settings.SymbolSwapIntervalSeconds;
+            warningDurationSeconds = settings.WarningDurationSeconds;
+            explosionDurationSeconds = settings.ExplosionDurationSeconds;
+            collapseDurationSeconds = settings.CollapseDurationSeconds;
+            refillDelaySeconds = settings.RefillDelaySeconds;
+            refillDurationSeconds = settings.RefillDurationSeconds;
+            difficulty01 = settings.Difficulty01;
+            easyBombCellsPerRound = settings.EasyBombCellsPerRound;
+            normalBombCellsPerRound = settings.NormalBombCellsPerRound;
+            hardBombCellsPerRound = settings.HardBombCellsPerRound;
+            easyBombIncreasePerSpin = settings.EasyBombIncreasePerSpin;
+            normalBombIncreasePerSpin = settings.NormalBombIncreasePerSpin;
+            hardBombIncreasePerSpin = settings.HardBombIncreasePerSpin;
+            autoStartSpinOnPlay = settings.AutoStartSpinOnPlay;
+
+            moveSpeed = settings.MoveSpeed;
+            playerBounceSpeed = settings.PlayerBounceSpeed;
+            playerBounceMaxSpeed = settings.PlayerBounceMaxSpeed;
+            playerBounceDecay = settings.PlayerBounceDecay;
+            playerBounceCooldownSeconds = settings.PlayerBounceCooldownSeconds;
+            playerBounceInputSuppressionSeconds = settings.PlayerBounceInputSuppressionSeconds;
+
+            botDecisionInterval = settings.BotDecisionInterval;
+            botTargetRefreshInterval = settings.BotTargetRefreshInterval;
+            botSteeringSmoothness = settings.BotSteeringSmoothness;
         }
 
         private void EnsureEditorParentsExist()

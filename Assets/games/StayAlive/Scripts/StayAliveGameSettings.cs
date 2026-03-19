@@ -45,7 +45,7 @@ namespace StayAlive
 
         [Header("Round")]
         [Min(0.1f)] public float spinDurationSeconds = 4f;
-        [Min(0.02f)] public float symbolSwapIntervalSeconds = 0.08f;
+        [Min(0.02f)] public float symbolSwapIntervalSeconds = 0.04f;
         [Min(0.1f)] public float warningDurationSeconds = 4f;
         [Min(0.1f)] public float explosionDurationSeconds = 0.5f;
         [Min(0.1f)] public float collapseDurationSeconds = 0.5f;
@@ -105,12 +105,18 @@ namespace StayAlive
         {
             ClampFallbackValues();
             SyncIfNeeded();
+#if UNITY_EDITOR
+            StayAliveGameManager.NotifySettingsChanged(this);
+#endif
         }
 
         private void OnValidate()
         {
             ClampFallbackValues();
             SyncIfNeeded();
+#if UNITY_EDITOR
+            StayAliveGameManager.NotifySettingsChanged(this);
+#endif
         }
 
         [ContextMenu("Sync From Split Assets")]
@@ -454,6 +460,8 @@ namespace StayAlive
                 {
                     settingsAsset.SyncFallbackToSplitAssets();
                 }
+
+                StayAliveGameManager.NotifySettingsChanged(settingsAsset);
             }
         }
 #endif

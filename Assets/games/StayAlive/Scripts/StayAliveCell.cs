@@ -19,6 +19,8 @@ namespace StayAlive
         [SerializeField] private SpriteRenderer spriteRenderer;
 
         private Vector3 authoredScale = Vector3.one;
+        private Vector2 normalWorldSize = Vector2.one;
+        private Vector2 spinningWorldSize = Vector2.one;
         private Sprite currentSprite;
         private Color baseColor = Color.white;
         private Color accentColor = Color.white;
@@ -50,7 +52,7 @@ namespace StayAlive
                 {
                     float pulse = (Mathf.Sin(Time.time * 10f) + 1f) * 0.5f;
                     spriteRenderer.color = Color.Lerp(baseColor, accentColor, pulse);
-                    transform.localScale = authoredScale;
+                    transform.localScale = EvaluateNormalScale(currentSprite);
                     break;
                 }
 
@@ -58,7 +60,7 @@ namespace StayAlive
                 {
                     float flash = (Mathf.Sin(Time.time * 18f) + 1f) * 0.5f;
                     spriteRenderer.color = Color.Lerp(baseColor, accentColor, flash);
-                    transform.localScale = authoredScale;
+                    transform.localScale = EvaluateNormalScale(currentSprite);
                     break;
                 }
 
@@ -67,7 +69,7 @@ namespace StayAlive
                     float collapse = GetStateProgress();
                     float easedCollapse = EaseInCubic(collapse);
                     spriteRenderer.color = Color.Lerp(baseColor, accentColor, easedCollapse);
-                    transform.localScale = authoredScale * Mathf.Lerp(1f, 0f, easedCollapse);
+                    transform.localScale = EvaluateNormalScale(currentSprite) * Mathf.Lerp(1f, 0f, easedCollapse);
                     break;
                 }
 
@@ -76,7 +78,7 @@ namespace StayAlive
                     float refill = GetStateProgress();
                     float scale = EvaluateRefillScale(refill);
                     spriteRenderer.color = Color.Lerp(accentColor, baseColor, EaseOutCubic(refill));
-                    transform.localScale = authoredScale * scale;
+                    transform.localScale = EvaluateNormalScale(currentSprite) * scale;
                     break;
                 }
 
@@ -87,7 +89,9 @@ namespace StayAlive
 
                 default:
                     spriteRenderer.color = baseColor;
-                    transform.localScale = authoredScale;
+                    transform.localScale = visualState == CellVisualState.Spinning
+                        ? EvaluateSpinningScale(currentSprite)
+                        : EvaluateNormalScale(currentSprite);
                     break;
             }
         }
@@ -99,6 +103,17 @@ namespace StayAlive
             Row = row;
             EnsureRenderer();
             authoredScale = transform.localScale;
+            transform.localScale = authoredScale;
+        }
+
+        public void SetSpinningWorldSize(Vector2 size)
+        {
+            spinningWorldSize = new Vector2(Mathf.Max(0.0001f, size.x), Mathf.Max(0.0001f, size.y));
+        }
+
+        public void SetNormalWorldSize(Vector2 size)
+        {
+            normalWorldSize = new Vector2(Mathf.Max(0.0001f, size.x), Mathf.Max(0.0001f, size.y));
         }
 
         public void ShowIdle(Sprite sprite, Color color)
@@ -157,8 +172,25 @@ namespace StayAlive
             stateDuration = Mathf.Max(0.0001f, durationSeconds);
 
             spriteRenderer.sprite = currentSprite;
-            spriteRenderer.color = state == CellVisualState.Refilling ? accentColor : baseColor;
-            transform.localScale = state == CellVisualState.Refilling ? Vector3.zero : authoredScale;
+            spriteRenderer.color = state == CellVisualState.Refilling || state == CellVisualState.Hidden
+                ? accentColor
+                : baseColor;
+            if (state == CellVisualState.Refilling)
+            {
+                transform.localScale = Vector3.zero;
+            }
+            else if (state == CellVisualState.Hidden)
+            {
+                transform.localScale = Vector3.zero;
+            }
+            else if (state == CellVisualState.Spinning)
+            {
+                transform.localScale = EvaluateSpinningScale(currentSprite);
+            }
+            else
+            {
+                transform.localScale = EvaluateNormalScale(currentSprite);
+            }
         }
 
         private float GetStateProgress()
@@ -202,6 +234,32 @@ namespace StayAlive
             {
                 spriteRenderer = GetComponent<SpriteRenderer>();
             }
+        }
+
+        private Vector3 EvaluateSpinningScale(Sprite sprite)
+        {
+            if (sprite == null)
+            {
+                return authoredScale;
+            }
+
+            Bounds bounds = sprite.bounds;
+            float width = Mathf.Max(0.0001f, bounds.size.x);
+            float height = Mathf.Max(0.0001f, bounds.size.y);
+            return new Vector3(spinningWorldSize.x / width, spinningWorldSize.y / height, authoredScale.z);
+        }
+
+        private Vector3 EvaluateNormalScale(Sprite sprite)
+        {
+            if (sprite == null)
+            {
+                return authoredScale;
+            }
+
+            Bounds bounds = sprite.bounds;
+            float width = Mathf.Max(0.0001f, bounds.size.x);
+            float height = Mathf.Max(0.0001f, bounds.size.y);
+            return new Vector3(normalWorldSize.x / width, normalWorldSize.y / height, authoredScale.z);
         }
     }
 }

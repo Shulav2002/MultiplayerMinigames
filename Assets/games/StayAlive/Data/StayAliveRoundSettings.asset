@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StayAliveRoundSettings
   m_EditorClassIdentifier: StayAlive::StayAlive.StayAliveRoundSettings
   spinDurationSeconds: 4
-  symbolSwapIntervalSeconds: 0.08
+  symbolSwapIntervalSeconds: 0.02
   warningDurationSeconds: 2
   explosionDurationSeconds: 0.5
   collapseDurationSeconds: 0.5

@@ -33,7 +33,7 @@ MonoBehaviour:
   playerBounceCooldownSeconds: 0.16
   playerBounceInputSuppressionSeconds: 0.08
   spinDurationSeconds: 4
-  symbolSwapIntervalSeconds: 0.08
+  symbolSwapIntervalSeconds: 0.02
   warningDurationSeconds: 2
   explosionDurationSeconds: 0.5
   collapseDurationSeconds: 0.5
