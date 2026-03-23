@@ -25,6 +25,7 @@ namespace StayAlive
 
         private const string DefaultSettingsPath = "Assets/games/StayAlive/Data/StayAliveGameSettings.asset";
         private const string DefaultPlayerPrefabPath = "Assets/games/StayAlive/Prefabs/Player.prefab";
+        private const string DefaultExplosionControllerPath = "Assets/games/StayAlive/Anims/Explosion.controller";
         private const int RequiredSafeSpriteCount = 4;
         private const float MinCellSize = 0.2f;
         private const float MinSwapInterval = 0.02f;
@@ -84,6 +85,11 @@ namespace StayAlive
         [SerializeField] private string spinButtonLabel = "SPIN";
         [SerializeField] private Rect spinButtonRect = new Rect(20f, 20f, 180f, 56f);
 
+        [Header("Explosion FX")]
+        [SerializeField] private RuntimeAnimatorController explosionEffectController;
+        [SerializeField, Min(0)] private int explosionEffectSortingOrderOffset = 8;
+        [SerializeField, Min(0.1f)] private float explosionEffectScale = 1.2f;
+
         [Header("Movement")]
         [SerializeField, Min(0.1f)] private float moveSpeed = 5f;
         [SerializeField, Min(0f)] private float playerBounceSpeed = 4.8f;
@@ -103,6 +109,7 @@ namespace StayAlive
         private readonly List<StayAlivePlayer> allPlayers = new List<StayAlivePlayer>();
         private readonly HashSet<int> activeBombCellIndices = new HashSet<int>();
         private readonly HashSet<int> queuedBombCellIndices = new HashSet<int>();
+        private readonly List<GameObject> activeExplosionEffects = new List<GameObject>();
 
         private int[] symbolIndices;
         private int[] queuedStopSymbolIndices;
@@ -168,6 +175,12 @@ namespace StayAlive
             sourceSettings = settings;
             EnsureFallbackSprite();
             CacheBoardCells();
+#if UNITY_EDITOR
+            if (explosionEffectController == null)
+            {
+                explosionEffectController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(DefaultExplosionControllerPath);
+            }
+#endif
         }
 
         private void Start()
@@ -262,6 +275,7 @@ namespace StayAlive
                 SpawnPlayers();
             }
 
+            ClearExplosionEffects();
             completedSpinCount = 0;
             InitializeIdleBoardState();
             BeginCountdownPhase();
@@ -503,7 +517,8 @@ namespace StayAlive
                 return;
             }
 
-            BeginCollapsePhase();
+            RefillCollapsedBombCells();
+            BeginRefillPhase();
         }
 
         private void UpdateCollapsePhase()
@@ -600,12 +615,14 @@ namespace StayAlive
             phaseTimer = Mathf.Max(0.1f, ExplosionDurationSeconds);
             explosionResolved = false;
             RefreshBoardVisualsForExplosion();
+            SpawnExplosionEffects();
         }
 
         private void BeginCollapsePhase()
         {
             phase = MatchPhase.Collapse;
             phaseTimer = Mathf.Max(0.1f, CollapseDurationSeconds);
+            ClearExplosionEffects();
             RefreshBoardVisualsForCollapse();
         }
 
@@ -613,6 +630,7 @@ namespace StayAlive
         {
             phase = MatchPhase.Refill;
             phaseTimer = Mathf.Max(0.1f, RefillDurationSeconds);
+            ClearExplosionEffects();
             RefreshBoardVisualsForRefill();
         }
 
@@ -626,6 +644,7 @@ namespace StayAlive
         private void FinishMatch()
         {
             phase = MatchPhase.GameOver;
+            ClearExplosionEffects();
             RefreshBoardVisualsForSpin();
             GameEnded?.Invoke(FindWinningChairId());
         }
@@ -1026,14 +1045,68 @@ namespace StayAlive
                 bool isBombCell = activeBombCellIndices.Contains(i);
                 if (isBombCell)
                 {
-                    Sprite sprite = bombSprite != null ? bombSprite : GetSymbolSprite(symbolIndices[i], false);
-                    cell.ShowExplosion(sprite, explosionCellColor, Color.white);
+                    cell.ShowHidden(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
                 else
                 {
                     cell.ShowIdle(GetSymbolSprite(symbolIndices[i], false), GetSymbolColor(symbolIndices[i]));
                 }
             }
+        }
+
+        private void SpawnExplosionEffects()
+        {
+            ClearExplosionEffects();
+            if (explosionEffectController == null || activeBombCellIndices.Count == 0)
+            {
+                return;
+            }
+
+            foreach (int bombCellIndex in activeBombCellIndices)
+            {
+                if (bombCellIndex < 0 || bombCellIndex >= cells.Count)
+                {
+                    continue;
+                }
+
+                StayAliveCell cell = cells[bombCellIndex];
+                Vector2 center = GetCellCenter(bombCellIndex);
+
+                GameObject effectObject = new GameObject($"ExplosionFx_{bombCellIndex}");
+                effectObject.transform.position = new Vector3(center.x, center.y, 0f);
+                effectObject.transform.localScale = Vector3.one * explosionEffectScale;
+
+                SpriteRenderer effectRenderer = effectObject.AddComponent<SpriteRenderer>();
+                if (cell != null && cell.Renderer != null)
+                {
+                    effectRenderer.sortingLayerID = cell.Renderer.sortingLayerID;
+                    effectRenderer.sortingOrder = cell.Renderer.sortingOrder + explosionEffectSortingOrderOffset;
+                }
+                else
+                {
+                    effectRenderer.sortingOrder = explosionEffectSortingOrderOffset;
+                }
+
+                Animator effectAnimator = effectObject.AddComponent<Animator>();
+                effectAnimator.runtimeAnimatorController = explosionEffectController;
+                effectAnimator.Play("Explosion", 0, 0f);
+                effectAnimator.Update(0f);
+
+                activeExplosionEffects.Add(effectObject);
+            }
+        }
+
+        private void ClearExplosionEffects()
+        {
+            for (int i = 0; i < activeExplosionEffects.Count; i++)
+            {
+                if (activeExplosionEffects[i] != null)
+                {
+                    DestroyImmediateSafe(activeExplosionEffects[i]);
+                }
+            }
+
+            activeExplosionEffects.Clear();
         }
 
         private void RefreshBoardVisualsForCollapse()
@@ -1606,6 +1679,11 @@ namespace StayAlive
             if (basePlayerPrefab == null)
             {
                 basePlayerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DefaultPlayerPrefabPath);
+            }
+
+            if (explosionEffectController == null)
+            {
+                explosionEffectController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(DefaultExplosionControllerPath);
             }
 
             RefreshEditorFromSettings();
