@@ -65,6 +65,9 @@ namespace StayAlive
         [Min(0.05f)] public float botTargetRefreshInterval = 0.25f;
         [Min(0f)] public float botSteeringSmoothness = 10f;
 
+        public int ClampedTotalPlayers => Mathf.Max(1, TotalPlayers);
+        public int ClampedHumanPlayers => Mathf.Clamp(HumanPlayers, 1, ClampedTotalPlayers);
+
         public int Columns => boardSettings != null ? boardSettings.columns : columns;
         public int Rows => boardSettings != null ? boardSettings.rows : rows;
         public float CellSize => boardSettings != null ? boardSettings.cellSize : cellSize;
@@ -100,6 +103,29 @@ namespace StayAlive
         public float BotDecisionInterval => botSettings != null ? botSettings.botDecisionInterval : botDecisionInterval;
         public float BotTargetRefreshInterval => botSettings != null ? botSettings.botTargetRefreshInterval : botTargetRefreshInterval;
         public float BotSteeringSmoothness => botSettings != null ? botSettings.botSteeringSmoothness : botSteeringSmoothness;
+
+        public StayAliveGameSettings CreateRuntimeCopy(int totalPlayersOverride, int humanPlayersOverride)
+        {
+            StayAliveGameSettings runtimeCopy = Instantiate(this);
+            runtimeCopy.keepSettingsSynced = false;
+
+            if (runtimeCopy.playerSettings != null)
+            {
+                runtimeCopy.playerSettings = Instantiate(runtimeCopy.playerSettings);
+                runtimeCopy.playerSettings.totalPlayers = Mathf.Max(1, totalPlayersOverride);
+                runtimeCopy.playerSettings.humanPlayers = Mathf.Clamp(
+                    humanPlayersOverride,
+                    1,
+                    runtimeCopy.playerSettings.totalPlayers);
+            }
+            else
+            {
+                runtimeCopy.totalPlayers = Mathf.Max(1, totalPlayersOverride);
+                runtimeCopy.humanPlayers = Mathf.Clamp(humanPlayersOverride, 1, runtimeCopy.totalPlayers);
+            }
+
+            return runtimeCopy;
+        }
 
         private void OnEnable()
         {

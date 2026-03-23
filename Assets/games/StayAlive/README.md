@@ -19,12 +19,13 @@
 
 ## Current Setup
 
-- Add `StayAliveGameManager` to a GameObject in `Assets/games/StayAlive/StayAlive.unity`.
+- Add `StayAliveGameManager` to a GameObject in `Assets/games/StayAlive/Scene/StayAlive.unity`.
 - The scene should already contain `Board` and `Players` child objects under the manager.
 - The manager does not create board hierarchy at runtime anymore.
 - In the editor, use `Rebuild Board In Editor` on the manager if the `Board` child does not already contain all `88` `StayAliveCell` children.
 - Player art assets live inside `Assets/games/StayAlive`, and the player prefab uses only `StayAlive` scripts.
 - Gameplay tuning now lives in `Assets/games/StayAlive/Data/StayAliveGameSettings.asset`, with optional split assets available under the `StayAlive/Settings/*` create menu.
+- Default local play now starts with `4` total players and `1` human, so `3` bot seats are active without extra setup.
 - `symbolSprites` and `bombSprite` are optional. If left empty, the board uses colored fallback tiles.
 - `autoStartSpinOnPlay` is off by default, so spinning starts from the on-screen button.
 - While spinning, the visible bomb frequency scales with the current round bomb target, so later spins look more dangerous before the board stops.

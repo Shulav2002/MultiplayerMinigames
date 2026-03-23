@@ -24,14 +24,14 @@ MonoBehaviour:
   cellGap: 0
   boardCenter: {x: 0, y: 0}
   spawnPlayers: 1
-  totalPlayers: 1
+  totalPlayers: 4
   humanPlayers: 1
   moveSpeed: 3
-  playerBounceSpeed: 4.8
-  playerBounceMaxSpeed: 6.5
-  playerBounceDecay: 8
-  playerBounceCooldownSeconds: 0.16
-  playerBounceInputSuppressionSeconds: 0.08
+  playerBounceSpeed: 2
+  playerBounceMaxSpeed: 3
+  playerBounceDecay: 6
+  playerBounceCooldownSeconds: 0.12
+  playerBounceInputSuppressionSeconds: 0.04
   spinDurationSeconds: 4
   symbolSwapIntervalSeconds: 0.02
   warningDurationSeconds: 2

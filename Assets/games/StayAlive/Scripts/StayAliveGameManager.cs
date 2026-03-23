@@ -114,6 +114,7 @@ namespace StayAlive
         private int completedSpinCount;
         private int completedSpinShiftCount;
         private int targetSpinShiftCount;
+        private StayAliveGameSettings sourceSettings;
 
         private int Columns => settings != null ? settings.Columns : columns;
         private int Rows => settings != null ? settings.Rows : rows;
@@ -151,6 +152,12 @@ namespace StayAlive
         public bool IsExplosionActive => phase == MatchPhase.Explosion;
         public bool IsMatchOver => phase == MatchPhase.GameOver;
         public bool IsSpinning => phase == MatchPhase.Spinning;
+        public bool AreBotsAllowedToMove =>
+            phase == MatchPhase.Warning
+            || phase == MatchPhase.Explosion
+            || phase == MatchPhase.Collapse
+            || phase == MatchPhase.RefillDelay
+            || phase == MatchPhase.Refill;
         public float Difficulty01 => settings != null ? settings.Difficulty01 : difficulty01;
         public int BombCellsPerRound => EvaluateBombCellsPerRound();
         public int CompletedSpinCount => completedSpinCount;
@@ -158,12 +165,19 @@ namespace StayAlive
 
         private void Awake()
         {
+            sourceSettings = settings;
             EnsureFallbackSprite();
             CacheBoardCells();
         }
 
         private void Start()
         {
+            if (ResolveSettingsSource() != null)
+            {
+                StartGameLocal();
+                return;
+            }
+
             StartMatch();
         }
 
@@ -253,6 +267,36 @@ namespace StayAlive
             BeginCountdownPhase();
         }
 
+        public void StartGameLocal()
+        {
+            StayAliveGameSettings baseSettings = ResolveSettingsSource();
+            if (baseSettings != null)
+            {
+                settings = baseSettings.CreateRuntimeCopy(baseSettings.ClampedTotalPlayers, baseSettings.ClampedHumanPlayers);
+            }
+
+            StartMatch();
+        }
+
+        public void StartGameLocal(int totalPlayers, int humanPlayers)
+        {
+            totalPlayers = Mathf.Max(1, totalPlayers);
+            humanPlayers = Mathf.Clamp(humanPlayers, 1, totalPlayers);
+
+            StayAliveGameSettings baseSettings = ResolveSettingsSource();
+            if (baseSettings != null)
+            {
+                settings = baseSettings.CreateRuntimeCopy(totalPlayers, humanPlayers);
+            }
+            else
+            {
+                this.totalPlayers = totalPlayers;
+                this.humanPlayers = humanPlayers;
+            }
+
+            StartMatch();
+        }
+
         public void StartSpinButton()
         {
             if (phase != MatchPhase.None)
@@ -339,6 +383,54 @@ namespace StayAlive
 
         public bool TryGetBestSafePoint(Vector2 currentPosition, out Vector2 safePoint)
         {
+            return TryGetBestSafePoint(null, currentPosition, out safePoint);
+        }
+
+        public bool TryGetBestSafePoint(StayAlivePlayer requester, out Vector2 safePoint)
+        {
+            Vector2 currentPosition = requester != null ? requester.Position : BoardCenter;
+            return TryGetBestSafePoint(requester, currentPosition, out safePoint);
+        }
+
+        public Vector2 GetCrowdAvoidance(StayAlivePlayer requester)
+        {
+            if (requester == null || alivePlayers.Count <= 1)
+            {
+                return Vector2.zero;
+            }
+
+            Vector2 avoidance = Vector2.zero;
+            float personalSpaceRadius = Mathf.Max(CellSize * 1.1f, 0.9f);
+            for (int i = 0; i < alivePlayers.Count; i++)
+            {
+                StayAlivePlayer otherPlayer = alivePlayers[i];
+                if (otherPlayer == null || otherPlayer == requester || !otherPlayer.IsAlive)
+                {
+                    continue;
+                }
+
+                Vector2 away = requester.Position - otherPlayer.Position;
+                float distance = away.magnitude;
+                if (distance <= 0.001f)
+                {
+                    avoidance += UnityEngine.Random.insideUnitCircle.normalized;
+                    continue;
+                }
+
+                float weight = Mathf.Clamp01(1f - (distance / personalSpaceRadius));
+                if (weight <= 0f)
+                {
+                    continue;
+                }
+
+                avoidance += away.normalized * weight;
+            }
+
+            return avoidance.sqrMagnitude > 1f ? avoidance.normalized : avoidance;
+        }
+
+        private bool TryGetBestSafePoint(StayAlivePlayer requester, Vector2 currentPosition, out Vector2 safePoint)
+        {
             safePoint = BoardCenter;
             if (cells.Count == 0)
             {
@@ -360,7 +452,8 @@ namespace StayAlive
                     : GetNearestBombDistance(center);
                 float distanceFromCurrent = Vector2.Distance(currentPosition, center);
                 float edgePenalty = GetEdgePenalty(center);
-                float score = (nearestBombDistance * 2f) - distanceFromCurrent - edgePenalty;
+                float crowdPenalty = GetCrowdPenalty(center, requester);
+                float score = (nearestBombDistance * 2f) - distanceFromCurrent - edgePenalty - crowdPenalty;
 
                 if (score <= bestScore)
                 {
@@ -1080,9 +1173,9 @@ namespace StayAlive
                 return GetCellCenter(GetCellIndex(centerColumn, centerRow));
             }
 
-            if (spawnPoints != null && spawnPoints.Length > 0)
+            if (spawnPoints != null && playerIndex >= 0 && playerIndex < spawnPoints.Length)
             {
-                Transform spawnPoint = spawnPoints[Mathf.Clamp(playerIndex, 0, spawnPoints.Length - 1)];
+                Transform spawnPoint = spawnPoints[playerIndex];
                 if (spawnPoint != null)
                 {
                     return spawnPoint.position;
@@ -1153,6 +1246,35 @@ namespace StayAlive
             float nearestEdge = Mathf.Min(Mathf.Min(left, right), Mathf.Min(bottom, top));
             float threshold = Mathf.Max(CellSize, 0.5f);
             return nearestEdge >= threshold ? 0f : (threshold - nearestEdge) * 1.5f;
+        }
+
+        private float GetCrowdPenalty(Vector2 point, StayAlivePlayer requester)
+        {
+            if (requester == null || alivePlayers.Count <= 1)
+            {
+                return 0f;
+            }
+
+            float penalty = 0f;
+            float desiredSpacing = Mathf.Max(CellSize * 1.15f, 1f);
+            for (int i = 0; i < alivePlayers.Count; i++)
+            {
+                StayAlivePlayer otherPlayer = alivePlayers[i];
+                if (otherPlayer == null || otherPlayer == requester || !otherPlayer.IsAlive)
+                {
+                    continue;
+                }
+
+                float distance = Vector2.Distance(point, otherPlayer.Position);
+                if (distance >= desiredSpacing)
+                {
+                    continue;
+                }
+
+                penalty += (desiredSpacing - distance) * 1.35f;
+            }
+
+            return penalty;
         }
 
         private Sprite GetSymbolSprite(int symbolIndex, bool useBlurredVariant = false)
@@ -1283,17 +1405,21 @@ namespace StayAlive
             fallbackCellSprite = Sprite.Create(texture, new Rect(0f, 0f, 2f, 2f), new Vector2(0.5f, 0.5f), 2f);
         }
 
+        private StayAliveGameSettings ResolveSettingsSource()
+        {
+            if (sourceSettings == null)
+            {
+                sourceSettings = settings;
+            }
+
+            return sourceSettings;
+        }
+
         private bool ValidateSceneSetup()
         {
             if (SpawnPlayersEnabled && playerParent == null)
             {
                 Debug.LogError("StayAliveGameManager: Assign a pre-created Players parent in the scene.");
-                return false;
-            }
-
-            if (SpawnPlayersEnabled && !HasValidSpawnPoints())
-            {
-                Debug.LogError("StayAliveGameManager: Assign pre-created spawnPoints in the scene.");
                 return false;
             }
 
@@ -1604,7 +1730,7 @@ namespace StayAlive
                 return;
             }
 
-            const int defaultSpawnPointCount = 4;
+            const int defaultSpawnPointCount = 8;
             if (spawnPoints == null || spawnPoints.Length != defaultSpawnPointCount)
             {
                 spawnPoints = new Transform[defaultSpawnPointCount];
@@ -1615,7 +1741,11 @@ namespace StayAlive
                 new Vector3(-4f, 2.5f, 0f),
                 new Vector3(4f, 2.5f, 0f),
                 new Vector3(-4f, -2.5f, 0f),
-                new Vector3(4f, -2.5f, 0f)
+                new Vector3(4f, -2.5f, 0f),
+                new Vector3(0f, 2.5f, 0f),
+                new Vector3(0f, -2.5f, 0f),
+                new Vector3(-4f, 0f, 0f),
+                new Vector3(4f, 0f, 0f)
             };
 
             for (int i = 0; i < defaultSpawnPointCount; i++)

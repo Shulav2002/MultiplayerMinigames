@@ -6,8 +6,6 @@ namespace StayAlive
     public class StayAlivePlayer : MonoBehaviour
     {
         private const float MovementInputNormalizeThreshold = 1f;
-        private const float VectorEpsilonSqr = 0.0001f;
-
         [SerializeField] private StayAlivePlayerInput humanInput;
         [SerializeField] private StayAliveBotController botInput;
         [SerializeField] private Rigidbody2D body;
@@ -38,9 +36,6 @@ namespace StayAlive
         private int chairId = -1;
         private int appearanceIndex;
         private Vector2 estimatedVelocity;
-        private Vector2 bounceVelocity;
-        private float bounceCooldownUntil = -1f;
-        private float bounceInputSuppressionUntil = -1f;
         private AnimatorOverrideController runAnimatorOverride;
         private Transform localPlayerIndicatorTransform;
         private Vector3 localPlayerIndicatorBaseScale = Vector3.one;
@@ -95,9 +90,6 @@ namespace StayAlive
 
             isAlive = true;
             estimatedVelocity = Vector2.zero;
-            bounceVelocity = Vector2.zero;
-            bounceCooldownUntil = -1f;
-            bounceInputSuppressionUntil = -1f;
             gameObject.SetActive(true);
             SetLocalPlayerIndicatorVisible(isHuman);
             UpdateRunAnimation(Vector2.zero);
@@ -108,30 +100,24 @@ namespace StayAlive
             if (!CanSimulateMovement())
             {
                 estimatedVelocity = Vector2.zero;
+                if (body != null)
+                {
+                    body.linearVelocity = Vector2.zero;
+                }
                 return;
             }
 
             Vector2 input = GetNormalizedMoveInput();
-            estimatedVelocity = CalculateEstimatedVelocity(input);
+            estimatedVelocity = input * Mathf.Max(0f, manager.MoveSpeed);
             UpdateRunAnimation(input);
             UpdateFacing(input);
-            MoveByEstimatedVelocity();
-            DecayBounceVelocity();
+            ApplyPhysicsMovement();
+            ClampToBoardBounds();
         }
 
         private void Update()
         {
             UpdateLocalPlayerIndicator();
-        }
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            TryBounceOnPlayerCollision(collision);
-        }
-
-        private void OnCollisionStay2D(Collision2D collision)
-        {
-            TryBounceOnPlayerCollision(collision);
         }
 
         public void Eliminate()
@@ -143,7 +129,6 @@ namespace StayAlive
 
             isAlive = false;
             estimatedVelocity = Vector2.zero;
-            bounceVelocity = Vector2.zero;
 
             if (body != null)
             {
@@ -253,38 +238,43 @@ namespace StayAlive
             return input;
         }
 
-        private Vector2 CalculateEstimatedVelocity(Vector2 input)
-        {
-            Vector2 baseVelocity = Time.time < bounceInputSuppressionUntil
-                ? Vector2.zero
-                : input * Mathf.Max(0f, manager.MoveSpeed);
-            return baseVelocity + bounceVelocity;
-        }
-
-        private void MoveByEstimatedVelocity()
+        private void ApplyPhysicsMovement()
         {
             if (body == null || manager == null)
             {
                 return;
             }
 
-            Vector2 nextPosition = body.position + (estimatedVelocity * Time.fixedDeltaTime);
-            body.MovePosition(manager.ClampToBoard(nextPosition));
+            body.linearVelocity = estimatedVelocity;
         }
 
-        private void DecayBounceVelocity()
+        private void ClampToBoardBounds()
         {
-            if (bounceVelocity.sqrMagnitude > VectorEpsilonSqr)
+            if (body == null || manager == null)
             {
-                bounceVelocity = Vector2.MoveTowards(
-                    bounceVelocity,
-                    Vector2.zero,
-                    Mathf.Max(0f, manager.PlayerBounceDecay) * Time.fixedDeltaTime);
+                return;
             }
-            else
+
+            Vector2 currentPosition = body.position;
+            Vector2 clampedPosition = manager.ClampToBoard(currentPosition);
+            if ((clampedPosition - currentPosition).sqrMagnitude <= 0.0001f)
             {
-                bounceVelocity = Vector2.zero;
+                return;
             }
+
+            Vector2 clampedVelocity = body.linearVelocity;
+            if (!Mathf.Approximately(clampedPosition.x, currentPosition.x))
+            {
+                clampedVelocity.x = 0f;
+            }
+
+            if (!Mathf.Approximately(clampedPosition.y, currentPosition.y))
+            {
+                clampedVelocity.y = 0f;
+            }
+
+            body.position = clampedPosition;
+            body.linearVelocity = clampedVelocity;
         }
 
         private void UpdateFacing(Vector2 movementInput)
@@ -341,49 +331,6 @@ namespace StayAlive
 
             runAnimatorOverride["Run"] = selectedClip;
             runAnimator.runtimeAnimatorController = runAnimatorOverride;
-        }
-
-        private void TryBounceOnPlayerCollision(Collision2D collision)
-        {
-            if (collision == null || !isAlive || body == null || manager == null || Time.time < bounceCooldownUntil)
-            {
-                return;
-            }
-
-            StayAlivePlayer otherPlayer = collision.collider != null
-                ? collision.collider.GetComponentInParent<StayAlivePlayer>()
-                : null;
-            if (otherPlayer == null || otherPlayer == this || !otherPlayer.isAlive || otherPlayer.body == null)
-            {
-                return;
-            }
-
-            if (GetInstanceID() > otherPlayer.GetInstanceID() || Time.time < otherPlayer.bounceCooldownUntil)
-            {
-                return;
-            }
-
-            Vector2 separation = otherPlayer.Position - Position;
-            Vector2 direction = separation.sqrMagnitude > VectorEpsilonSqr
-                ? separation.normalized
-                : (collision.relativeVelocity.sqrMagnitude > VectorEpsilonSqr ? collision.relativeVelocity.normalized : Vector2.right);
-
-            ApplyBounceImpulse(-direction);
-            otherPlayer.ApplyBounceImpulse(direction);
-        }
-
-        private void ApplyBounceImpulse(Vector2 direction)
-        {
-            Vector2 normalized = direction.sqrMagnitude > VectorEpsilonSqr ? direction.normalized : Vector2.zero;
-            bounceVelocity += normalized * Mathf.Max(0f, manager.PlayerBounceSpeed);
-            float maxBounce = Mathf.Max(0f, manager.PlayerBounceMaxSpeed);
-            if (bounceVelocity.sqrMagnitude > maxBounce * maxBounce)
-            {
-                bounceVelocity = bounceVelocity.normalized * maxBounce;
-            }
-
-            bounceCooldownUntil = Time.time + Mathf.Max(0f, manager.PlayerBounceCooldownSeconds);
-            bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, manager.PlayerBounceInputSuppressionSeconds);
         }
 
         private void RefreshLocalPlayerIndicator()
