@@ -6,6 +6,7 @@ namespace StayAlive
     public class StayAlivePlayer : MonoBehaviour
     {
         private const float MovementInputNormalizeThreshold = 1f;
+        private const float VectorEpsilonSqr = 0.0001f;
         [SerializeField] private StayAlivePlayerInput humanInput;
         [SerializeField] private StayAliveBotController botInput;
         [SerializeField] private Rigidbody2D body;
@@ -36,6 +37,9 @@ namespace StayAlive
         private int chairId = -1;
         private int appearanceIndex;
         private Vector2 estimatedVelocity;
+        private Vector2 bounceVelocity;
+        private float bounceCooldownUntil = -1f;
+        private float bounceInputSuppressionUntil = -1f;
         private AnimatorOverrideController runAnimatorOverride;
         private Transform localPlayerIndicatorTransform;
         private Vector3 localPlayerIndicatorBaseScale = Vector3.one;
@@ -90,6 +94,7 @@ namespace StayAlive
 
             isAlive = true;
             estimatedVelocity = Vector2.zero;
+            ResetBounceState();
             gameObject.SetActive(true);
             SetLocalPlayerIndicatorVisible(isHuman);
             UpdateRunAnimation(Vector2.zero);
@@ -108,16 +113,27 @@ namespace StayAlive
             }
 
             Vector2 input = GetNormalizedMoveInput();
-            estimatedVelocity = input * Mathf.Max(0f, manager.MoveSpeed);
+            estimatedVelocity = CalculateEstimatedVelocity(input);
             UpdateRunAnimation(input);
             UpdateFacing(input);
             ApplyPhysicsMovement();
             ClampToBoardBounds();
+            DecayBounceVelocity();
         }
 
         private void Update()
         {
             UpdateLocalPlayerIndicator();
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            TryBounceOnPlayerCollision(collision);
+        }
+
+        private void OnCollisionStay2D(Collision2D collision)
+        {
+            TryBounceOnPlayerCollision(collision);
         }
 
         public void Eliminate()
@@ -129,6 +145,7 @@ namespace StayAlive
 
             isAlive = false;
             estimatedVelocity = Vector2.zero;
+            ResetBounceState();
 
             if (body != null)
             {
@@ -238,6 +255,14 @@ namespace StayAlive
             return input;
         }
 
+        private Vector2 CalculateEstimatedVelocity(Vector2 input)
+        {
+            Vector2 baseVelocity = Time.time < bounceInputSuppressionUntil
+                ? Vector2.zero
+                : input * Mathf.Max(0f, manager.MoveSpeed);
+            return baseVelocity + bounceVelocity;
+        }
+
         private void ApplyPhysicsMovement()
         {
             if (body == null || manager == null)
@@ -246,6 +271,21 @@ namespace StayAlive
             }
 
             body.linearVelocity = estimatedVelocity;
+        }
+
+        private void DecayBounceVelocity()
+        {
+            if (bounceVelocity.sqrMagnitude > VectorEpsilonSqr)
+            {
+                bounceVelocity = Vector2.MoveTowards(
+                    bounceVelocity,
+                    Vector2.zero,
+                    Mathf.Max(0f, manager.PlayerBounceDecay) * Time.fixedDeltaTime);
+            }
+            else
+            {
+                bounceVelocity = Vector2.zero;
+            }
         }
 
         private void ClampToBoardBounds()
@@ -331,6 +371,64 @@ namespace StayAlive
 
             runAnimatorOverride["Run"] = selectedClip;
             runAnimator.runtimeAnimatorController = runAnimatorOverride;
+        }
+
+        private void TryBounceOnPlayerCollision(Collision2D collision)
+        {
+            if (collision == null || !isAlive || body == null || manager == null || Time.time < bounceCooldownUntil)
+            {
+                return;
+            }
+
+            StayAlivePlayer otherPlayer = collision.collider != null
+                ? collision.collider.GetComponentInParent<StayAlivePlayer>()
+                : null;
+            if (otherPlayer == null || otherPlayer == this || !otherPlayer.isAlive || otherPlayer.body == null)
+            {
+                return;
+            }
+
+            // Resolve each player pair once so both players receive the same rebound strength.
+            if (GetInstanceID() > otherPlayer.GetInstanceID() || Time.time < otherPlayer.bounceCooldownUntil)
+            {
+                return;
+            }
+
+            Vector2 separation = otherPlayer.Position - Position;
+            Vector2 direction = separation.sqrMagnitude > VectorEpsilonSqr
+                ? separation.normalized
+                : (collision.relativeVelocity.sqrMagnitude > VectorEpsilonSqr ? collision.relativeVelocity.normalized : Vector2.right);
+
+            ApplyBounceImpulse(-direction);
+            otherPlayer.ApplyBounceImpulse(direction);
+        }
+
+        private void ApplyBounceImpulse(Vector2 direction)
+        {
+            Vector2 normalized = direction.sqrMagnitude > VectorEpsilonSqr ? direction.normalized : Vector2.zero;
+            bounceVelocity += normalized * Mathf.Max(0f, manager.PlayerBounceSpeed);
+
+            float maxBounce = Mathf.Max(0f, manager.PlayerBounceMaxSpeed);
+            if (bounceVelocity.sqrMagnitude > maxBounce * maxBounce)
+            {
+                bounceVelocity = bounceVelocity.normalized * maxBounce;
+            }
+
+            if (body != null)
+            {
+                // Apply the recoil immediately so the bounce is visible on the contact frame.
+                body.linearVelocity = bounceVelocity;
+            }
+
+            bounceCooldownUntil = Time.time + Mathf.Max(0f, manager.PlayerBounceCooldownSeconds);
+            bounceInputSuppressionUntil = Time.time + Mathf.Max(0f, manager.PlayerBounceInputSuppressionSeconds);
+        }
+
+        private void ResetBounceState()
+        {
+            bounceVelocity = Vector2.zero;
+            bounceCooldownUntil = -1f;
+            bounceInputSuppressionUntil = -1f;
         }
 
         private void RefreshLocalPlayerIndicator()

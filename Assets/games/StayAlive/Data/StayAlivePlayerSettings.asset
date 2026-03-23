@@ -17,7 +17,7 @@ MonoBehaviour:
   humanPlayers: 1
   moveSpeed: 3
   playerBounceSpeed: 2
-  playerBounceMaxSpeed: 3
-  playerBounceDecay: 6
-  playerBounceCooldownSeconds: 0.12
-  playerBounceInputSuppressionSeconds: 0.04
+  playerBounceMaxSpeed: 4.25
+  playerBounceDecay: 5.5
+  playerBounceCooldownSeconds: 0.14
+  playerBounceInputSuppressionSeconds: 0.12
