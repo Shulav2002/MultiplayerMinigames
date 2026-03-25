@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using StayAlive.Networking;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -61,6 +62,7 @@ namespace StayAlive
 
         [Header("Round Flow")]
         [SerializeField] private bool spawnPlayers = true;
+        [SerializeField] private bool autoStartLocalGame = true;
         [SerializeField, Min(1)] private int totalPlayers = 1;
         [SerializeField, Min(1)] private int humanPlayers = 1;
         [SerializeField, Min(0f)] private float startCountdownSeconds = 3f;
@@ -107,6 +109,7 @@ namespace StayAlive
         private readonly List<StayAliveCell> cells = new List<StayAliveCell>();
         private readonly List<StayAlivePlayer> alivePlayers = new List<StayAlivePlayer>();
         private readonly List<StayAlivePlayer> allPlayers = new List<StayAlivePlayer>();
+        private readonly Dictionary<int, StayAlivePlayer> playersByChair = new Dictionary<int, StayAlivePlayer>();
         private readonly HashSet<int> activeBombCellIndices = new HashSet<int>();
         private readonly HashSet<int> queuedBombCellIndices = new HashSet<int>();
         private readonly List<GameObject> activeExplosionEffects = new List<GameObject>();
@@ -122,6 +125,8 @@ namespace StayAlive
         private int completedSpinShiftCount;
         private int targetSpinShiftCount;
         private StayAliveGameSettings sourceSettings;
+        private bool localSimulationEnabled = true;
+        private bool startupHandled;
 
         private int Columns => settings != null ? settings.Columns : columns;
         private int Rows => settings != null ? settings.Rows : rows;
@@ -159,6 +164,8 @@ namespace StayAlive
         public bool IsExplosionActive => phase == MatchPhase.Explosion;
         public bool IsMatchOver => phase == MatchPhase.GameOver;
         public bool IsSpinning => phase == MatchPhase.Spinning;
+        public bool LocalSimulationEnabled => localSimulationEnabled;
+        public IReadOnlyList<StayAlivePlayer> Players => allPlayers;
         public bool AreBotsAllowedToMove =>
             phase == MatchPhase.Warning
             || phase == MatchPhase.Explosion
@@ -185,6 +192,16 @@ namespace StayAlive
 
         private void Start()
         {
+            if (startupHandled || !autoStartLocalGame)
+            {
+                return;
+            }
+
+            if (FindFirstObjectByType<StayAlive.Lobby.StayAliveLobbyManager>(FindObjectsInactive.Include) != null)
+            {
+                return;
+            }
+
             if (ResolveSettingsSource() != null)
             {
                 StartGameLocal();
@@ -217,6 +234,11 @@ namespace StayAlive
         private void Update()
         {
             if (phase == MatchPhase.GameOver || phase == MatchPhase.None)
+            {
+                return;
+            }
+
+            if (!localSimulationEnabled)
             {
                 return;
             }
@@ -263,6 +285,8 @@ namespace StayAlive
 
         public void StartMatch()
         {
+            startupHandled = true;
+            localSimulationEnabled = true;
             if (!ValidateSceneSetup())
             {
                 phase = MatchPhase.GameOver;
@@ -283,6 +307,7 @@ namespace StayAlive
 
         public void StartGameLocal()
         {
+            startupHandled = true;
             StayAliveGameSettings baseSettings = ResolveSettingsSource();
             if (baseSettings != null)
             {
@@ -294,6 +319,7 @@ namespace StayAlive
 
         public void StartGameLocal(int totalPlayers, int humanPlayers)
         {
+            startupHandled = true;
             totalPlayers = Mathf.Max(1, totalPlayers);
             humanPlayers = Mathf.Clamp(humanPlayers, 1, totalPlayers);
 
@@ -309,6 +335,51 @@ namespace StayAlive
             }
 
             StartMatch();
+        }
+
+        public void StartOnlineGame(StayAliveRosterEntry[] roster, string localUserId, bool simulationAuthority, float countdownSeconds = 3f)
+        {
+            startupHandled = true;
+            if (roster == null || roster.Length == 0)
+            {
+                Debug.LogError("StayAliveGameManager: Cannot start online game without a roster.");
+                return;
+            }
+
+            StayAliveGameSettings baseSettings = ResolveSettingsSource();
+            if (baseSettings != null)
+            {
+                settings = baseSettings.CreateRuntimeCopy(roster.Length, CountHumanParticipants(roster));
+            }
+            else
+            {
+                totalPlayers = Mathf.Max(1, roster.Length);
+                humanPlayers = Mathf.Clamp(CountHumanParticipants(roster), 1, totalPlayers);
+            }
+
+            localSimulationEnabled = simulationAuthority;
+            if (!ValidateSceneSetup())
+            {
+                phase = MatchPhase.GameOver;
+                return;
+            }
+
+            if (SpawnPlayersEnabled)
+            {
+                ClearPlayers();
+                SpawnPlayers(roster, localUserId, simulationAuthority);
+            }
+
+            ClearExplosionEffects();
+            InitializeIdleBoardState();
+            phase = MatchPhase.Countdown;
+            phaseTimer = Mathf.Max(0f, countdownSeconds);
+            symbolSwapTimer = 0f;
+            explosionResolved = false;
+            if (localSimulationEnabled && phaseTimer <= 0f)
+            {
+                BeginSpinPhase();
+            }
         }
 
         public void StartSpinButton()
@@ -719,6 +790,51 @@ namespace StayAlive
 
                 allPlayers.Add(stayAlivePlayer);
                 alivePlayers.Add(stayAlivePlayer);
+                playersByChair[i] = stayAlivePlayer;
+            }
+        }
+
+        private void SpawnPlayers(StayAliveRosterEntry[] roster, string localUserId, bool simulationAuthority)
+        {
+            if (basePlayerPrefab == null)
+            {
+                Debug.LogError("StayAliveGameManager: Base player prefab is not assigned.");
+                phase = MatchPhase.GameOver;
+                return;
+            }
+
+            for (int i = 0; i < roster.Length; i++)
+            {
+                StayAliveRosterEntry entry = roster[i];
+                if (entry == null)
+                {
+                    continue;
+                }
+
+                Vector2 spawnPosition = GetSpawnPosition(entry.chairId);
+                GameObject playerObject = Instantiate(
+                    basePlayerPrefab,
+                    new Vector3(spawnPosition.x, spawnPosition.y, 0f),
+                    Quaternion.identity,
+                    playerParent != null ? playerParent : transform);
+
+                StayAlivePlayer stayAlivePlayer = playerObject.GetComponent<StayAlivePlayer>();
+                if (stayAlivePlayer == null)
+                {
+                    stayAlivePlayer = playerObject.AddComponent<StayAlivePlayer>();
+                }
+
+                StayAlivePlayerControlMode controlMode = ResolveControlMode(entry, localUserId, simulationAuthority);
+                stayAlivePlayer.SetAppearanceIndex(entry.appearanceIndex);
+                stayAlivePlayer.Initialize(this, controlMode, entry.userId, entry.chairId, entry.isBot);
+
+                allPlayers.Add(stayAlivePlayer);
+                if (stayAlivePlayer.IsAlive)
+                {
+                    alivePlayers.Add(stayAlivePlayer);
+                }
+
+                playersByChair[entry.chairId] = stayAlivePlayer;
             }
         }
 
@@ -734,6 +850,7 @@ namespace StayAlive
 
             allPlayers.Clear();
             alivePlayers.Clear();
+            playersByChair.Clear();
         }
 
         private void ResolveExplosionHits()
@@ -1196,6 +1313,282 @@ namespace StayAlive
             return -1;
         }
 
+        public StayAlivePlayer GetPlayerByChair(int chairId)
+        {
+            playersByChair.TryGetValue(chairId, out StayAlivePlayer player);
+            return player;
+        }
+
+        public void SetNetworkMoveInput(int chairId, Vector2 moveInput)
+        {
+            if (!playersByChair.TryGetValue(chairId, out StayAlivePlayer player) || player == null)
+            {
+                return;
+            }
+
+            player.SetNetworkMoveInput(moveInput);
+        }
+
+        public StayAliveStateSnapshotPayload BuildStateSnapshot(string hostUserId, int tick)
+        {
+            StayAlivePlayerStateSnapshot[] playerSnapshots = new StayAlivePlayerStateSnapshot[allPlayers.Count];
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                StayAlivePlayer player = allPlayers[i];
+                playerSnapshots[i] = new StayAlivePlayerStateSnapshot
+                {
+                    chairId = player != null ? player.ChairId : -1,
+                    x = player != null ? player.Position.x : 0f,
+                    y = player != null ? player.Position.y : 0f,
+                    facingAngle = player != null ? player.FacingAngle : 0f,
+                    velocityX = player != null ? player.EstimatedVelocity.x : 0f,
+                    velocityY = player != null ? player.EstimatedVelocity.y : 0f,
+                    isAlive = player != null && player.IsAlive,
+                    isBot = player != null && player.IsBotParticipant,
+                    appearanceIndex = player != null ? player.AppearanceIndex : 0
+                };
+            }
+
+            return new StayAliveStateSnapshotPayload
+            {
+                roomId = string.Empty,
+                hostUserId = hostUserId,
+                tick = tick,
+                phase = (int)phase,
+                phaseTimeRemaining = Mathf.Max(0f, phaseTimer),
+                completedSpinCount = completedSpinCount,
+                symbolIndices = CloneIntArray(symbolIndices),
+                activeBombCellIndices = GetSortedIndices(activeBombCellIndices),
+                players = playerSnapshots
+            };
+        }
+
+        public void ApplyStateSnapshot(StayAliveStateSnapshotPayload snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            MatchPhase previousPhase = phase;
+            int[] previousSymbols = CloneIntArray(symbolIndices);
+            int[] previousBombCells = GetSortedIndices(activeBombCellIndices);
+
+            phase = Enum.IsDefined(typeof(MatchPhase), snapshot.phase)
+                ? (MatchPhase)snapshot.phase
+                : MatchPhase.None;
+            phaseTimer = Mathf.Max(0f, snapshot.phaseTimeRemaining);
+            completedSpinCount = Mathf.Max(0, snapshot.completedSpinCount);
+            symbolSwapTimer = 0f;
+            explosionResolved = phase != MatchPhase.Explosion;
+
+            CopyInto(symbolIndices, snapshot.symbolIndices);
+            SetIndices(activeBombCellIndices, snapshot.activeBombCellIndices);
+
+            if (snapshot.players != null)
+            {
+                for (int i = 0; i < snapshot.players.Length; i++)
+                {
+                    StayAlivePlayerStateSnapshot playerSnapshot = snapshot.players[i];
+                    if (playerSnapshot == null)
+                    {
+                        continue;
+                    }
+
+                    StayAlivePlayer player = GetPlayerByChair(playerSnapshot.chairId);
+                    if (player == null)
+                    {
+                        continue;
+                    }
+
+                    player.ApplyStateSnapshot(playerSnapshot);
+                }
+            }
+
+            RebuildAlivePlayersList();
+
+            bool symbolsChanged = !AreArraysEqual(previousSymbols, symbolIndices);
+            bool bombCellsChanged = !AreArraysEqual(previousBombCells, GetSortedIndices(activeBombCellIndices));
+            RefreshBoardVisualsFromSnapshot(previousPhase, symbolsChanged, bombCellsChanged);
+        }
+
+        private void RefreshBoardVisualsFromSnapshot(MatchPhase previousPhase, bool symbolsChanged, bool bombCellsChanged)
+        {
+            bool phaseChanged = previousPhase != phase;
+            bool shouldRefresh = phaseChanged || symbolsChanged || bombCellsChanged;
+            switch (phase)
+            {
+                case MatchPhase.Countdown:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForIdle();
+                    }
+                    break;
+
+                case MatchPhase.Spinning:
+                    if (phaseChanged || symbolsChanged)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForSpin();
+                    }
+                    break;
+
+                case MatchPhase.Warning:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForWarning();
+                    }
+                    break;
+
+                case MatchPhase.Explosion:
+                    if (shouldRefresh)
+                    {
+                        RefreshBoardVisualsForExplosion();
+                        SpawnExplosionEffects();
+                    }
+                    break;
+
+                case MatchPhase.Collapse:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForCollapse();
+                    }
+                    break;
+
+                case MatchPhase.RefillDelay:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForHiddenRefill();
+                    }
+                    break;
+
+                case MatchPhase.Refill:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForRefill();
+                    }
+                    break;
+
+                case MatchPhase.GameOver:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForSpin();
+                    }
+                    break;
+
+                default:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForIdle();
+                    }
+                    break;
+            }
+        }
+
+        private void RebuildAlivePlayersList()
+        {
+            alivePlayers.Clear();
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                StayAlivePlayer player = allPlayers[i];
+                if (player != null && player.IsAlive)
+                {
+                    alivePlayers.Add(player);
+                }
+            }
+        }
+
+        private static void CopyInto(int[] target, int[] source)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            Array.Clear(target, 0, target.Length);
+            if (source == null)
+            {
+                return;
+            }
+
+            int count = Mathf.Min(target.Length, source.Length);
+            Array.Copy(source, target, count);
+        }
+
+        private static void SetIndices(HashSet<int> target, int[] source)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            target.Clear();
+            if (source == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                target.Add(source[i]);
+            }
+        }
+
+        private static int[] CloneIntArray(int[] source)
+        {
+            if (source == null)
+            {
+                return Array.Empty<int>();
+            }
+
+            int[] clone = new int[source.Length];
+            Array.Copy(source, clone, source.Length);
+            return clone;
+        }
+
+        private static int[] GetSortedIndices(HashSet<int> source)
+        {
+            if (source == null || source.Count == 0)
+            {
+                return Array.Empty<int>();
+            }
+
+            int[] values = new int[source.Count];
+            source.CopyTo(values);
+            Array.Sort(values);
+            return values;
+        }
+
+        private static bool AreArraysEqual(int[] left, int[] right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left == null || right == null || left.Length != right.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] != right[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private void InitializeIdleBoardState()
         {
             activeBombCellIndices.Clear();
@@ -1565,6 +1958,42 @@ namespace StayAlive
             {
                 DestroyImmediate(target);
             }
+        }
+
+        private static int CountHumanParticipants(StayAliveRosterEntry[] roster)
+        {
+            int humans = 0;
+            for (int i = 0; i < roster.Length; i++)
+            {
+                if (roster[i] != null && !roster[i].isBot)
+                {
+                    humans++;
+                }
+            }
+
+            return Mathf.Max(1, humans);
+        }
+
+        private static StayAlivePlayerControlMode ResolveControlMode(
+            StayAliveRosterEntry entry,
+            string localUserId,
+            bool simulationAuthority)
+        {
+            if (simulationAuthority)
+            {
+                if (entry.isBot)
+                {
+                    return StayAlivePlayerControlMode.Bot;
+                }
+
+                return entry.userId == localUserId
+                    ? StayAlivePlayerControlMode.LocalHuman
+                    : StayAlivePlayerControlMode.NetworkDriven;
+            }
+
+            return entry.userId == localUserId
+                ? StayAlivePlayerControlMode.LocalHuman
+                : StayAlivePlayerControlMode.SnapshotOnly;
         }
 
         private void OnDrawGizmosSelected()
