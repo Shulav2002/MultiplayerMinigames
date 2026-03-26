@@ -25,13 +25,15 @@ namespace StayAlive.Lobby
         {
             Hidden = 0,
             JoinEntry = 1,
-            PrivateWaitingHost = 2,
-            PrivateWaitingGuest = 3
+            CreateEntry = 2,
+            PrivateWaitingHost = 3,
+            PrivateWaitingGuest = 4
         }
 
         [Header("UI & Game References")]
         [SerializeField] private GameObject lobbyCanvas;
         [SerializeField] private GameObject gameContainer;
+        [SerializeField] private StayAlivePopupManager popupManager;
 
         [Header("Join Popup")]
         [SerializeField] private GameObject joinRoomPopupPanel;
@@ -85,9 +87,11 @@ namespace StayAlive.Lobby
         private RoomPanelMode roomPanelMode;
         private int currentOccupiedSeats;
         private int currentCapacity;
+        private string currentRoomId;
         private bool joinRequestInFlight;
         private bool dismissPrivateRoomRequested;
         private bool subscribedToGameEvents;
+        private bool subscribedToPopupEvents;
         private Coroutine showGameEndCoroutine;
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
@@ -110,6 +114,7 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            SubscribeToPopupEvents();
             RegisterButtons();
             SubscribeToGameEvents();
             ShowLobbyHome();
@@ -121,6 +126,7 @@ namespace StayAlive.Lobby
             {
                 UnregisterButtons();
                 UnsubscribeFromGameEvents();
+                UnsubscribeFromPopupEvents();
             }
 
             UnsubscribeFromNetworkEvents();
@@ -149,28 +155,40 @@ namespace StayAlive.Lobby
         {
             EnsureReferences();
             roomPanelMode = RoomPanelMode.JoinEntry;
+            ShowLobbyVisualState();
+            SetRoomIdReadOnly(false);
+            SetRoomIdText(string.Empty);
+
+            if (popupManager != null)
+            {
+                popupManager.ShowJoinPopup();
+                return;
+            }
+
             SetPopup(joinRoomPopupPanel, true);
             SetPopup(createRoomPopupPanel, false);
             SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
-            SetRoomIdReadOnly(false);
-            SetRoomIdText(string.Empty);
         }
 
-        public async void OnOpenCreateRoomPopupClicked()
+        public void OnOpenCreateRoomPopupClicked()
         {
             if (!useNetworkLobby)
             {
                 return;
             }
 
+            EnsureReferences();
+            roomPanelMode = RoomPanelMode.CreateEntry;
             dismissPrivateRoomRequested = false;
-            if (!await EnsureReadyForPrivateRoomCreateAsync())
+            ShowLobbyVisualState();
+
+            if (popupManager != null)
             {
+                popupManager.ShowCreatePopup();
                 return;
             }
 
-            ShowPrivateWaitingPanel(isHost: true, "Creating...", 1, Mathf.Max(2, networkClient != null ? networkClient.RoomCapacity : 4));
-            await BeginOnlineJoinAsync(null, createRoom: true, usePrivateRoom: true);
+            SubmitCreateRoomRequest();
         }
 
         public void OnRoomPopupConfirmButtonClicked()
@@ -178,6 +196,12 @@ namespace StayAlive.Lobby
             if (roomPanelMode == RoomPanelMode.JoinEntry)
             {
                 SubmitJoinRoomRequest();
+                return;
+            }
+
+            if (roomPanelMode == RoomPanelMode.CreateEntry)
+            {
+                SubmitCreateRoomRequest();
                 return;
             }
 
@@ -194,8 +218,18 @@ namespace StayAlive.Lobby
 
         public async void OnCloseCreateRoomPopupClicked()
         {
-            dismissPrivateRoomRequested = true;
+            RoomPanelMode panelMode = roomPanelMode;
             HideRoomPanel();
+
+            bool shouldDismissPrivateRoom = panelMode == RoomPanelMode.PrivateWaitingHost
+                || panelMode == RoomPanelMode.PrivateWaitingGuest;
+            if (!shouldDismissPrivateRoom)
+            {
+                dismissPrivateRoomRequested = false;
+                return;
+            }
+
+            dismissPrivateRoomRequested = true;
             await DismissPrivateRoomAsync();
         }
 
@@ -240,6 +274,18 @@ namespace StayAlive.Lobby
             }
 
             await BeginOnlineJoinAsync(roomId, createRoom: false, usePrivateRoom: true);
+        }
+
+        private async void SubmitCreateRoomRequest()
+        {
+            dismissPrivateRoomRequested = false;
+            if (!await EnsureReadyForPrivateRoomCreateAsync())
+            {
+                return;
+            }
+
+            ShowPrivateWaitingPanel(isHost: true, "Creating...", 1, Mathf.Max(2, networkClient != null ? networkClient.RoomCapacity : 4));
+            await BeginOnlineJoinAsync(null, createRoom: true, usePrivateRoom: true);
         }
 
         private async Task BeginOnlineJoinAsync(string roomId, bool createRoom, bool usePrivateRoom)
@@ -357,20 +403,12 @@ namespace StayAlive.Lobby
             HideWaiting();
             HideNetworkIssue();
 
-            if (lobbyCanvas != null)
+            if (popupManager != null)
             {
-                lobbyCanvas.SetActive(true);
+                popupManager.HideAllPopups();
             }
 
-            if (lobbyRoot != null)
-            {
-                lobbyRoot.SetActive(true);
-            }
-
-            if (gameContainer != null)
-            {
-                gameContainer.SetActive(false);
-            }
+            ShowLobbyVisualState();
         }
 
         private void ShowRandomWaitingPanel()
@@ -383,20 +421,17 @@ namespace StayAlive.Lobby
             HideRoomPanel();
             HideGameEnd();
             HideNetworkIssue();
-
-            if (lobbyCanvas != null)
-            {
-                lobbyCanvas.SetActive(true);
-            }
-
-            if (lobbyRoot != null)
-            {
-                lobbyRoot.SetActive(false);
-            }
+            ShowLobbyVisualState();
 
             if (waitingForPlayersPanel != null)
             {
                 waitingForPlayersPanel.SetActive(true);
+                return;
+            }
+
+            if (popupManager != null)
+            {
+                popupManager.ShowWaitingForPlayersPopup();
             }
         }
 
@@ -405,6 +440,15 @@ namespace StayAlive.Lobby
             roomPanelMode = isHost ? RoomPanelMode.PrivateWaitingHost : RoomPanelMode.PrivateWaitingGuest;
             currentOccupiedSeats = occupiedSeats;
             currentCapacity = capacity;
+            currentRoomId = roomId ?? string.Empty;
+            ShowLobbyVisualState();
+
+            if (popupManager != null)
+            {
+                popupManager.ShowPrivateRoomWaitingPopup(isHost, currentRoomId, currentOccupiedSeats, currentCapacity);
+                return;
+            }
+
             SetPopup(joinRoomPopupPanel, false);
             SetPopup(createRoomPopupPanel, true);
             SetComponentText(createRoomIdLabel, roomId ?? string.Empty);
@@ -413,6 +457,16 @@ namespace StayAlive.Lobby
 
         private void RefreshPrivateWaitingUi()
         {
+            if (popupManager != null
+                && (roomPanelMode == RoomPanelMode.PrivateWaitingHost || roomPanelMode == RoomPanelMode.PrivateWaitingGuest))
+            {
+                popupManager.ShowPrivateRoomWaitingPopup(
+                    roomPanelMode == RoomPanelMode.PrivateWaitingHost,
+                    currentRoomId,
+                    currentOccupiedSeats,
+                    currentCapacity);
+            }
+
             SetComponentText(createRoomOccupancyLabel, $"{currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)} joined");
 
             if (createRoomStartButton == null)
@@ -430,6 +484,13 @@ namespace StayAlive.Lobby
         private void HideRoomPanel()
         {
             roomPanelMode = RoomPanelMode.Hidden;
+            currentRoomId = string.Empty;
+
+            if (popupManager != null)
+            {
+                popupManager.HideLobbyPopup();
+            }
+
             SetPopup(joinRoomPopupPanel, false);
             SetPopup(createRoomPopupPanel, false);
         }
@@ -508,17 +569,79 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            string resolvedMessage = string.IsNullOrWhiteSpace(message) ? networkIssueConnectMessage : message;
+            bool showOnLobbyCanvas = ShouldShowNetworkIssueOnLobbyCanvas();
+
+            if (showOnLobbyCanvas)
+            {
+                ShowLobbyVisualState();
+            }
+
+            if (popupManager != null)
+            {
+                popupManager.ShowNetworkErrorPopup(resolvedMessage, preferOverlay: !showOnLobbyCanvas);
+            }
+
             if (networkIssueRoot != null)
             {
                 networkIssueRoot.SetActive(true);
             }
 
             SetComponentText(networkIssueTitleLabel, networkIssueTitle);
-            SetComponentText(networkIssueMessageLabel, string.IsNullOrWhiteSpace(message) ? networkIssueConnectMessage : message);
+            SetComponentText(networkIssueMessageLabel, resolvedMessage);
+        }
+
+        private bool ShouldShowNetworkIssueOnLobbyCanvas()
+        {
+            if (roomPanelMode != RoomPanelMode.Hidden)
+            {
+                return true;
+            }
+
+            if (popupManager == null)
+            {
+                return gameContainer == null || !gameContainer.activeInHierarchy;
+            }
+
+            switch (popupManager.LobbyIntent)
+            {
+                case StayAlivePopupIntent.JoinRoom:
+                case StayAlivePopupIntent.CreateRoom:
+                case StayAlivePopupIntent.WaitingForPlayers:
+                case StayAlivePopupIntent.PrivateRoomWaitingHost:
+                case StayAlivePopupIntent.PrivateRoomWaitingGuest:
+                    return true;
+
+                default:
+                    return gameContainer == null || !gameContainer.activeInHierarchy;
+            }
+        }
+
+        private void ShowLobbyVisualState()
+        {
+            if (lobbyCanvas != null)
+            {
+                lobbyCanvas.SetActive(true);
+            }
+
+            if (lobbyRoot != null)
+            {
+                lobbyRoot.SetActive(true);
+            }
+
+            if (gameContainer != null)
+            {
+                gameContainer.SetActive(false);
+            }
         }
 
         private void HideNetworkIssue()
         {
+            if (popupManager != null)
+            {
+                popupManager.HidePopupByIntent(StayAlivePopupIntent.NetworkError);
+            }
+
             if (networkIssueRoot != null)
             {
                 networkIssueRoot.SetActive(false);
@@ -721,6 +844,11 @@ namespace StayAlive.Lobby
                 gameManager = FindFirstObjectByType<StayAliveGameManager>(FindObjectsInactive.Include);
             }
 
+            if (popupManager == null)
+            {
+                popupManager = GetComponent<StayAlivePopupManager>();
+            }
+
             if (useNetworkLobby && networkClient == null)
             {
                 networkClient = GetComponent<StayAliveLobbyNetworkClient>();
@@ -764,6 +892,28 @@ namespace StayAlive.Lobby
             if (gameManager != null) gameManager.GameEnded -= HandleGameEnded;
             if (onlineMatchController != null) onlineMatchController.MatchEnded -= HandleMatchEnded;
             subscribedToGameEvents = false;
+        }
+
+        private void SubscribeToPopupEvents()
+        {
+            if (subscribedToPopupEvents || popupManager == null)
+            {
+                return;
+            }
+
+            popupManager.ButtonClicked += HandlePopupButtonClicked;
+            subscribedToPopupEvents = true;
+        }
+
+        private void UnsubscribeFromPopupEvents()
+        {
+            if (!subscribedToPopupEvents || popupManager == null)
+            {
+                return;
+            }
+
+            popupManager.ButtonClicked -= HandlePopupButtonClicked;
+            subscribedToPopupEvents = false;
         }
 
         private void SubscribeToNetworkEvents()
@@ -852,6 +1002,69 @@ namespace StayAlive.Lobby
             await LeaveCurrentRoomIfNeededAsync();
             dismissPrivateRoomRequested = false;
             ShowLobbyHome();
+        }
+
+        private void HandlePopupButtonClicked(StayAlivePopupCanvasType canvasType, StayAlivePopupIntent intent, StayAlivePopupButtonType buttonType)
+        {
+            if (buttonType == StayAlivePopupButtonType.Primary)
+            {
+                HandlePopupPrimaryAction(intent);
+                return;
+            }
+
+            HandlePopupCloseAction(intent, canvasType);
+        }
+
+        private void HandlePopupPrimaryAction(StayAlivePopupIntent intent)
+        {
+            switch (intent)
+            {
+                case StayAlivePopupIntent.JoinRoom:
+                case StayAlivePopupIntent.CreateRoom:
+                case StayAlivePopupIntent.PrivateRoomWaitingHost:
+                    OnRoomPopupConfirmButtonClicked();
+                    break;
+
+                case StayAlivePopupIntent.NetworkError:
+                    OnCloseNetworkIssueButtonClicked();
+                    break;
+            }
+        }
+
+        private void HandlePopupCloseAction(StayAlivePopupIntent intent, StayAlivePopupCanvasType canvasType)
+        {
+            switch (intent)
+            {
+                case StayAlivePopupIntent.JoinRoom:
+                    OnCloseJoinRoomPopupClicked();
+                    break;
+
+                case StayAlivePopupIntent.CreateRoom:
+                case StayAlivePopupIntent.PrivateRoomWaitingHost:
+                case StayAlivePopupIntent.PrivateRoomWaitingGuest:
+                    OnCloseCreateRoomPopupClicked();
+                    break;
+
+                case StayAlivePopupIntent.WaitingForPlayers:
+                    ShowLobbyHome();
+                    break;
+
+                case StayAlivePopupIntent.NetworkError:
+                    OnCloseNetworkIssueButtonClicked();
+                    break;
+
+                case StayAlivePopupIntent.Custom:
+                    if (canvasType == StayAlivePopupCanvasType.Lobby)
+                    {
+                        popupManager?.HideLobbyPopup();
+                    }
+                    else
+                    {
+                        popupManager?.HideOverlayPopup();
+                    }
+
+                    break;
+            }
         }
 
         private void RegisterButtons()
@@ -1122,6 +1335,11 @@ namespace StayAlive.Lobby
                 onlineMatchController = GetComponent<StayAliveOnlineMatchController>();
             }
 
+            if (popupManager == null)
+            {
+                popupManager = GetComponent<StayAlivePopupManager>();
+            }
+
             if (networkClient == null)
             {
                 networkClient = gameObject.AddComponent<StayAliveLobbyNetworkClient>();
@@ -1131,6 +1349,12 @@ namespace StayAlive.Lobby
             if (onlineMatchController == null)
             {
                 onlineMatchController = gameObject.AddComponent<StayAliveOnlineMatchController>();
+                EditorUtility.SetDirty(gameObject);
+            }
+
+            if (popupManager == null)
+            {
+                popupManager = gameObject.AddComponent<StayAlivePopupManager>();
                 EditorUtility.SetDirty(gameObject);
             }
         }
