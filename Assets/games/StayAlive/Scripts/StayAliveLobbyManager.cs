@@ -75,6 +75,8 @@ namespace StayAlive.Lobby
         [SerializeField] private bool useNetworkLobby = true;
         [SerializeField] private StayAliveLobbyNetworkClient networkClient;
         [SerializeField] private StayAliveOnlineMatchController onlineMatchController;
+        [SerializeField, Min(1f)] private float onlineConnectTimeoutSeconds = 5f;
+        [SerializeField, Min(1f)] private float onlineJoinTimeoutSeconds = 6f;
 
         [Header("Offline With Bots")]
         [SerializeField, Min(2)] private int offlineTotalPlayers = 4;
@@ -141,6 +143,7 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            PrepareForFreshOnlineAttempt();
             ShowRandomWaitingPanel();
             await BeginOnlineJoinAsync(null, createRoom: false, usePrivateRoom: false);
         }
@@ -180,6 +183,7 @@ namespace StayAlive.Lobby
             EnsureReferences();
             roomPanelMode = RoomPanelMode.CreateEntry;
             dismissPrivateRoomRequested = false;
+            PrepareForFreshOnlineAttempt();
             ShowLobbyVisualState();
 
             if (popupManager != null)
@@ -296,12 +300,21 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            if (!networkClient.IsConnected)
+            {
+                PrepareForFreshOnlineAttempt();
+            }
+
             joinRequestInFlight = true;
             try
             {
                 if (!networkClient.IsConnected)
                 {
                     await networkClient.ConnectAsync();
+                    if (!await WaitForConnectionAsync())
+                    {
+                        throw new TimeoutException(networkIssueConnectMessage);
+                    }
                 }
 
                 if (networkClient.IsInRoom && usePrivateRoom && createRoom)
@@ -323,12 +336,55 @@ namespace StayAlive.Lobby
                 {
                     await networkClient.JoinAsync();
                 }
+
+                if (!await WaitForRoomJoinAsync())
+                {
+                    throw new TimeoutException(networkIssueConnectMessage);
+                }
             }
             catch (Exception exception)
             {
                 joinRequestInFlight = false;
-                ShowNetworkIssue(string.IsNullOrWhiteSpace(exception.Message) ? networkIssueConnectMessage : exception.Message);
+                Debug.LogError($"StayAliveLobbyManager: Failed to connect or join backend room. {exception.Message}");
+                ShowNetworkIssue(networkIssueConnectMessage);
             }
+        }
+
+        private async Task<bool> WaitForConnectionAsync()
+        {
+            float timeoutAt = Time.realtimeSinceStartup + Mathf.Max(1f, onlineConnectTimeoutSeconds);
+            while (Time.realtimeSinceStartup < timeoutAt)
+            {
+                if (networkClient != null && networkClient.IsConnected)
+                {
+                    return true;
+                }
+
+                await Task.Yield();
+            }
+
+            return networkClient != null && networkClient.IsConnected;
+        }
+
+        private async Task<bool> WaitForRoomJoinAsync()
+        {
+            float timeoutAt = Time.realtimeSinceStartup + Mathf.Max(1f, onlineJoinTimeoutSeconds);
+            while (Time.realtimeSinceStartup < timeoutAt)
+            {
+                if (networkClient != null && networkClient.IsInRoom)
+                {
+                    return true;
+                }
+
+                if (networkClient == null || !networkClient.IsConnected)
+                {
+                    return false;
+                }
+
+                await Task.Yield();
+            }
+
+            return networkClient != null && networkClient.IsInRoom;
         }
 
         private async Task<bool> EnsureReadyForPrivateRoomCreateAsync()
@@ -408,6 +464,7 @@ namespace StayAlive.Lobby
                 popupManager.HideAllPopups();
             }
 
+            onlineMatchController?.ResetToLobbyState();
             ShowLobbyVisualState();
         }
 
@@ -632,6 +689,19 @@ namespace StayAlive.Lobby
             if (gameContainer != null)
             {
                 gameContainer.SetActive(false);
+            }
+        }
+
+        private void PrepareForFreshOnlineAttempt()
+        {
+            if (onlineMatchController != null)
+            {
+                onlineMatchController.ResetToLobbyState();
+            }
+
+            if (networkClient != null && !networkClient.IsConnected)
+            {
+                networkClient.ResetRuntimeState();
             }
         }
 
@@ -987,7 +1057,8 @@ namespace StayAlive.Lobby
         private void HandleConnectionError(string errorMessage)
         {
             joinRequestInFlight = false;
-            ShowNetworkIssue(string.IsNullOrWhiteSpace(errorMessage) ? networkIssueConnectMessage : errorMessage);
+            Debug.LogError($"StayAliveLobbyManager: Connection error: {errorMessage}");
+            ShowNetworkIssue(networkIssueConnectMessage);
         }
 
         private void HandleDisconnected(WebSocketCloseReason closeReason)

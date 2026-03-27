@@ -346,6 +346,14 @@ namespace StayAlive
                 return;
             }
 
+            StayAlive.Networking.StayAliveLobbyNetworkClient networkClient =
+                FindFirstObjectByType<StayAlive.Networking.StayAliveLobbyNetworkClient>(FindObjectsInactive.Include);
+            if (networkClient == null || !networkClient.IsConnected || !networkClient.IsInRoom || string.IsNullOrEmpty(localUserId))
+            {
+                Debug.LogError("StayAliveGameManager: Refusing to start online game without an active backend room connection.");
+                return;
+            }
+
             StayAliveGameSettings baseSettings = ResolveSettingsSource();
             if (baseSettings != null)
             {

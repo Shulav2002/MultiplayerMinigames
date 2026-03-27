@@ -38,10 +38,21 @@ namespace StayAlive.Networking
         public bool CanHostStartMatch => isInitialized
             && networkClient != null
             && networkClient.IsHost
+            && networkClient.IsConnected
             && networkClient.IsInRoom
             && networkClient.RoomMode == StayAliveRoomModes.Private
             && !matchPreparing
             && !matchRunning;
+
+        private void Awake()
+        {
+            ResetMatchState();
+        }
+
+        private void OnEnable()
+        {
+            ResetMatchState();
+        }
 
         public void Initialize(
             StayAliveGameManager gameManager,
@@ -76,7 +87,13 @@ namespace StayAlive.Networking
                 return;
             }
 
-            if (networkClient.IsHost && !matchPreparing && !matchRunning && hostAutoStartAt > 0f && Time.time >= hostAutoStartAt)
+            if (networkClient.IsConnected
+                && networkClient.IsInRoom
+                && networkClient.IsHost
+                && !matchPreparing
+                && !matchRunning
+                && hostAutoStartAt > 0f
+                && Time.time >= hostAutoStartAt)
             {
                 LogDiagnostic($"Host auto-start timer reached at t={Time.time:0.00}. Starting match preparation.");
                 StartHostMatchPreparation();
@@ -203,6 +220,13 @@ namespace StayAlive.Networking
                 return;
             }
 
+            if (!CanEnterOnlineMatch(payload.roomId))
+            {
+                LogDiagnostic("Ignoring match_prepare because there is no active connected online room.");
+                ResetToLobbyState();
+                return;
+            }
+
             matchPreparing = true;
             ActivateGameView();
             gameManager.StartOnlineGame(payload.roster, networkClient.LocalUserId, simulationAuthority: false, payload.countdownSeconds);
@@ -282,9 +306,27 @@ namespace StayAlive.Networking
             StartHostMatchPreparation();
         }
 
+        public void ResetToLobbyState()
+        {
+            ResetMatchState();
+
+            if (lobbyCanvas != null)
+            {
+                lobbyCanvas.SetActive(true);
+            }
+
+            if (gameContainer != null)
+            {
+                gameContainer.SetActive(false);
+            }
+        }
+
         private async void StartHostMatchPreparation()
         {
-            if (!isInitialized || !networkClient.IsHost || matchPreparing || matchRunning)
+            if (!CanEnterOnlineMatch()
+                || !networkClient.IsHost
+                || matchPreparing
+                || matchRunning)
             {
                 return;
             }
@@ -458,6 +500,13 @@ namespace StayAlive.Networking
 
         private void ActivateGameView()
         {
+            if (!CanEnterOnlineMatch())
+            {
+                LogDiagnostic("Blocked ActivateGameView because there is no active connected online room.");
+                ResetToLobbyState();
+                return;
+            }
+
             if (lobbyCanvas != null)
             {
                 lobbyCanvas.SetActive(false);
@@ -480,6 +529,31 @@ namespace StayAlive.Networking
             snapshotTick = 0;
             latestAppliedSnapshotTick = -1;
             localInputSequence = 0;
+        }
+
+        private bool CanEnterOnlineMatch(string expectedRoomId = null)
+        {
+            if (!isInitialized || networkClient == null || gameManager == null)
+            {
+                return false;
+            }
+
+            if (!networkClient.IsConnected || !networkClient.IsInRoom || string.IsNullOrEmpty(networkClient.LocalUserId))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(networkClient.CurrentRoomId))
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(expectedRoomId) && expectedRoomId != networkClient.CurrentRoomId)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private bool IsTrustedHostMessage(string senderUserId, string roomId, string hostUserId)

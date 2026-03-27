@@ -16,6 +16,7 @@ namespace StayAlive.Networking
         [SerializeField] private string roomMode = StayAliveRoomModes.Random;
 
         private StayAliveWebSocketClient socketClient;
+        private string initialRoomMode;
 
         public event Action Connected;
         public event Action<string> ConnectionError;
@@ -58,11 +59,21 @@ namespace StayAlive.Networking
 
         private void Awake()
         {
+            initialRoomMode = string.IsNullOrWhiteSpace(roomMode)
+                ? StayAliveRoomModes.Random
+                : roomMode;
+
             socketClient = new StayAliveWebSocketClient();
             socketClient.Connected += HandleConnected;
             socketClient.MessageReceived += HandleMessageReceived;
             socketClient.ErrorReceived += HandleSocketError;
             socketClient.Disconnected += HandleDisconnected;
+            ResetRuntimeState();
+        }
+
+        private void OnEnable()
+        {
+            ResetRuntimeState();
         }
 
         private async void Start()
@@ -113,6 +124,16 @@ namespace StayAlive.Networking
 
             SetLobbyPhase(StayAliveLobbyPhase.Connecting);
             return socketClient.ConnectAsync(serverUrl, cancellationToken);
+        }
+
+        public void ResetRuntimeState()
+        {
+            LocalUserId = null;
+            roomMode = string.IsNullOrWhiteSpace(initialRoomMode)
+                ? StayAliveRoomModes.Random
+                : initialRoomMode;
+            ResetRoomState();
+            SetLobbyPhase(StayAliveLobbyPhase.Disconnected);
         }
 
         public Task JoinAsync(CancellationToken cancellationToken = default)
