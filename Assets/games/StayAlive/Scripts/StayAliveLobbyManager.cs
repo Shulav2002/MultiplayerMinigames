@@ -99,6 +99,14 @@ namespace StayAlive.Lobby
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
+        private void Update()
+        {
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                RefreshJoinEntryUi();
+            }
+        }
+
         private void Start()
         {
             EnsureReferences();
@@ -158,20 +166,7 @@ namespace StayAlive.Lobby
         public void OnOpenJoinRoomPopupClicked()
         {
             EnsureReferences();
-            roomPanelMode = RoomPanelMode.JoinEntry;
-            ShowLobbyVisualState();
-            SetRoomIdReadOnly(false);
-            SetRoomIdText(string.Empty);
-
-            if (popupManager != null)
-            {
-                popupManager.ShowJoinPopup();
-                return;
-            }
-
-            SetPopup(joinRoomPopupPanel, true);
-            SetPopup(createRoomPopupPanel, false);
-            SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
+            ShowJoinEntryPanel();
         }
 
         public async void OnOpenCreateRoomPopupClicked()
@@ -283,6 +278,12 @@ namespace StayAlive.Lobby
             ShowLobbyHome();
         }
 
+        public void OnJoinRoomInputValueChanged(string value)
+        {
+            popupManager?.ClearLobbyJoinError();
+            RefreshJoinEntryUi();
+        }
+
         private async void SubmitJoinRoomRequest()
         {
             string roomId = GetRoomIdText();
@@ -292,6 +293,8 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            dismissPrivateRoomRequested = false;
+            popupManager?.ClearLobbyJoinError();
             await BeginOnlineJoinAsync(roomId, createRoom: false, usePrivateRoom: true);
         }
 
@@ -360,8 +363,23 @@ namespace StayAlive.Lobby
             catch (Exception exception)
             {
                 joinRequestInFlight = false;
+                dismissPrivateRoomRequested = false;
                 Debug.LogError($"StayAliveLobbyManager: Failed to connect or join backend room. {exception.Message}");
-                ShowNetworkIssue(networkIssueConnectMessage);
+                if (createRoom && roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
+                {
+                    HideRoomPanel();
+                }
+
+                if (usePrivateRoom && !createRoom && roomPanelMode == RoomPanelMode.JoinEntry)
+                {
+                    ShowJoinEntryError(exception.Message);
+                    return;
+                }
+
+                if (!usePrivateRoom || createRoom)
+                {
+                    ShowNetworkIssue(networkIssueConnectMessage);
+                }
             }
         }
 
@@ -504,6 +522,42 @@ namespace StayAlive.Lobby
             if (popupManager != null)
             {
                 popupManager.ShowWaitingForPlayersPopup();
+            }
+        }
+
+        private void ShowJoinEntryPanel()
+        {
+            roomPanelMode = RoomPanelMode.JoinEntry;
+            ShowLobbyVisualState();
+            SetPopup(createRoomPopupPanel, false);
+            SetRoomIdReadOnly(false);
+            SetRoomIdText(string.Empty);
+            popupManager?.ClearLobbyJoinError();
+
+            if (popupManager != null)
+            {
+                popupManager.ShowJoinPopup();
+            }
+            else
+            {
+                SetPopup(joinRoomPopupPanel, true);
+                SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
+            }
+
+            RefreshJoinEntryUi();
+        }
+
+        private void RefreshJoinEntryUi()
+        {
+            bool canJoin = !string.IsNullOrWhiteSpace(GetRoomIdText()) && !joinRequestInFlight;
+            if (popupManager != null)
+            {
+                popupManager.SetLobbyPrimaryButtonInteractable(canJoin);
+            }
+
+            if (roomPopupPrimaryButton != null)
+            {
+                roomPopupPrimaryButton.interactable = canJoin;
             }
         }
 
@@ -885,7 +939,13 @@ namespace StayAlive.Lobby
             if (roomIdInputField == null)
             {
                 Transform found = FindInActiveScene("RoomIdInputField");
-                if (found != null) roomIdInputField = FindComponentByTypeName(found.gameObject, "TMP_InputField");
+                if (found != null) roomIdInputField = FindInputFieldComponent(found.gameObject);
+            }
+
+            if (roomIdInputField == null)
+            {
+                Transform found = FindInActiveScene("InputField (Legacy)");
+                if (found != null) roomIdInputField = FindInputFieldComponent(found.gameObject);
             }
 
             if (roomPopupPrimaryButton == null && joinRoomPopupPanel != null)
@@ -1078,7 +1138,15 @@ namespace StayAlive.Lobby
                 return;
             }
 
-            ShowRandomWaitingPanel();
+            if (networkClient != null && networkClient.RoomMode == StayAliveRoomModes.Random)
+            {
+                lastReplayMode = ReplayMode.QuickPlayOnline;
+                ShowRandomWaitingPanel();
+            }
+            else
+            {
+                HideRoomPanel();
+            }
         }
 
         private void HandleRoomOccupancyChanged(int occupiedSeats, int capacity, string[] chairs)
@@ -1095,21 +1163,69 @@ namespace StayAlive.Lobby
         private void HandleBackendError(StayAliveErrorMessage error)
         {
             joinRequestInFlight = false;
-            ShowNetworkIssue(error != null ? error.message : networkIssueConnectMessage);
+            dismissPrivateRoomRequested = false;
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                ShowJoinEntryError(error?.message);
+                Debug.LogError($"StayAliveLobbyManager: Backend error: {error?.message}");
+                return;
+            }
+
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
+            {
+                HideRoomPanel();
+            }
+
+            if (networkClient != null && networkClient.RoomMode == StayAliveRoomModes.Random)
+            {
+                ShowLobbyHome();
+            }
+
+            Debug.LogError($"StayAliveLobbyManager: Backend error: {error?.message}");
         }
 
         private void HandleConnectionError(string errorMessage)
         {
             joinRequestInFlight = false;
+            dismissPrivateRoomRequested = false;
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                ShowJoinEntryError(string.IsNullOrWhiteSpace(errorMessage) ? networkIssueConnectMessage : errorMessage);
+                Debug.LogError($"StayAliveLobbyManager: Connection error: {errorMessage}");
+                return;
+            }
+
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
+            {
+                HideRoomPanel();
+            }
+
+            if (networkClient != null && (networkClient.RoomMode == StayAliveRoomModes.Random || roomPanelMode == RoomPanelMode.PrivateWaitingHost))
+            {
+                ShowNetworkIssue(networkIssueConnectMessage);
+            }
+
             Debug.LogError($"StayAliveLobbyManager: Connection error: {errorMessage}");
-            ShowNetworkIssue(networkIssueConnectMessage);
         }
 
         private void HandleDisconnected(WebSocketCloseReason closeReason)
         {
             joinRequestInFlight = false;
+            dismissPrivateRoomRequested = false;
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                ShowJoinEntryError(networkIssueDisconnectMessage);
+                Debug.Log($"StayAliveLobbyManager: Disconnected from backend. Status: {closeReason.Status}, Description: {closeReason.Description}");
+                return;
+            }
+
             HideRoomPanel();
-            ShowNetworkIssue(networkIssueDisconnectMessage);
+            if (networkClient != null && (networkClient.RoomMode == StayAliveRoomModes.Random || currentOccupiedSeats > 0 || roomPanelMode != RoomPanelMode.Hidden))
+            {
+                ShowNetworkIssue(networkIssueDisconnectMessage);
+            }
+
+            Debug.Log($"StayAliveLobbyManager: Disconnected from backend. Status: {closeReason.Status}, Description: {closeReason.Description}");
         }
 
         private async void DismissJoinedPrivateRoomAfterClose()
@@ -1117,6 +1233,18 @@ namespace StayAlive.Lobby
             await LeaveCurrentRoomIfNeededAsync();
             dismissPrivateRoomRequested = false;
             ShowLobbyHome();
+        }
+
+        private void ShowJoinEntryError(string message)
+        {
+            string resolvedMessage = string.IsNullOrWhiteSpace(message) ? "Unable to join room." : message;
+            ShowLobbyVisualState();
+            if (popupManager != null)
+            {
+                popupManager.ShowLobbyJoinError(resolvedMessage);
+            }
+
+            RefreshJoinEntryUi();
         }
 
         private void HandlePopupButtonClicked(StayAlivePopupCanvasType canvasType, StayAlivePopupIntent intent, StayAlivePopupButtonType buttonType)
@@ -1305,6 +1433,17 @@ namespace StayAlive.Lobby
             }
 
             return target.GetComponent(typeName);
+        }
+
+        private static Component FindInputFieldComponent(GameObject target)
+        {
+            Component inputField = FindComponentByTypeName(target, "TMP_InputField");
+            if (inputField != null)
+            {
+                return inputField;
+            }
+
+            return FindComponentByTypeName(target, "InputField");
         }
 
         private static Component FindTextComponent(GameObject root)
