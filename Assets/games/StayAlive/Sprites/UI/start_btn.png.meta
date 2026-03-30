@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 67cc1c4a41982e04fb7973e1673dc653
+guid: 827922e5bdb761c48a58cc43f918e86b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5436262269407304001
-    second: onboarding_bg 1_0
+      213: -391929959677103260
+    second: start_btn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: onboarding_bg 1_0
+      name: start_btn_0
       rect:
         serializedVersion: 2
-        x: 43
-        y: 24
-        width: 1834
-        height: 1032
+        x: 41
+        y: 18
+        width: 174
+        height: 92
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fb66e1eb4448e84b0800000000000000
-      internalID: -5436262269407304001
+      spriteID: 463fc9837c59f8af0800000000000000
+      internalID: -391929959677103260
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      onboarding_bg 1_0: -5436262269407304001
+      start_btn_0: -391929959677103260
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

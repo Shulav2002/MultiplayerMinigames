@@ -92,6 +92,7 @@ namespace StayAlive.Lobby
         private string currentRoomId;
         private bool joinRequestInFlight;
         private bool dismissPrivateRoomRequested;
+        private bool privateRoomDismissInFlight;
         private bool subscribedToGameEvents;
         private bool subscribedToPopupEvents;
         private Coroutine showGameEndCoroutine;
@@ -173,7 +174,7 @@ namespace StayAlive.Lobby
             SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
         }
 
-        public void OnOpenCreateRoomPopupClicked()
+        public async void OnOpenCreateRoomPopupClicked()
         {
             if (!useNetworkLobby)
             {
@@ -181,18 +182,17 @@ namespace StayAlive.Lobby
             }
 
             EnsureReferences();
-            roomPanelMode = RoomPanelMode.CreateEntry;
             dismissPrivateRoomRequested = false;
             PrepareForFreshOnlineAttempt();
             ShowLobbyVisualState();
 
-            if (popupManager != null)
+            if (!await EnsureReadyForPrivateRoomCreateAsync())
             {
-                popupManager.ShowCreatePopup();
                 return;
             }
 
-            SubmitCreateRoomRequest();
+            ShowPrivateWaitingPanel(isHost: true, "Creating...", 1, Mathf.Max(2, networkClient != null ? networkClient.RoomCapacity : 4));
+            await BeginOnlineJoinAsync(null, createRoom: true, usePrivateRoom: true);
         }
 
         public void OnRoomPopupConfirmButtonClicked()
@@ -203,38 +203,53 @@ namespace StayAlive.Lobby
                 return;
             }
 
-            if (roomPanelMode == RoomPanelMode.CreateEntry)
-            {
-                SubmitCreateRoomRequest();
-                return;
-            }
-
             if (roomPanelMode == RoomPanelMode.PrivateWaitingHost)
             {
-                onlineMatchController?.StartHostedMatchNow();
+                StartHostedPrivateMatch();
             }
         }
 
         public void OnCloseJoinRoomPopupClicked()
         {
-            HideRoomPanel();
+            if (roomPanelMode == RoomPanelMode.JoinEntry)
+            {
+                HideRoomPanel();
+                return;
+            }
+
+            if (roomPanelMode == RoomPanelMode.PrivateWaitingHost || roomPanelMode == RoomPanelMode.PrivateWaitingGuest)
+            {
+                OnCloseCreateRoomPopupClicked();
+            }
         }
 
         public async void OnCloseCreateRoomPopupClicked()
         {
-            RoomPanelMode panelMode = roomPanelMode;
-            HideRoomPanel();
-
-            bool shouldDismissPrivateRoom = panelMode == RoomPanelMode.PrivateWaitingHost
-                || panelMode == RoomPanelMode.PrivateWaitingGuest;
-            if (!shouldDismissPrivateRoom)
+            if (privateRoomDismissInFlight)
             {
-                dismissPrivateRoomRequested = false;
                 return;
             }
 
-            dismissPrivateRoomRequested = true;
-            await DismissPrivateRoomAsync();
+            privateRoomDismissInFlight = true;
+            RoomPanelMode panelMode = roomPanelMode;
+            HideRoomPanel();
+            try
+            {
+                bool shouldDismissPrivateRoom = panelMode == RoomPanelMode.PrivateWaitingHost
+                    || panelMode == RoomPanelMode.PrivateWaitingGuest;
+                if (!shouldDismissPrivateRoom)
+                {
+                    dismissPrivateRoomRequested = false;
+                    return;
+                }
+
+                dismissPrivateRoomRequested = true;
+                await DismissPrivateRoomAsync();
+            }
+            finally
+            {
+                privateRoomDismissInFlight = false;
+            }
         }
 
         public void OnPlayAgainButtonClicked()
@@ -502,7 +517,12 @@ namespace StayAlive.Lobby
 
             if (popupManager != null)
             {
-                popupManager.ShowPrivateRoomWaitingPopup(isHost, currentRoomId, currentOccupiedSeats, currentCapacity);
+                popupManager.ShowPrivateRoomWaitingPopup(
+                    isHost,
+                    currentRoomId,
+                    currentOccupiedSeats,
+                    currentCapacity,
+                    CanHostStartPrivateMatch());
                 return;
             }
 
@@ -521,7 +541,8 @@ namespace StayAlive.Lobby
                     roomPanelMode == RoomPanelMode.PrivateWaitingHost,
                     currentRoomId,
                     currentOccupiedSeats,
-                    currentCapacity);
+                    currentCapacity,
+                    CanHostStartPrivateMatch());
             }
 
             SetComponentText(createRoomOccupancyLabel, $"{currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)} joined");
@@ -531,11 +552,34 @@ namespace StayAlive.Lobby
                 return;
             }
 
-            bool canStart = roomPanelMode == RoomPanelMode.PrivateWaitingHost
+            createRoomStartButton.interactable = CanHostStartPrivateMatch();
+        }
+
+        private bool CanHostStartPrivateMatch()
+        {
+            return roomPanelMode == RoomPanelMode.PrivateWaitingHost
                 && onlineMatchController != null
                 && onlineMatchController.CanHostStartMatch
-                && currentOccupiedSeats >= 2;
-            createRoomStartButton.interactable = canStart;
+                && currentOccupiedSeats >= 2
+                && !string.IsNullOrWhiteSpace(currentRoomId)
+                && !string.Equals(currentRoomId, "Creating...", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void StartHostedPrivateMatch()
+        {
+            if (onlineMatchController == null)
+            {
+                return;
+            }
+
+            if (!CanHostStartPrivateMatch())
+            {
+                Debug.Log("StayAliveLobbyManager: Waiting for another player before starting the room.");
+                return;
+            }
+
+            HideRoomPanel();
+            onlineMatchController.StartHostedMatchNow();
         }
 
         private void HideRoomPanel()

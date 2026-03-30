@@ -42,6 +42,15 @@ namespace StayAlive.Lobby
             public GameObject popupBoard;
             public Component titleLabel;
             public Component detailsLabel;
+            public GameObject confirmButtonRoot;
+            public Button confirmButton;
+            public Component confirmButtonLabel;
+            public GameObject startButtonRoot;
+            public Button startButton;
+            public Component startButtonLabel;
+            public GameObject closeButtonRoot;
+            public Button closeButton;
+            public Component closeButtonLabel;
 
             [NonSerialized] public StayAlivePopupIntent currentIntent;
         }
@@ -51,6 +60,9 @@ namespace StayAlive.Lobby
         [SerializeField] private string popupBoardName = "PopUpBoard";
         [SerializeField] private string popupTitleName = "PopUpTitle";
         [SerializeField] private string popupDetailsName = "Details";
+        [SerializeField] private string popupConfirmButtonName = "OK";
+        [SerializeField] private string popupStartButtonName = "Start";
+        [SerializeField] private string popupCloseButtonName = "Close";
 
         [Header("Scene Canvases")]
         [SerializeField] private PopupCanvasBinding lobbyPopup = new PopupCanvasBinding { canvasName = "LobbyCanvas" };
@@ -90,7 +102,7 @@ namespace StayAlive.Lobby
                 "Searching for available players.");
         }
 
-        public void ShowPrivateRoomWaitingPopup(bool isHost, string roomId, int occupiedSeats, int capacity)
+        public void ShowPrivateRoomWaitingPopup(bool isHost, string roomId, int occupiedSeats, int capacity, bool canStart)
         {
             string title = isHost ? "Create Room" : "Join Room";
             string details = BuildPrivateRoomDetails(isHost, roomId, occupiedSeats, capacity);
@@ -98,6 +110,7 @@ namespace StayAlive.Lobby
                 isHost ? StayAlivePopupIntent.PrivateRoomWaitingHost : StayAlivePopupIntent.PrivateRoomWaitingGuest,
                 title,
                 details);
+            ConfigureButtons(lobbyPopup, isHost ? StayAlivePopupIntent.PrivateRoomWaitingHost : StayAlivePopupIntent.PrivateRoomWaitingGuest, canStart);
         }
 
         public void ShowNetworkErrorPopup(string message, bool preferOverlay)
@@ -254,6 +267,39 @@ namespace StayAlive.Lobby
                     binding.detailsLabel = FindTextComponent(detailsTransform.gameObject);
                 }
             }
+
+            if (binding.confirmButtonRoot == null)
+            {
+                Transform confirmButtonTransform = FindInChildren(binding.popupPanel.transform, popupConfirmButtonName);
+                if (confirmButtonTransform != null)
+                {
+                    binding.confirmButtonRoot = confirmButtonTransform.gameObject;
+                    binding.confirmButton = confirmButtonTransform.GetComponent<Button>();
+                    binding.confirmButtonLabel = FindTextComponent(confirmButtonTransform.gameObject);
+                }
+            }
+
+            if (binding.startButtonRoot == null)
+            {
+                Transform startButtonTransform = FindInChildren(binding.popupPanel.transform, popupStartButtonName);
+                if (startButtonTransform != null)
+                {
+                    binding.startButtonRoot = startButtonTransform.gameObject;
+                    binding.startButton = startButtonTransform.GetComponent<Button>();
+                    binding.startButtonLabel = FindTextComponent(startButtonTransform.gameObject);
+                }
+            }
+
+            if (binding.closeButtonRoot == null)
+            {
+                Transform closeButtonTransform = FindInChildren(binding.popupPanel.transform, popupCloseButtonName);
+                if (closeButtonTransform != null)
+                {
+                    binding.closeButtonRoot = closeButtonTransform.gameObject;
+                    binding.closeButton = closeButtonTransform.GetComponent<Button>();
+                    binding.closeButtonLabel = FindTextComponent(closeButtonTransform.gameObject);
+                }
+            }
         }
 
         private PopupCanvasBinding ResolveNetworkErrorBinding(bool preferOverlay)
@@ -282,6 +328,7 @@ namespace StayAlive.Lobby
             }
 
             binding.currentIntent = intent;
+            ConfigureButtons(binding, intent, canStart: false);
         }
 
         private void HidePopup(PopupCanvasBinding binding)
@@ -297,12 +344,73 @@ namespace StayAlive.Lobby
             }
 
             binding.currentIntent = StayAlivePopupIntent.None;
+            SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, string.Empty);
+            SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, string.Empty);
         }
 
         private void RaiseButtonClicked(StayAlivePopupCanvasType canvasType, StayAlivePopupButtonType buttonType)
         {
             PopupCanvasBinding binding = canvasType == StayAlivePopupCanvasType.Lobby ? lobbyPopup : overlayPopup;
             ButtonClicked?.Invoke(canvasType, binding.currentIntent, buttonType);
+        }
+
+        private void ConfigureButtons(PopupCanvasBinding binding, StayAlivePopupIntent intent, bool canStart)
+        {
+            if (binding == null)
+            {
+                return;
+            }
+
+            switch (intent)
+            {
+                case StayAlivePopupIntent.JoinRoom:
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, true, true, "Join");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    break;
+
+                case StayAlivePopupIntent.PrivateRoomWaitingHost:
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "Join");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, true, canStart, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    break;
+
+                case StayAlivePopupIntent.PrivateRoomWaitingGuest:
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "Join");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    break;
+
+                case StayAlivePopupIntent.NetworkError:
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    break;
+
+                default:
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    break;
+            }
+        }
+
+        private static void SetButtonState(GameObject buttonRoot, Button button, Component label, bool isVisible, bool isInteractable, string text)
+        {
+            if (buttonRoot != null)
+            {
+                buttonRoot.SetActive(isVisible);
+            }
+
+            if (button != null)
+            {
+                button.interactable = isInteractable;
+            }
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                SetComponentText(label, text);
+            }
         }
 
         private static string BuildPrivateRoomDetails(bool isHost, string roomId, int occupiedSeats, int capacity)
