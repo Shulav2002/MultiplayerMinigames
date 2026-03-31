@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -166,6 +167,7 @@ namespace StayAlive.Lobby
         public void OnOpenJoinRoomPopupClicked()
         {
             EnsureReferences();
+            lastReplayMode = ReplayMode.None;
             ShowJoinEntryPanel();
         }
 
@@ -177,6 +179,7 @@ namespace StayAlive.Lobby
             }
 
             EnsureReferences();
+            lastReplayMode = ReplayMode.None;
             dismissPrivateRoomRequested = false;
             PrepareForFreshOnlineAttempt();
             ShowLobbyVisualState();
@@ -249,18 +252,22 @@ namespace StayAlive.Lobby
 
         public void OnPlayAgainButtonClicked()
         {
-            HideGameEnd();
-
-            if (lastReplayMode == ReplayMode.OfflineBots)
+            if (!IsPrimaryLobbyManager)
             {
-                StartGameLocalFlow(lastOfflineTotalPlayers, lastOfflineHumanPlayers);
                 return;
             }
 
-            if (lastReplayMode == ReplayMode.QuickPlayOnline)
+            HideGameEnd();
+
+            switch (ResolveReplayModeForReplay())
             {
-                RestartQuickPlayOnline();
-                return;
+                case ReplayMode.OfflineBots:
+                    StartGameLocalFlow(lastOfflineTotalPlayers, lastOfflineHumanPlayers);
+                    return;
+
+                case ReplayMode.QuickPlayOnline:
+                    RestartQuickPlayOnline();
+                    return;
             }
 
             ShowLobbyHome();
@@ -268,9 +275,13 @@ namespace StayAlive.Lobby
 
         public async void OnBackToHomeButtonClicked()
         {
+            if (!IsPrimaryLobbyManager)
+            {
+                return;
+            }
+
             HideGameEnd();
-            await LeaveCurrentRoomIfNeededAsync();
-            ShowLobbyHome();
+            await ReturnToHomeAsync();
         }
 
         public void OnCloseNetworkIssueButtonClicked()
@@ -480,9 +491,32 @@ namespace StayAlive.Lobby
 
         private async void RestartQuickPlayOnline()
         {
+            lastReplayMode = ReplayMode.QuickPlayOnline;
             ShowRandomWaitingPanel();
             await LeaveCurrentRoomIfNeededAsync();
             await BeginOnlineJoinAsync(null, createRoom: false, usePrivateRoom: false);
+        }
+
+        private ReplayMode ResolveReplayModeForReplay()
+        {
+            if (lastReplayMode == ReplayMode.OfflineBots)
+            {
+                return ReplayMode.OfflineBots;
+            }
+
+            if (useNetworkLobby && networkClient != null && networkClient.RoomMode == StayAliveRoomModes.Random)
+            {
+                return ReplayMode.QuickPlayOnline;
+            }
+
+            return ReplayMode.None;
+        }
+
+        private async Task ReturnToHomeAsync()
+        {
+            dismissPrivateRoomRequested = false;
+            await LeaveCurrentRoomIfNeededAsync();
+            ShowLobbyHome();
         }
 
         private void ShowLobbyHome()
@@ -650,17 +684,17 @@ namespace StayAlive.Lobby
             SetPopup(createRoomPopupPanel, false);
         }
 
-        private void ShowGameEnd(int winningChairId)
+        private void ShowGameEnd(int[] winningChairIds)
         {
             if (!IsPrimaryLobbyManager || showGameEndCoroutine != null)
             {
                 return;
             }
 
-            showGameEndCoroutine = StartCoroutine(ShowGameEndAfterDelay(winningChairId));
+            showGameEndCoroutine = StartCoroutine(ShowGameEndAfterDelay(winningChairIds));
         }
 
-        private System.Collections.IEnumerator ShowGameEndAfterDelay(int winningChairId)
+        private System.Collections.IEnumerator ShowGameEndAfterDelay(int[] winningChairIds)
         {
             float delay = Mathf.Max(0f, gameEndDelaySeconds);
             if (delay > 0f)
@@ -684,7 +718,7 @@ namespace StayAlive.Lobby
                 lobbyRoot.SetActive(false);
             }
 
-            SetWinnerPanel(winningChairId);
+            SetWinnerPanelsForWinningChairs(winningChairIds);
             HideWaiting();
         }
 
@@ -714,6 +748,13 @@ namespace StayAlive.Lobby
             if (waitingForPlayersPanel != null)
             {
                 waitingForPlayersPanel.SetActive(false);
+            }
+
+            if (popupManager != null)
+            {
+                popupManager.HidePopupByIntent(StayAlivePopupIntent.WaitingForPlayers);
+                popupManager.HidePopupByIntent(StayAlivePopupIntent.PrivateRoomWaitingHost);
+                popupManager.HidePopupByIntent(StayAlivePopupIntent.PrivateRoomWaitingGuest);
             }
         }
 
@@ -816,28 +857,68 @@ namespace StayAlive.Lobby
             }
         }
 
-        private void SetWinnerPanel(int winningChairId)
+        private void SetWinnerPanelsForWinningChairs(int[] winningChairIds)
         {
-            int appearanceIndex = ResolveWinningAppearanceIndex(winningChairId);
-            SetWinnerPanels(
-                blue: appearanceIndex == 1,
-                green: appearanceIndex == 2,
-                red: appearanceIndex == 0,
-                yellow: appearanceIndex == 3);
-        }
+            int[] appearanceIndices = ResolveWinningAppearanceIndices(winningChairIds);
+            bool blue = false;
+            bool green = false;
+            bool red = false;
+            bool yellow = false;
 
-        private int ResolveWinningAppearanceIndex(int winningChairId)
-        {
-            if (gameManager != null)
+            for (int i = 0; i < appearanceIndices.Length; i++)
             {
-                StayAlivePlayer winningPlayer = gameManager.GetPlayerByChair(winningChairId);
-                if (winningPlayer != null)
+                switch (appearanceIndices[i])
                 {
-                    return Mathf.Max(0, winningPlayer.AppearanceIndex % 4);
+                    case 0:
+                        red = true;
+                        break;
+
+                    case 1:
+                        blue = true;
+                        break;
+
+                    case 2:
+                        green = true;
+                        break;
+
+                    case 3:
+                        yellow = true;
+                        break;
                 }
             }
 
-            return Mathf.Clamp(winningChairId, 0, 3);
+            SetWinnerPanels(
+                blue: blue,
+                green: green,
+                red: red,
+                yellow: yellow);
+        }
+
+        private int[] ResolveWinningAppearanceIndices(int[] winningChairIds)
+        {
+            if (winningChairIds == null || winningChairIds.Length == 0)
+            {
+                return Array.Empty<int>();
+            }
+
+            List<int> appearanceIndices = new List<int>(winningChairIds.Length);
+            for (int i = 0; i < winningChairIds.Length; i++)
+            {
+                int winningChairId = winningChairIds[i];
+                if (gameManager != null)
+                {
+                    StayAlivePlayer winningPlayer = gameManager.GetPlayerByChair(winningChairId);
+                    if (winningPlayer != null)
+                    {
+                        appearanceIndices.Add(Mathf.Max(0, winningPlayer.AppearanceIndex % 4));
+                        continue;
+                    }
+                }
+
+                appearanceIndices.Add(Mathf.Clamp(winningChairId, 0, 3));
+            }
+
+            return appearanceIndices.ToArray();
         }
 
         private void SetWinnerPanels(bool blue, bool green, bool red, bool yellow)
@@ -848,14 +929,14 @@ namespace StayAlive.Lobby
             if (yellowWinnerPanel != null) yellowWinnerPanel.SetActive(yellow);
         }
 
-        private void HandleGameEnded(int winningChairId)
+        private void HandleGameEnded(int[] winningChairIds)
         {
-            ShowGameEnd(winningChairId);
+            ShowGameEnd(winningChairIds);
         }
 
-        private void HandleMatchEnded(int winningChairId)
+        private void HandleMatchEnded(int[] winningChairIds)
         {
-            ShowGameEnd(winningChairId);
+            ShowGameEnd(winningChairIds);
         }
 
         private void StartGameLocalFlow()
@@ -909,6 +990,7 @@ namespace StayAlive.Lobby
             if (gameEndPanel == null)
             {
                 Transform found = FindUnderLobbyCanvas("GameEnd");
+                if (found == null) found = FindUnderLobbyCanvas("GameOverPanel");
                 if (found != null) gameEndPanel = found.gameObject;
             }
 
@@ -1010,6 +1092,7 @@ namespace StayAlive.Lobby
             if (backToHomeButton == null)
             {
                 GameObject found = FindNamedGameObjectUnderGameEnd("BackToHome");
+                if (found == null) found = FindNamedGameObjectUnderGameEnd("ReutnToHome");
                 if (found != null) backToHomeButton = found.GetComponent<Button>();
             }
 
@@ -1134,6 +1217,7 @@ namespace StayAlive.Lobby
 
             if (networkClient != null && networkClient.RoomMode == StayAliveRoomModes.Private)
             {
+                lastReplayMode = ReplayMode.None;
                 ShowPrivateWaitingPanel(networkClient.IsHost, joined.roomId, currentOccupiedSeats, currentCapacity);
                 return;
             }

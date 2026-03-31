@@ -212,7 +212,7 @@ namespace StayAlive
         public int BombCellsPerRound => EvaluateBombCellsPerRound();
         public int CompletedSpinCount => completedSpinCount;
         public float MatchTimeRemaining => Mathf.Max(0f, matchTimerRemaining);
-        public event Action<int> GameEnded;
+        public event Action<int[]> GameEnded;
 
         private void Awake()
         {
@@ -336,8 +336,7 @@ namespace StayAlive
             StartBackgroundMusic();
             StopSpinLoop();
             ClearExplosionEffects();
-            completedSpinCount = 0;
-            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
+            ResetMatchRuntimeState();
             InitializeIdleBoardState();
             BeginSpinPhase();
         }
@@ -418,7 +417,7 @@ namespace StayAlive
             StartBackgroundMusic();
             StopSpinLoop();
             ClearExplosionEffects();
-            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
+            ResetMatchRuntimeState();
             InitializeIdleBoardState();
             if (localSimulationEnabled)
             {
@@ -775,12 +774,14 @@ namespace StayAlive
 
         private void FinishMatch()
         {
+            int[] winningChairIds = FindWinningChairIds();
             phase = MatchPhase.GameOver;
             StopSpinLoop();
             ClearExplosionEffects();
             RefreshBoardVisualsForSpin();
             UpdateTimerLabel();
-            GameEnded?.Invoke(FindWinningChairId());
+            LogMatchResult(winningChairIds);
+            GameEnded?.Invoke(winningChairIds);
         }
 
         private bool CacheBoardCells()
@@ -1409,24 +1410,97 @@ namespace StayAlive
             }
         }
 
-        private int FindWinningChairId()
+        private int[] FindWinningChairIds()
         {
+            List<int> winningChairIds = new List<int>();
             for (int i = 0; i < alivePlayers.Count; i++)
             {
                 StayAlivePlayer player = alivePlayers[i];
                 if (player != null && player.IsAlive)
                 {
-                    return player.ChairId;
+                    winningChairIds.Add(player.ChairId);
                 }
             }
 
-            return -1;
+            return winningChairIds.ToArray();
+        }
+
+        private void LogMatchResult(int[] winningChairIds)
+        {
+            if (winningChairIds == null || winningChairIds.Length == 0)
+            {
+                Debug.Log("StayAlive: Match ended with no surviving winner.");
+                return;
+            }
+
+            List<string> winners = new List<string>(winningChairIds.Length);
+            for (int i = 0; i < winningChairIds.Length; i++)
+            {
+                winners.Add(DescribePlayer(GetPlayerByChair(winningChairIds[i])));
+            }
+
+            Debug.Log($"StayAlive: Winners {string.Join(", ", winners)}");
+        }
+
+        private static string DescribePlayer(StayAlivePlayer player)
+        {
+            if (player == null)
+            {
+                return "Unknown player";
+            }
+
+            string colorName = GetAppearanceColorName(player.AppearanceIndex);
+            string chairText = player.ChairId >= 0 ? $"chair {player.ChairId}" : "chair ?";
+            if (!string.IsNullOrEmpty(player.UserId))
+            {
+                return $"{colorName} ({chairText}, user {player.UserId})";
+            }
+
+            return $"{colorName} ({chairText})";
         }
 
         public StayAlivePlayer GetPlayerByChair(int chairId)
         {
             playersByChair.TryGetValue(chairId, out StayAlivePlayer player);
             return player;
+        }
+
+        public int GetWinningAppearanceIndex()
+        {
+            int[] winningChairIds = FindWinningChairIds();
+            StayAlivePlayer winningPlayer = winningChairIds.Length > 0 ? GetPlayerByChair(winningChairIds[0]) : null;
+            return winningPlayer != null ? Mathf.Max(0, winningPlayer.AppearanceIndex) : -1;
+        }
+
+        public void NotifyPlayerEliminated(StayAlivePlayer player)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            Debug.Log($"StayAlive: Eliminated {DescribePlayer(player)}");
+        }
+
+        public static string GetAppearanceColorName(int appearanceIndex)
+        {
+            switch (Mathf.Abs(appearanceIndex) % 4)
+            {
+                case 0:
+                    return "Red";
+
+                case 1:
+                    return "Blue";
+
+                case 2:
+                    return "Green";
+
+                case 3:
+                    return "Yellow";
+
+                default:
+                    return "Unknown";
+            }
         }
 
         public void SetNetworkMoveInput(int chairId, Vector2 moveInput)
@@ -1719,6 +1793,18 @@ namespace StayAlive
             FillSymbolsRandomly();
             RefreshBoardVisualsForIdle();
             UpdateTimerLabel();
+        }
+
+        private void ResetMatchRuntimeState()
+        {
+            completedSpinCount = 0;
+            completedSpinShiftCount = 0;
+            targetSpinShiftCount = 0;
+            phaseTimer = 0f;
+            symbolSwapTimer = 0f;
+            explosionResolved = false;
+            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
+            lastCountdownDisplayNumber = int.MinValue;
         }
 
         private void EnsureTimerLabelReference()

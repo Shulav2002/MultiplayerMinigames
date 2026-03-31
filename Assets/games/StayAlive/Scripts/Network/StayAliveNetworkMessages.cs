@@ -193,6 +193,7 @@ namespace StayAlive.Networking
         public string roomId;
         public string hostUserId;
         public int winningChairId = -1;
+        public int[] winningChairIds;
     }
 
     [Serializable]

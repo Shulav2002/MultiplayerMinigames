@@ -199,6 +199,8 @@ namespace StayAlive
                 return;
             }
 
+            bool wasAlive = isAlive;
+
             if (appearanceIndex != snapshot.appearanceIndex)
             {
                 SetAppearanceIndex(snapshot.appearanceIndex);
@@ -227,6 +229,11 @@ namespace StayAlive
                 networkMoveVector = Vector2.zero;
                 estimatedVelocity = authoritativeVelocity;
                 ResetBounceState();
+            }
+
+            if (wasAlive && !isAlive && manager != null)
+            {
+                manager.NotifyPlayerEliminated(this);
             }
 
             RefreshInputEnabledState();
@@ -258,6 +265,11 @@ namespace StayAlive
 
             SetLocalPlayerIndicatorVisible(false);
             gameObject.SetActive(false);
+
+            if (manager != null)
+            {
+                manager.NotifyPlayerEliminated(this);
+            }
         }
 
         private bool CanSimulateMovement()

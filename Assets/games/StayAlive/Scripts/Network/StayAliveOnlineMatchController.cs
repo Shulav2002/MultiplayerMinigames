@@ -26,6 +26,7 @@ namespace StayAlive.Networking
         private bool matchPreparing;
         private bool matchRunning;
         private bool matchEndSent;
+        private bool allowRandomAutoStart;
         private float hostAutoStartAt = -1f;
         private float nextInputSendAt;
         private float nextSnapshotSendAt;
@@ -33,7 +34,7 @@ namespace StayAlive.Networking
         private int latestAppliedSnapshotTick = -1;
         private int localInputSequence;
 
-        public event Action<int> MatchEnded;
+        public event Action<int[]> MatchEnded;
 
         public bool CanHostStartMatch => isInitialized
             && networkClient != null
@@ -92,6 +93,7 @@ namespace StayAlive.Networking
                 && networkClient.IsHost
                 && !matchPreparing
                 && !matchRunning
+                && allowRandomAutoStart
                 && hostAutoStartAt > 0f
                 && Time.time >= hostAutoStartAt)
             {
@@ -114,12 +116,14 @@ namespace StayAlive.Networking
 
                 if (gameManager.IsMatchOver && !matchEndSent)
                 {
-                    int winningChairId = FindWinningChair();
+                    int[] winningChairIds = FindWinningChairs();
                     matchEndSent = true;
                     matchRunning = false;
                     matchPreparing = false;
-                    BroadcastMatchEnd(winningChairId);
-                    MatchEnded?.Invoke(winningChairId);
+                    allowRandomAutoStart = false;
+                    hostAutoStartAt = -1f;
+                    BroadcastMatchEnd(winningChairIds);
+                    MatchEnded?.Invoke(winningChairIds);
                 }
             }
             else if (Time.time >= nextInputSendAt)
@@ -183,11 +187,13 @@ namespace StayAlive.Networking
 
             if (networkClient.RoomMode == StayAliveRoomModes.Private)
             {
+                allowRandomAutoStart = false;
                 hostAutoStartAt = -1f;
                 LogDiagnostic("Private room joined by host. Waiting for manual start.");
             }
             else
             {
+                allowRandomAutoStart = true;
                 hostAutoStartAt = Time.time + randomModeAutoStartSeconds;
                 LogDiagnostic($"Host auto-start armed for {hostAutoStartAt:0.00}.");
             }
@@ -202,7 +208,7 @@ namespace StayAlive.Networking
                 return;
             }
 
-            if (networkClient.RoomMode == StayAliveRoomModes.Private)
+            if (networkClient.RoomMode == StayAliveRoomModes.Private || !allowRandomAutoStart)
             {
                 return;
             }
@@ -260,7 +266,12 @@ namespace StayAlive.Networking
 
             matchRunning = false;
             matchPreparing = false;
-            MatchEnded?.Invoke(payload != null ? payload.winningChairId : -1);
+            allowRandomAutoStart = false;
+            hostAutoStartAt = -1f;
+            int[] winningChairIds = payload != null && payload.winningChairIds != null && payload.winningChairIds.Length > 0
+                ? payload.winningChairIds
+                : (payload != null && payload.winningChairId >= 0 ? new[] { payload.winningChairId } : Array.Empty<int>());
+            MatchEnded?.Invoke(winningChairIds);
         }
 
         private void HandleRoomMessageReceived(string fromUserId, string payloadJson)
@@ -416,13 +427,14 @@ namespace StayAlive.Networking
             }
         }
 
-        private async void BroadcastMatchEnd(int winningChairId)
+        private async void BroadcastMatchEnd(int[] winningChairIds)
         {
             StayAliveMatchEndPayload payload = new StayAliveMatchEndPayload
             {
                 roomId = networkClient.CurrentRoomId,
                 hostUserId = networkClient.HostUserId,
-                winningChairId = winningChairId
+                winningChairId = winningChairIds != null && winningChairIds.Length > 0 ? winningChairIds[0] : -1,
+                winningChairIds = winningChairIds
             };
 
             try
@@ -483,19 +495,20 @@ namespace StayAlive.Networking
             return null;
         }
 
-        private int FindWinningChair()
+        private int[] FindWinningChairs()
         {
+            List<int> winningChairIds = new List<int>();
             IReadOnlyList<StayAlivePlayer> players = gameManager.Players;
             for (int i = 0; i < players.Count; i++)
             {
                 StayAlivePlayer player = players[i];
                 if (player != null && player.IsAlive)
                 {
-                    return player.ChairId;
+                    winningChairIds.Add(player.ChairId);
                 }
             }
 
-            return -1;
+            return winningChairIds.ToArray();
         }
 
         private void ActivateGameView()
@@ -523,6 +536,7 @@ namespace StayAlive.Networking
             matchPreparing = false;
             matchRunning = false;
             matchEndSent = false;
+            allowRandomAutoStart = false;
             hostAutoStartAt = -1f;
             nextInputSendAt = 0f;
             nextSnapshotSendAt = 0f;
