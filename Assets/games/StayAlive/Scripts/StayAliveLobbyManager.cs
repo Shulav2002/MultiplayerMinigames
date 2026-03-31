@@ -289,6 +289,11 @@ namespace StayAlive.Lobby
             ShowLobbyHome();
         }
 
+        public void OnPauseButtonClicked()
+        {
+            popupManager?.ShowOverlayPopup(StayAlivePopupIntent.Custom, "Paused", "Tap close to continue.");
+        }
+
         public void OnJoinRoomInputValueChanged(string value)
         {
             popupManager?.ClearLobbyJoinError();
