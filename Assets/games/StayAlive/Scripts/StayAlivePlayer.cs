@@ -624,6 +624,7 @@ namespace StayAlive
 
             ApplyBounceImpulse(-direction);
             otherPlayer.ApplyBounceImpulse(direction);
+            manager.NotifyPlayerCollision();
         }
 
         private void ApplyBounceImpulse(Vector2 direction)

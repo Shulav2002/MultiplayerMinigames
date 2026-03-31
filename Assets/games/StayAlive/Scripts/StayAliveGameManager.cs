@@ -27,9 +27,17 @@ namespace StayAlive
         private const string DefaultSettingsPath = "Assets/games/StayAlive/Data/StayAliveGameSettings.asset";
         private const string DefaultPlayerPrefabPath = "Assets/games/StayAlive/Prefabs/Player.prefab";
         private const string DefaultExplosionControllerPath = "Assets/games/StayAlive/Anims/Explosion.controller";
+        private const string DefaultBackgroundMusicPath = "Assets/games/StayAlive/audio/bg loop.mp3";
+        private const string DefaultCountdownTickPath = "Assets/games/StayAlive/audio/Countdown.mp3";
+        private const string DefaultPlayerCollisionPath = "Assets/games/StayAlive/audio/Dynamic Bounce Jump.mp3";
+        private const string DefaultExplosionSfxPath = "Assets/games/StayAlive/audio/Explosion.mp3";
+        private const string DefaultSpinLoopPath = "Assets/games/StayAlive/audio/spin 2.mp3";
+        private const string DefaultStartWhistlePath = "Assets/games/StayAlive/audio/sports-whistle-04.mp3";
+        private const string DefaultSpinStopPath = "Assets/games/StayAlive/audio/stop.mp3";
         private const int RequiredSafeSpriteCount = 4;
         private const float MinCellSize = 0.2f;
         private const float MinSwapInterval = 0.02f;
+        private const float CollisionSfxCooldownSeconds = 0.06f;
 
         [Header("Player Source")]
         [SerializeField] private StayAliveGameSettings settings;
@@ -92,6 +100,22 @@ namespace StayAlive
         [SerializeField, Min(0)] private int explosionEffectSortingOrderOffset = 8;
         [SerializeField, Min(0.1f)] private float explosionEffectScale = 1.2f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip backgroundMusic;
+        [SerializeField] private AudioClip countdownTickClip;
+        [SerializeField] private AudioClip playerCollisionClip;
+        [SerializeField] private AudioClip spinLoopClip;
+        [SerializeField] private AudioClip spinStopClip;
+        [SerializeField] private AudioClip startWhistleClip;
+        [SerializeField] private AudioClip explosionClip;
+        [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
+        [SerializeField, Range(0f, 1f)] private float countdownTickVolume = 0.95f;
+        [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.65f;
+        [SerializeField, Range(0f, 1f)] private float spinLoopVolume = 0.55f;
+        [SerializeField, Range(0f, 1f)] private float spinStopVolume = 0.85f;
+        [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
+        [SerializeField, Range(0f, 1f)] private float explosionVolume = 0.9f;
+
         [Header("Movement")]
         [SerializeField, Min(0.1f)] private float moveSpeed = 5f;
         [SerializeField, Min(0f)] private float playerBounceSpeed = 4.8f;
@@ -127,6 +151,11 @@ namespace StayAlive
         private StayAliveGameSettings sourceSettings;
         private bool localSimulationEnabled = true;
         private bool startupHandled;
+        private AudioSource musicSource;
+        private AudioSource sfxSource;
+        private AudioSource spinLoopSource;
+        private float lastCollisionSfxTime = float.NegativeInfinity;
+        private int lastCountdownDisplayNumber = int.MinValue;
 
         private int Columns => settings != null ? settings.Columns : columns;
         private int Rows => settings != null ? settings.Rows : rows;
@@ -182,6 +211,7 @@ namespace StayAlive
             sourceSettings = settings;
             EnsureFallbackSprite();
             CacheBoardCells();
+            EnsureAudioSources();
 #if UNITY_EDITOR
             if (explosionEffectController == null)
             {
@@ -213,22 +243,6 @@ namespace StayAlive
 
         private void OnGUI()
         {
-            if (phase != MatchPhase.Countdown)
-            {
-                return;
-            }
-
-            GUIStyle style = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 56,
-                fontStyle = FontStyle.Bold,
-                normal = { textColor = Color.white }
-            };
-
-            Rect rect = new Rect(0f, 0f, Screen.width, Screen.height);
-            int displayNumber = Mathf.Max(1, Mathf.CeilToInt(phaseTimer));
-            GUI.Label(rect, displayNumber.ToString(), style);
         }
 
         private void Update()
@@ -252,6 +266,7 @@ namespace StayAlive
                     break;
 
                 case MatchPhase.Countdown:
+                    UpdateCountdownAudio();
                     if (phaseTimer <= 0f)
                     {
                         BeginSpinPhase();
@@ -299,10 +314,12 @@ namespace StayAlive
                 SpawnPlayers();
             }
 
+            StartBackgroundMusic();
+            StopSpinLoop();
             ClearExplosionEffects();
             completedSpinCount = 0;
             InitializeIdleBoardState();
-            BeginCountdownPhase();
+            BeginSpinPhase();
         }
 
         public void StartGameLocal()
@@ -378,15 +395,21 @@ namespace StayAlive
                 SpawnPlayers(roster, localUserId, simulationAuthority);
             }
 
+            StartBackgroundMusic();
+            StopSpinLoop();
             ClearExplosionEffects();
             InitializeIdleBoardState();
-            phase = MatchPhase.Countdown;
-            phaseTimer = Mathf.Max(0f, countdownSeconds);
-            symbolSwapTimer = 0f;
-            explosionResolved = false;
-            if (localSimulationEnabled && phaseTimer <= 0f)
+            if (localSimulationEnabled)
             {
                 BeginSpinPhase();
+            }
+            else
+            {
+                phase = MatchPhase.None;
+                phaseTimer = 0f;
+                symbolSwapTimer = 0f;
+                explosionResolved = false;
+                RefreshBoardVisualsForIdle();
             }
         }
 
@@ -645,6 +668,7 @@ namespace StayAlive
             phase = MatchPhase.Countdown;
             phaseTimer = Mathf.Max(0f, startCountdownSeconds);
             symbolSwapTimer = 0f;
+            lastCountdownDisplayNumber = int.MinValue;
             if (phaseTimer <= 0f)
             {
                 BeginSpinPhase();
@@ -663,10 +687,14 @@ namespace StayAlive
             activeBombCellIndices.Clear();
             FillSymbolsRandomly(GetSpinningBombChance());
             RefreshBoardVisualsForSpin();
+            PlayStartWhistle();
+            StartSpinLoop();
         }
 
         private void StopSpinPhase()
         {
+            StopSpinLoop();
+            PlaySpinStopSfx();
             ApplyPreparedStoppedBoardState();
             symbolSwapTimer = 0f;
             RefreshBoardVisualsForIdle();
@@ -693,6 +721,8 @@ namespace StayAlive
             phase = MatchPhase.Explosion;
             phaseTimer = Mathf.Max(0.1f, ExplosionDurationSeconds);
             explosionResolved = false;
+            StopSpinLoop();
+            PlayExplosionSfx();
             RefreshBoardVisualsForExplosion();
             SpawnExplosionEffects();
         }
@@ -723,6 +753,7 @@ namespace StayAlive
         private void FinishMatch()
         {
             phase = MatchPhase.GameOver;
+            StopSpinLoop();
             ClearExplosionEffects();
             RefreshBoardVisualsForSpin();
             GameEnded?.Invoke(FindWinningChairId());
@@ -885,6 +916,23 @@ namespace StayAlive
                 player.Eliminate();
                 alivePlayers.RemoveAt(i);
             }
+        }
+
+        public void NotifyPlayerCollision()
+        {
+            if (playerCollisionClip == null || Time.unscaledTime < lastCollisionSfxTime + CollisionSfxCooldownSeconds)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            lastCollisionSfxTime = Time.unscaledTime;
+            sfxSource.PlayOneShot(playerCollisionClip, playerCollisionVolume);
         }
 
         private bool IsPlayerTouchingBombCell(StayAlivePlayer player)
@@ -1418,6 +1466,12 @@ namespace StayAlive
             bool symbolsChanged = !AreArraysEqual(previousSymbols, symbolIndices);
             bool bombCellsChanged = !AreArraysEqual(previousBombCells, GetSortedIndices(activeBombCellIndices));
             RefreshBoardVisualsFromSnapshot(previousPhase, symbolsChanged, bombCellsChanged);
+
+            if (!localSimulationEnabled)
+            {
+                StartBackgroundMusic();
+                SyncSnapshotAudio(previousPhase);
+            }
         }
 
         private void RefreshBoardVisualsFromSnapshot(MatchPhase previousPhase, bool symbolsChanged, bool bombCellsChanged)
@@ -1603,8 +1657,66 @@ namespace StayAlive
             queuedBombCellIndices.Clear();
             completedSpinShiftCount = 0;
             targetSpinShiftCount = 0;
+            lastCountdownDisplayNumber = int.MinValue;
             FillSymbolsRandomly();
             RefreshBoardVisualsForIdle();
+        }
+
+        private void UpdateCountdownAudio()
+        {
+            int displayNumber = Mathf.Max(1, Mathf.CeilToInt(phaseTimer));
+            if (displayNumber == lastCountdownDisplayNumber)
+            {
+                return;
+            }
+
+            lastCountdownDisplayNumber = displayNumber;
+            if (displayNumber >= 1 && displayNumber <= 3)
+            {
+                PlayCountdownTick();
+            }
+        }
+
+        private void SyncSnapshotAudio(MatchPhase previousPhase)
+        {
+            if (phase == MatchPhase.Countdown)
+            {
+                UpdateCountdownAudio();
+            }
+            else
+            {
+                lastCountdownDisplayNumber = int.MinValue;
+            }
+
+            if (previousPhase == phase)
+            {
+                if (phase == MatchPhase.Spinning)
+                {
+                    StartSpinLoop();
+                }
+                return;
+            }
+
+            if (phase == MatchPhase.Spinning)
+            {
+                PlayStartWhistle();
+                StartSpinLoop();
+                return;
+            }
+
+            if (previousPhase == MatchPhase.Spinning)
+            {
+                StopSpinLoop();
+                if (phase == MatchPhase.Warning)
+                {
+                    PlaySpinStopSfx();
+                }
+            }
+
+            if (phase == MatchPhase.Explosion)
+            {
+                PlayExplosionSfx();
+            }
         }
 
         private void RefillCollapsedBombCells()
@@ -1879,6 +1991,151 @@ namespace StayAlive
             fallbackCellSprite = Sprite.Create(texture, new Rect(0f, 0f, 2f, 2f), new Vector2(0.5f, 0.5f), 2f);
         }
 
+        private void EnsureAudioSources()
+        {
+            if (musicSource == null)
+            {
+                musicSource = CreateAudioSource(loop: true);
+            }
+
+            if (sfxSource == null)
+            {
+                sfxSource = CreateAudioSource(loop: false);
+            }
+
+            if (spinLoopSource == null)
+            {
+                spinLoopSource = CreateAudioSource(loop: true);
+            }
+        }
+
+        private AudioSource CreateAudioSource(bool loop)
+        {
+            AudioSource source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            source.spatialBlend = 0f;
+            source.volume = 1f;
+            return source;
+        }
+
+        private void StartBackgroundMusic()
+        {
+            if (backgroundMusic == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (musicSource == null || (musicSource.isPlaying && musicSource.clip == backgroundMusic))
+            {
+                return;
+            }
+
+            musicSource.clip = backgroundMusic;
+            musicSource.volume = backgroundMusicVolume;
+            musicSource.Play();
+        }
+
+        private void PlayCountdownTick()
+        {
+            if (countdownTickClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(countdownTickClip, countdownTickVolume);
+        }
+
+        private void PlayStartWhistle()
+        {
+            if (startWhistleClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
+        }
+
+        private void PlaySpinStopSfx()
+        {
+            if (spinStopClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(spinStopClip, spinStopVolume);
+        }
+
+        private void PlayExplosionSfx()
+        {
+            if (explosionClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(explosionClip, explosionVolume);
+        }
+
+        private void StartSpinLoop()
+        {
+            if (spinLoopClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (spinLoopSource == null)
+            {
+                return;
+            }
+
+            if (spinLoopSource.clip != spinLoopClip)
+            {
+                spinLoopSource.clip = spinLoopClip;
+            }
+
+            spinLoopSource.volume = spinLoopVolume;
+            if (!spinLoopSource.isPlaying)
+            {
+                spinLoopSource.Play();
+            }
+        }
+
+        private void StopSpinLoop()
+        {
+            if (spinLoopSource == null || !spinLoopSource.isPlaying)
+            {
+                return;
+            }
+
+            spinLoopSource.Stop();
+        }
+
         private StayAliveGameSettings ResolveSettingsSource()
         {
             if (sourceSettings == null)
@@ -2122,6 +2379,14 @@ namespace StayAlive
             {
                 explosionEffectController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(DefaultExplosionControllerPath);
             }
+
+            backgroundMusic = backgroundMusic != null ? backgroundMusic : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultBackgroundMusicPath);
+            countdownTickClip = countdownTickClip != null ? countdownTickClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultCountdownTickPath);
+            playerCollisionClip = playerCollisionClip != null ? playerCollisionClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultPlayerCollisionPath);
+            explosionClip = explosionClip != null ? explosionClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultExplosionSfxPath);
+            spinLoopClip = spinLoopClip != null ? spinLoopClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultSpinLoopPath);
+            startWhistleClip = startWhistleClip != null ? startWhistleClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultStartWhistlePath);
+            spinStopClip = spinStopClip != null ? spinStopClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultSpinStopPath);
 
             RefreshEditorFromSettings();
         }
