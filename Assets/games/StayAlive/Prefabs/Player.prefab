@@ -144,7 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useMobileJoystick: 1
   showJoystick: 1
-  limitToLeftHalf: 1
+  limitToLeftHalf: 0
   joystickRadiusPixels: 120
   deadZone: 0.1
   forceMobileJoystickInEditor: 1

@@ -179,6 +179,7 @@ namespace StayAlive.Networking
         public int tick;
         public int phase;
         public float phaseTimeRemaining;
+        public float matchTimeRemaining;
         public int completedSpinCount;
         public int[] symbolIndices;
         public int[] activeBombCellIndices;

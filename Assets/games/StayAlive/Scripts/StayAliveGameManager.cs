@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using StayAlive.Networking;
 
@@ -71,6 +72,7 @@ namespace StayAlive
         [Header("Round Flow")]
         [SerializeField] private bool spawnPlayers = true;
         [SerializeField] private bool autoStartLocalGame = true;
+        [SerializeField, Min(1f)] private float matchDurationSeconds = 60f;
         [SerializeField, Min(1)] private int totalPlayers = 1;
         [SerializeField, Min(1)] private int humanPlayers = 1;
         [SerializeField, Min(0f)] private float startCountdownSeconds = 3f;
@@ -88,6 +90,7 @@ namespace StayAlive
         [SerializeField, Min(0)] private int easyBombIncreasePerSpin = 5;
         [SerializeField, Min(0)] private int normalBombIncreasePerSpin = 7;
         [SerializeField, Min(0)] private int hardBombIncreasePerSpin = 10;
+        [SerializeField, Min(1)] private int targetSafeCellsAtTimeUp = 1;
         [SerializeField] private bool autoStartSpinOnPlay = false;
 
         [Header("Spin Button")]
@@ -116,6 +119,9 @@ namespace StayAlive
         [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
         [SerializeField, Range(0f, 1f)] private float explosionVolume = 0.9f;
 
+        [Header("UI")]
+        [SerializeField] private Component timerLabel;
+
         [Header("Movement")]
         [SerializeField, Min(0.1f)] private float moveSpeed = 5f;
         [SerializeField, Min(0f)] private float playerBounceSpeed = 4.8f;
@@ -143,6 +149,7 @@ namespace StayAlive
         private MatchPhase phase;
         private float phaseTimer;
         private float symbolSwapTimer;
+        private float matchTimerRemaining;
         private Sprite fallbackCellSprite;
         private bool explosionResolved;
         private int completedSpinCount;
@@ -204,6 +211,7 @@ namespace StayAlive
         public float Difficulty01 => settings != null ? settings.Difficulty01 : difficulty01;
         public int BombCellsPerRound => EvaluateBombCellsPerRound();
         public int CompletedSpinCount => completedSpinCount;
+        public float MatchTimeRemaining => Mathf.Max(0f, matchTimerRemaining);
         public event Action<int> GameEnded;
 
         private void Awake()
@@ -211,6 +219,7 @@ namespace StayAlive
             sourceSettings = settings;
             EnsureFallbackSprite();
             CacheBoardCells();
+            EnsureTimerLabelReference();
             EnsureAudioSources();
 #if UNITY_EDITOR
             if (explosionEffectController == null)
@@ -249,11 +258,21 @@ namespace StayAlive
         {
             if (phase == MatchPhase.GameOver || phase == MatchPhase.None)
             {
+                UpdateTimerLabel();
                 return;
             }
 
             if (!localSimulationEnabled)
             {
+                UpdateTimerLabel();
+                return;
+            }
+
+            matchTimerRemaining = Mathf.Max(0f, matchTimerRemaining - Time.deltaTime);
+            UpdateTimerLabel();
+            if (matchTimerRemaining <= 0f)
+            {
+                FinishMatch();
                 return;
             }
 
@@ -318,6 +337,7 @@ namespace StayAlive
             StopSpinLoop();
             ClearExplosionEffects();
             completedSpinCount = 0;
+            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
             InitializeIdleBoardState();
             BeginSpinPhase();
         }
@@ -398,6 +418,7 @@ namespace StayAlive
             StartBackgroundMusic();
             StopSpinLoop();
             ClearExplosionEffects();
+            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
             InitializeIdleBoardState();
             if (localSimulationEnabled)
             {
@@ -411,6 +432,8 @@ namespace StayAlive
                 explosionResolved = false;
                 RefreshBoardVisualsForIdle();
             }
+
+            UpdateTimerLabel();
         }
 
         public void StartSpinButton()
@@ -756,6 +779,7 @@ namespace StayAlive
             StopSpinLoop();
             ClearExplosionEffects();
             RefreshBoardVisualsForSpin();
+            UpdateTimerLabel();
             GameEnded?.Invoke(FindWinningChairId());
         }
 
@@ -1111,7 +1135,37 @@ namespace StayAlive
             }
 
             float hardT = Mathf.InverseLerp(0.5f, 1f, Difficulty01);
-            return Mathf.RoundToInt(Mathf.Lerp(normal, hard, hardT));
+            int configuredIncrease = Mathf.RoundToInt(Mathf.Lerp(normal, hard, hardT));
+            int timeMatchedIncrease = EvaluateTimeMatchedBombIncreasePerSpin();
+            if (timeMatchedIncrease <= 0)
+            {
+                return configuredIncrease;
+            }
+
+            return Mathf.Min(configuredIncrease, timeMatchedIncrease);
+        }
+
+        private int EvaluateTimeMatchedBombIncreasePerSpin()
+        {
+            int totalCellCount = Mathf.Max(1, Columns * Rows);
+            int targetSafeCells = Mathf.Clamp(targetSafeCellsAtTimeUp, 1, totalCellCount);
+            int targetBombCells = Mathf.Clamp(totalCellCount - targetSafeCells, 1, Mathf.Max(1, totalCellCount - 1));
+            float roundDurationSeconds =
+                Mathf.Max(0.1f, SpinDurationSeconds)
+                + Mathf.Max(0.1f, WarningDurationSeconds)
+                + Mathf.Max(0.1f, ExplosionDurationSeconds)
+                + Mathf.Max(0.1f, CollapseDurationSeconds)
+                + Mathf.Max(0f, RefillDelaySeconds)
+                + Mathf.Max(0.1f, RefillDurationSeconds);
+            int expectedRounds = Mathf.Max(1, Mathf.CeilToInt(Mathf.Max(1f, matchDurationSeconds) / Mathf.Max(0.1f, roundDurationSeconds)));
+            if (expectedRounds <= 1)
+            {
+                return 0;
+            }
+
+            int baseBombCells = EvaluateBaseBombCellsPerRound();
+            float requiredIncrease = (targetBombCells - baseBombCells) / (float)(expectedRounds - 1);
+            return Mathf.Max(0, Mathf.RoundToInt(requiredIncrease));
         }
 
         private float GetDefaultBombChance()
@@ -1412,6 +1466,7 @@ namespace StayAlive
                 tick = tick,
                 phase = (int)phase,
                 phaseTimeRemaining = Mathf.Max(0f, phaseTimer),
+                matchTimeRemaining = Mathf.Max(0f, matchTimerRemaining),
                 completedSpinCount = completedSpinCount,
                 symbolIndices = CloneIntArray(symbolIndices),
                 activeBombCellIndices = GetSortedIndices(activeBombCellIndices),
@@ -1434,6 +1489,7 @@ namespace StayAlive
                 ? (MatchPhase)snapshot.phase
                 : MatchPhase.None;
             phaseTimer = Mathf.Max(0f, snapshot.phaseTimeRemaining);
+            matchTimerRemaining = Mathf.Max(0f, snapshot.matchTimeRemaining);
             completedSpinCount = Mathf.Max(0, snapshot.completedSpinCount);
             symbolSwapTimer = 0f;
             explosionResolved = phase != MatchPhase.Explosion;
@@ -1472,6 +1528,8 @@ namespace StayAlive
                 StartBackgroundMusic();
                 SyncSnapshotAudio(previousPhase);
             }
+
+            UpdateTimerLabel();
         }
 
         private void RefreshBoardVisualsFromSnapshot(MatchPhase previousPhase, bool symbolsChanged, bool bombCellsChanged)
@@ -1660,6 +1718,35 @@ namespace StayAlive
             lastCountdownDisplayNumber = int.MinValue;
             FillSymbolsRandomly();
             RefreshBoardVisualsForIdle();
+            UpdateTimerLabel();
+        }
+
+        private void EnsureTimerLabelReference()
+        {
+            if (timerLabel != null)
+            {
+                return;
+            }
+
+            Transform found = FindInActiveScene("TimerText");
+            if (found != null)
+            {
+                timerLabel = FindTextComponent(found.gameObject);
+            }
+        }
+
+        private void UpdateTimerLabel()
+        {
+            EnsureTimerLabelReference();
+            SetTextComponentText(timerLabel, FormatMatchTime(matchTimerRemaining));
+        }
+
+        private static string FormatMatchTime(float secondsRemaining)
+        {
+            int totalSeconds = Mathf.Max(0, Mathf.CeilToInt(Mathf.Max(0f, secondsRemaining)));
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            return string.Format("{0:00}:{1:00}", minutes, seconds);
         }
 
         private void UpdateCountdownAudio()
@@ -2144,6 +2231,113 @@ namespace StayAlive
             }
 
             return sourceSettings;
+        }
+
+        private static Transform FindInActiveScene(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
+            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (!scene.IsValid())
+            {
+                return null;
+            }
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                Transform found = FindInChildren(roots[i].transform, name);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Transform FindInChildren(Transform root, string name)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root.name == name)
+            {
+                return root;
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindInChildren(root.GetChild(i), name);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Component FindTextComponent(GameObject root)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            Component[] components = root.GetComponentsInChildren<Component>(true);
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component component = components[i];
+                if (component == null)
+                {
+                    continue;
+                }
+
+                if (GetTextProperty(component.GetType()) != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        private static void SetTextComponentText(Component component, string value)
+        {
+            if (component == null)
+            {
+                return;
+            }
+
+            PropertyInfo property = GetTextProperty(component.GetType());
+            if (property == null || !property.CanWrite)
+            {
+                return;
+            }
+
+            property.SetValue(component, value ?? string.Empty, null);
+        }
+
+        private static PropertyInfo GetTextProperty(Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            PropertyInfo property = type.GetProperty("text", BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(string) || !property.CanRead)
+            {
+                return null;
+            }
+
+            return property;
         }
 
         private bool ValidateSceneSetup()

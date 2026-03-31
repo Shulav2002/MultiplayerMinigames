@@ -10,7 +10,7 @@ namespace HotDynamite
         [Header("Mobile Joystick")]
         [SerializeField] private bool useMobileJoystick = true;
         [SerializeField] private bool showJoystick = true;
-        [SerializeField] private bool limitToLeftHalf = true;
+        [SerializeField] private bool limitToLeftHalf = false;
         [SerializeField] private float joystickRadiusPixels = 120f;
         [SerializeField] private float deadZone = 0.1f;
         [SerializeField] private bool forceMobileJoystickInEditor = false;
