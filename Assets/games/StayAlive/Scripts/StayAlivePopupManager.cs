@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace StayAlive.Lobby
@@ -12,17 +11,18 @@ namespace StayAlive.Lobby
         Overlay = 1
     }
 
-    public enum StayAlivePopupIntent
-    {
-        None = 0,
-        JoinRoom = 1,
-        CreateRoom = 2,
-        WaitingForPlayers = 3,
-        PrivateRoomWaitingHost = 4,
-        PrivateRoomWaitingGuest = 5,
-        NetworkError = 6,
-        Custom = 7
-    }
+        public enum StayAlivePopupIntent
+        {
+            None = 0,
+            JoinRoom = 1,
+            CreateRoom = 2,
+            WaitingForPlayers = 3,
+            PrivateRoomWaitingHost = 4,
+            PrivateRoomWaitingGuest = 5,
+            NetworkError = 6,
+            Custom = 7,
+            PauseMenu = 8
+        }
 
     public enum StayAlivePopupButtonType
     {
@@ -36,17 +36,21 @@ namespace StayAlive.Lobby
         [Serializable]
         private sealed class PopupCanvasBinding
         {
-            public string canvasName;
             public GameObject canvasRoot;
             public GameObject popupPanel;
             public GameObject popupBoard;
+            public GameObject titleRoot;
             public GameObject detailsRoot;
             public Component titleLabel;
             public Component detailsLabel;
             public GameObject roomIdInputRoot;
+            public GameObject homeButtonRoot;
+            public Button homeButton;
             public GameObject joinButtonRoot;
             public Button joinButton;
             public Component joinButtonLabel;
+            public GameObject volumeSliderRoot;
+            public Slider volumeSlider;
             public GameObject confirmButtonRoot;
             public Button confirmButton;
             public Component confirmButtonLabel;
@@ -60,22 +64,13 @@ namespace StayAlive.Lobby
             [NonSerialized] public StayAlivePopupIntent currentIntent;
         }
 
-        [Header("Popup Object Names")]
-        [SerializeField] private string popupPanelName = "PopUpPanel";
-        [SerializeField] private string popupBoardName = "PopUpBoard";
-        [SerializeField] private string popupTitleName = "PopUpTitle";
-        [SerializeField] private string popupDetailsName = "Details";
-        [SerializeField] private string popupRoomIdInputName = "InputField (Legacy)";
-        [SerializeField] private string popupJoinButtonName = "Join";
-        [SerializeField] private string popupConfirmButtonName = "OK";
-        [SerializeField] private string popupStartButtonName = "Start";
-        [SerializeField] private string popupCloseButtonName = "Close";
-
-        [Header("Scene Canvases")]
-        [SerializeField] private PopupCanvasBinding lobbyPopup = new PopupCanvasBinding { canvasName = "LobbyCanvas" };
-        [SerializeField] private PopupCanvasBinding overlayPopup = new PopupCanvasBinding { canvasName = "InGameOverLayCanvas" };
+        [Header("Lobby Popup")]
+        [SerializeField] private PopupCanvasBinding lobbyPopup = new PopupCanvasBinding();
+        [Header("Overlay Popup")]
+        [SerializeField] private PopupCanvasBinding overlayPopup = new PopupCanvasBinding();
 
         private string lobbyJoinErrorMessage = string.Empty;
+        private bool missingReferencesLogged;
 
         public event Action<StayAlivePopupCanvasType, StayAlivePopupIntent, StayAlivePopupButtonType> ButtonClicked;
 
@@ -145,6 +140,21 @@ namespace StayAlive.Lobby
         {
             EnsureReferences();
             ShowPopup(overlayPopup, intent, title, details);
+        }
+
+        public void ShowPauseOverlayPopup()
+        {
+            EnsureReferences();
+            ShowPopup(overlayPopup, StayAlivePopupIntent.PauseMenu, string.Empty, string.Empty);
+        }
+
+        public void SetOverlayVolumeSliderValueWithoutNotify(float value)
+        {
+            EnsureReferences();
+            if (overlayPopup.volumeSlider != null)
+            {
+                overlayPopup.volumeSlider.SetValueWithoutNotify(Mathf.Clamp01(value));
+            }
         }
 
         public void HideLobbyPopup()
@@ -251,125 +261,14 @@ namespace StayAlive.Lobby
 
         private void EnsureReferences()
         {
-            EnsureBinding(lobbyPopup);
-            EnsureBinding(overlayPopup);
-        }
-
-        private void EnsureBinding(PopupCanvasBinding binding)
-        {
-            if (binding == null)
+            if (missingReferencesLogged)
             {
                 return;
             }
 
-            if (binding.canvasRoot == null)
-            {
-                Transform canvasTransform = FindInActiveScene(binding.canvasName);
-                if (canvasTransform != null)
-                {
-                    binding.canvasRoot = canvasTransform.gameObject;
-                }
-            }
-
-            if (binding.canvasRoot == null)
-            {
-                return;
-            }
-
-            if (binding.popupPanel == null)
-            {
-                Transform popupPanelTransform = FindInChildren(binding.canvasRoot.transform, popupPanelName);
-                if (popupPanelTransform != null)
-                {
-                    binding.popupPanel = popupPanelTransform.gameObject;
-                }
-            }
-
-            if (binding.popupPanel == null)
-            {
-                return;
-            }
-
-            if (binding.popupBoard == null)
-            {
-                Transform popupBoardTransform = FindInChildren(binding.popupPanel.transform, popupBoardName);
-                if (popupBoardTransform != null)
-                {
-                    binding.popupBoard = popupBoardTransform.gameObject;
-                }
-            }
-
-            if (binding.titleLabel == null)
-            {
-                Transform titleTransform = FindInChildren(binding.popupPanel.transform, popupTitleName);
-                if (titleTransform != null)
-                {
-                    binding.titleLabel = FindTextComponent(titleTransform.gameObject);
-                }
-            }
-
-            if (binding.detailsLabel == null)
-            {
-                Transform detailsTransform = FindInChildren(binding.popupPanel.transform, popupDetailsName);
-                if (detailsTransform != null)
-                {
-                    binding.detailsRoot = detailsTransform.gameObject;
-                    binding.detailsLabel = FindTextComponent(detailsTransform.gameObject);
-                }
-            }
-
-            if (binding.roomIdInputRoot == null)
-            {
-                Transform roomIdInputTransform = FindInChildren(binding.popupPanel.transform, popupRoomIdInputName);
-                if (roomIdInputTransform != null)
-                {
-                    binding.roomIdInputRoot = roomIdInputTransform.gameObject;
-                }
-            }
-
-            if (binding.joinButtonRoot == null)
-            {
-                Transform joinButtonTransform = FindInChildren(binding.popupPanel.transform, popupJoinButtonName);
-                if (joinButtonTransform != null)
-                {
-                    binding.joinButtonRoot = joinButtonTransform.gameObject;
-                    binding.joinButton = joinButtonTransform.GetComponent<Button>();
-                    binding.joinButtonLabel = FindTextComponent(joinButtonTransform.gameObject);
-                }
-            }
-
-            if (binding.confirmButtonRoot == null)
-            {
-                Transform confirmButtonTransform = FindInChildren(binding.popupPanel.transform, popupConfirmButtonName);
-                if (confirmButtonTransform != null)
-                {
-                    binding.confirmButtonRoot = confirmButtonTransform.gameObject;
-                    binding.confirmButton = confirmButtonTransform.GetComponent<Button>();
-                    binding.confirmButtonLabel = FindTextComponent(confirmButtonTransform.gameObject);
-                }
-            }
-
-            if (binding.startButtonRoot == null)
-            {
-                Transform startButtonTransform = FindInChildren(binding.popupPanel.transform, popupStartButtonName);
-                if (startButtonTransform != null)
-                {
-                    binding.startButtonRoot = startButtonTransform.gameObject;
-                    binding.startButton = startButtonTransform.GetComponent<Button>();
-                    binding.startButtonLabel = FindTextComponent(startButtonTransform.gameObject);
-                }
-            }
-
-            if (binding.closeButtonRoot == null)
-            {
-                Transform closeButtonTransform = FindInChildren(binding.popupPanel.transform, popupCloseButtonName);
-                if (closeButtonTransform != null)
-                {
-                    binding.closeButtonRoot = closeButtonTransform.gameObject;
-                    binding.closeButton = closeButtonTransform.GetComponent<Button>();
-                    binding.closeButtonLabel = FindTextComponent(closeButtonTransform.gameObject);
-                }
-            }
+            missingReferencesLogged = true;
+            LogMissingBindingReferences("Lobby", lobbyPopup);
+            LogMissingBindingReferences("Overlay", overlayPopup);
         }
 
         private PopupCanvasBinding ResolveNetworkErrorBinding(bool preferOverlay)
@@ -392,6 +291,7 @@ namespace StayAlive.Lobby
             SetComponentText(binding.titleLabel, title);
             SetComponentText(binding.detailsLabel, details);
             ConfigureDetailsAlignment(binding, intent);
+            SetGameObjectActive(binding.titleRoot, true);
 
             if (binding.popupPanel != null)
             {
@@ -422,6 +322,9 @@ namespace StayAlive.Lobby
             }
 
             SetContentState(binding, showDetails: true, showRoomIdInput: false);
+            SetGameObjectActive(binding.titleRoot, true);
+            SetGameObjectActive(binding.homeButtonRoot, false);
+            SetGameObjectActive(binding.volumeSliderRoot, false);
             SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, string.Empty);
             SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, string.Empty);
             SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, string.Empty);
@@ -440,32 +343,41 @@ namespace StayAlive.Lobby
                 return;
             }
 
+            bool useConfirmAsCloseFallback = binding.closeButtonRoot == null && ReferenceEquals(binding, lobbyPopup);
+
             switch (intent)
             {
                 case StayAlivePopupIntent.JoinRoom:
                     SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, true, true, "Join");
-                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, useConfirmAsCloseFallback, true, "OK");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
-                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, !useConfirmAsCloseFallback, true, "Close");
                     break;
 
                 case StayAlivePopupIntent.PrivateRoomWaitingHost:
                     SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, "Join");
-                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, useConfirmAsCloseFallback, true, "OK");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, true, canStart, "Start");
-                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, !useConfirmAsCloseFallback, true, "Close");
                     break;
 
                 case StayAlivePopupIntent.PrivateRoomWaitingGuest:
                     SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, "Join");
-                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, useConfirmAsCloseFallback, true, "OK");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
-                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, !useConfirmAsCloseFallback, true, "Close");
                     break;
 
                 case StayAlivePopupIntent.NetworkError:
                     SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, "Join");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, useConfirmAsCloseFallback, true, "OK");
+                    SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, !useConfirmAsCloseFallback, true, "Close");
+                    break;
+
+                case StayAlivePopupIntent.PauseMenu:
+                    SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, "Join");
                     SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
                     SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
@@ -473,9 +385,9 @@ namespace StayAlive.Lobby
 
                 default:
                     SetButtonState(binding.joinButtonRoot, binding.joinButton, binding.joinButtonLabel, false, true, "Join");
-                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, false, true, "OK");
+                    SetButtonState(binding.confirmButtonRoot, binding.confirmButton, binding.confirmButtonLabel, useConfirmAsCloseFallback, true, "OK");
                     SetButtonState(binding.startButtonRoot, binding.startButton, binding.startButtonLabel, false, false, "Start");
-                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, true, true, "Close");
+                    SetButtonState(binding.closeButtonRoot, binding.closeButton, binding.closeButtonLabel, !useConfirmAsCloseFallback, true, "Close");
                     break;
             }
         }
@@ -489,6 +401,9 @@ namespace StayAlive.Lobby
 
             bool showRoomIdInput = intent == StayAlivePopupIntent.JoinRoom;
             bool showDetails = !showRoomIdInput;
+            bool showTitle = true;
+            bool showHomeButton = false;
+            bool showVolumeSlider = false;
             if (ReferenceEquals(binding, lobbyPopup) && intent == StayAlivePopupIntent.JoinRoom)
             {
                 showDetails = !string.IsNullOrWhiteSpace(lobbyJoinErrorMessage);
@@ -498,8 +413,19 @@ namespace StayAlive.Lobby
                 }
             }
 
+            if (intent == StayAlivePopupIntent.PauseMenu)
+            {
+                showTitle = false;
+                showDetails = false;
+                showHomeButton = true;
+                showVolumeSlider = true;
+            }
+
             ConfigureDetailsAlignment(binding, intent);
             SetContentState(binding, showDetails, showRoomIdInput);
+            SetGameObjectActive(binding.titleRoot, showTitle);
+            SetGameObjectActive(binding.homeButtonRoot, showHomeButton);
+            SetGameObjectActive(binding.volumeSliderRoot, showVolumeSlider);
         }
 
         private static void ConfigureDetailsAlignment(PopupCanvasBinding binding, StayAlivePopupIntent intent)
@@ -525,6 +451,14 @@ namespace StayAlive.Lobby
             if (binding.roomIdInputRoot != null)
             {
                 binding.roomIdInputRoot.SetActive(showRoomIdInput);
+            }
+        }
+
+        private static void SetGameObjectActive(GameObject target, bool isActive)
+        {
+            if (target != null)
+            {
+                target.SetActive(isActive);
             }
         }
 
@@ -595,80 +529,33 @@ namespace StayAlive.Lobby
             return string.Format("Room ID\n{0}\n\nPlayers\n{1}\n\n{2}", normalizedRoomId, statusLine, instructions);
         }
 
-        private static Transform FindInActiveScene(string name)
+        private static void LogMissingBindingReferences(string bindingName, PopupCanvasBinding binding)
         {
-            Scene scene = SceneManager.GetActiveScene();
-            if (!scene.IsValid())
+            if (binding == null)
             {
-                return null;
+                Debug.LogWarning($"StayAlivePopupManager: {bindingName} popup binding is missing.");
+                return;
             }
 
-            GameObject[] roots = scene.GetRootGameObjects();
-            for (int i = 0; i < roots.Length; i++)
+            if (binding.canvasRoot == null)
             {
-                Transform found = FindInChildren(roots[i].transform, name);
-                if (found != null)
-                {
-                    return found;
-                }
+                Debug.LogWarning($"StayAlivePopupManager: {bindingName} popup canvas root is not assigned.", null);
             }
 
-            return null;
-        }
-
-        private static Transform FindInChildren(Transform root, string name)
-        {
-            if (root == null)
+            if (binding.popupPanel == null)
             {
-                return null;
+                Debug.LogWarning($"StayAlivePopupManager: {bindingName} popup panel is not assigned.", null);
             }
 
-            if (root.name == name)
+            if (binding.titleLabel == null)
             {
-                return root;
+                Debug.LogWarning($"StayAlivePopupManager: {bindingName} popup title label is not assigned.", null);
             }
 
-            for (int i = 0; i < root.childCount; i++)
+            if (binding.detailsLabel == null)
             {
-                Transform found = FindInChildren(root.GetChild(i), name);
-                if (found != null)
-                {
-                    return found;
-                }
+                Debug.LogWarning($"StayAlivePopupManager: {bindingName} popup details label is not assigned.", null);
             }
-
-            return null;
-        }
-
-        private static Component FindTextComponent(GameObject root)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            Component[] components = root.GetComponentsInChildren<Component>(true);
-            for (int i = 0; i < components.Length; i++)
-            {
-                Component component = components[i];
-                if (component == null)
-                {
-                    continue;
-                }
-
-                if (component is Text)
-                {
-                    return component;
-                }
-
-                PropertyInfo property = GetProperty(component.GetType(), "text");
-                if (property != null && property.PropertyType == typeof(string) && property.CanRead)
-                {
-                    return component;
-                }
-            }
-
-            return null;
         }
 
         private static void SetComponentText(Component component, string value)

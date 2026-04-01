@@ -173,7 +173,11 @@ namespace StayAlive
 
         private void Update()
         {
-            UpdateSnapshotPresentation(Time.deltaTime);
+            if (manager == null || !manager.IsPaused)
+            {
+                UpdateSnapshotPresentation(Time.deltaTime);
+            }
+
             UpdateLocalPlayerIndicator();
         }
 
@@ -274,7 +278,12 @@ namespace StayAlive
 
         private bool CanSimulateMovement()
         {
-            return isAlive && manager != null && body != null && ShouldSimulateLocally() && !manager.IsMatchOver;
+            return isAlive
+                && manager != null
+                && body != null
+                && ShouldSimulateLocally()
+                && !manager.IsMatchOver
+                && !manager.IsPaused;
         }
 
         private bool ShouldSimulateLocally()

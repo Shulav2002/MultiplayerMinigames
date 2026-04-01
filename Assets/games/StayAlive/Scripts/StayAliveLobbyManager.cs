@@ -3,13 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using StayAlive.Networking;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace StayAlive.Lobby
 {
@@ -84,6 +79,10 @@ namespace StayAlive.Lobby
         [SerializeField, Min(1)] private int offlineHumanPlayers = 1;
         [SerializeField, Min(0f)] private float gameEndDelaySeconds = 0.5f;
 
+        [Header("Pause Overlay")]
+        [SerializeField] private Button pauseHomeButton;
+        [SerializeField] private Slider pauseVolumeSlider;
+
         private ReplayMode lastReplayMode;
         private int lastOfflineTotalPlayers = 4;
         private int lastOfflineHumanPlayers = 1;
@@ -97,6 +96,10 @@ namespace StayAlive.Lobby
         private bool subscribedToGameEvents;
         private bool subscribedToPopupEvents;
         private Coroutine showGameEndCoroutine;
+        private bool pauseMenuOpen;
+        private bool missingReferencesLogged;
+
+        private const string PauseVolumePreferenceKey = "StayAlive.MasterVolume";
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
@@ -111,6 +114,7 @@ namespace StayAlive.Lobby
         private void Start()
         {
             EnsureReferences();
+            ApplySavedPauseVolume();
 
             if (useNetworkLobby && (networkClient == null || onlineMatchController == null))
             {
@@ -291,7 +295,45 @@ namespace StayAlive.Lobby
 
         public void OnPauseButtonClicked()
         {
-            popupManager?.ShowOverlayPopup(StayAlivePopupIntent.Custom, "Paused", "Tap close to continue.");
+            if (!IsPrimaryLobbyManager || pauseMenuOpen || popupManager == null || gameContainer == null || !gameContainer.activeInHierarchy)
+            {
+                return;
+            }
+
+            pauseMenuOpen = true;
+            Time.timeScale = 0f;
+            gameManager?.SetPaused(true);
+            popupManager.ShowPauseOverlayPopup();
+            SyncPauseVolumeSlider();
+        }
+
+        public async void OnPauseHomeButtonClicked()
+        {
+            if (!IsPrimaryLobbyManager)
+            {
+                return;
+            }
+
+            ClosePauseMenu();
+            await ReturnToHomeAsync();
+        }
+
+        public void OnPauseResumeButtonClicked()
+        {
+            if (!IsPrimaryLobbyManager)
+            {
+                return;
+            }
+
+            ClosePauseMenu();
+        }
+
+        public void OnPauseVolumeSliderValueChanged(float value)
+        {
+            float clampedValue = Mathf.Clamp01(value);
+            AudioListener.volume = clampedValue;
+            PlayerPrefs.SetFloat(PauseVolumePreferenceKey, clampedValue);
+            PlayerPrefs.Save();
         }
 
         public void OnJoinRoomInputValueChanged(string value)
@@ -526,6 +568,7 @@ namespace StayAlive.Lobby
 
         private void ShowLobbyHome()
         {
+            ClosePauseMenu();
             HideRoomPanel();
             HideGameEnd();
             HideWaiting();
@@ -708,6 +751,7 @@ namespace StayAlive.Lobby
             }
 
             showGameEndCoroutine = null;
+            ClosePauseMenu();
             if (gameEndPanel != null)
             {
                 gameEndPanel.SetActive(true);
@@ -980,145 +1024,28 @@ namespace StayAlive.Lobby
 
         private void EnsureReferences()
         {
-            if (lobbyCanvas == null)
+            if (missingReferencesLogged)
             {
-                Transform found = FindInActiveScene("LobbyCanvas");
-                if (found != null) lobbyCanvas = found.gameObject;
+                return;
             }
 
-            if (lobbyRoot == null)
-            {
-                Transform found = FindUnderLobbyCanvas("Lobby");
-                if (found != null) lobbyRoot = found.gameObject;
-            }
+            missingReferencesLogged = true;
+            LogMissingReference(lobbyCanvas == null, "lobbyCanvas");
+            LogMissingReference(gameContainer == null, "gameContainer");
+            LogMissingReference(popupManager == null, "popupManager");
+            LogMissingReference(roomIdInputField == null, "roomIdInputField");
+            LogMissingReference(lobbyRoot == null, "lobbyRoot");
+            LogMissingReference(gameEndPanel == null, "gameEndPanel");
+            LogMissingReference(playAgainButton == null, "playAgainButton");
+            LogMissingReference(backToHomeButton == null, "backToHomeButton");
+            LogMissingReference(gameManager == null, "gameManager");
+            LogMissingReference(pauseHomeButton == null, "pauseHomeButton");
+            LogMissingReference(pauseVolumeSlider == null, "pauseVolumeSlider");
 
-            if (gameEndPanel == null)
+            if (useNetworkLobby)
             {
-                Transform found = FindUnderLobbyCanvas("GameEnd");
-                if (found == null) found = FindUnderLobbyCanvas("GameOverPanel");
-                if (found != null) gameEndPanel = found.gameObject;
-            }
-
-            if (waitingForPlayersPanel == null)
-            {
-                Transform found = FindUnderLobbyCanvas("WaitingForPlayers");
-                if (found != null) waitingForPlayersPanel = found.gameObject;
-            }
-
-            if (networkIssueRoot == null)
-            {
-                Transform found = FindUnderLobbyCanvas("NetworkIssue");
-                if (found != null) networkIssueRoot = found.gameObject;
-            }
-
-            if (joinRoomPopupPanel == null)
-            {
-                Transform found = FindInActiveScene("JoinPopUpPanel");
-                if (found != null) joinRoomPopupPanel = found.gameObject;
-            }
-
-            if (createRoomPopupPanel == null)
-            {
-                Transform found = FindInActiveScene("CreatePopUpPanel");
-                if (found != null) createRoomPopupPanel = found.gameObject;
-            }
-
-            if (roomIdInputField == null)
-            {
-                Transform found = FindInActiveScene("RoomIdInputField");
-                if (found != null) roomIdInputField = FindInputFieldComponent(found.gameObject);
-            }
-
-            if (roomIdInputField == null)
-            {
-                Transform found = FindInActiveScene("InputField (Legacy)");
-                if (found != null) roomIdInputField = FindInputFieldComponent(found.gameObject);
-            }
-
-            if (roomPopupPrimaryButton == null && joinRoomPopupPanel != null)
-            {
-                Transform found = FindInChildren(joinRoomPopupPanel.transform, "Join");
-                if (found != null) roomPopupPrimaryButton = found.GetComponent<Button>();
-            }
-
-            if (roomPopupActionLabel == null && joinRoomPopupPanel != null)
-            {
-                Transform found = FindInChildren(joinRoomPopupPanel.transform, "Join");
-                if (found != null) roomPopupActionLabel = FindTextComponent(found.gameObject);
-            }
-
-            if (createRoomIdLabel == null && createRoomPopupPanel != null)
-            {
-                Transform found = FindInChildren(createRoomPopupPanel.transform, "RoomID");
-                if (found != null) createRoomIdLabel = FindTextComponent(found.gameObject);
-            }
-
-            if (createRoomOccupancyLabel == null && createRoomPopupPanel != null)
-            {
-                Transform found = FindInChildren(createRoomPopupPanel.transform, "JoinedPlayersCount");
-                if (found != null) createRoomOccupancyLabel = FindTextComponent(found.gameObject);
-            }
-
-            if (createRoomStartButton == null && createRoomPopupPanel != null)
-            {
-                Transform found = FindInChildren(createRoomPopupPanel.transform, "Start");
-                if (found != null) createRoomStartButton = found.GetComponent<Button>();
-            }
-
-            if (networkIssueTitleLabel == null && networkIssueRoot != null)
-            {
-                Transform found = FindInChildren(networkIssueRoot.transform, "NetworkError");
-                if (found != null) networkIssueTitleLabel = FindTextComponent(found.gameObject);
-            }
-
-            if (networkIssueMessageLabel == null && networkIssueRoot != null)
-            {
-                Transform found = FindInChildren(networkIssueRoot.transform, "Isssue");
-                if (found != null) networkIssueMessageLabel = FindTextComponent(found.gameObject);
-            }
-
-            if (networkIssueCloseButton == null && networkIssueRoot != null)
-            {
-                Transform found = FindInChildren(networkIssueRoot.transform, "Close");
-                if (found != null) networkIssueCloseButton = found.GetComponent<Button>();
-            }
-
-            if (blueWinnerPanel == null) blueWinnerPanel = FindNamedGameObjectUnderGameEnd("BlueWinner");
-            if (greenWinnerPanel == null) greenWinnerPanel = FindNamedGameObjectUnderGameEnd("GreenWinner");
-            if (redWinnerPanel == null) redWinnerPanel = FindNamedGameObjectUnderGameEnd("RedWinner");
-            if (yellowWinnerPanel == null) yellowWinnerPanel = FindNamedGameObjectUnderGameEnd("YellowWinner");
-
-            if (playAgainButton == null)
-            {
-                GameObject found = FindNamedGameObjectUnderGameEnd("PlayAgain");
-                if (found != null) playAgainButton = found.GetComponent<Button>();
-            }
-
-            if (backToHomeButton == null)
-            {
-                GameObject found = FindNamedGameObjectUnderGameEnd("BackToHome");
-                if (found == null) found = FindNamedGameObjectUnderGameEnd("ReutnToHome");
-                if (found != null) backToHomeButton = found.GetComponent<Button>();
-            }
-
-            if (gameManager == null)
-            {
-                gameManager = FindFirstObjectByType<StayAliveGameManager>(FindObjectsInactive.Include);
-            }
-
-            if (popupManager == null)
-            {
-                popupManager = GetComponent<StayAlivePopupManager>();
-            }
-
-            if (useNetworkLobby && networkClient == null)
-            {
-                networkClient = GetComponent<StayAliveLobbyNetworkClient>();
-            }
-
-            if (useNetworkLobby && onlineMatchController == null)
-            {
-                onlineMatchController = GetComponent<StayAliveOnlineMatchController>();
+                LogMissingReference(networkClient == null, "networkClient");
+                LogMissingReference(onlineMatchController == null, "onlineMatchController");
             }
         }
 
@@ -1396,6 +1323,10 @@ namespace StayAlive.Lobby
                     }
 
                     break;
+
+                case StayAlivePopupIntent.PauseMenu:
+                    OnPauseResumeButtonClicked();
+                    break;
             }
         }
 
@@ -1411,6 +1342,32 @@ namespace StayAlive.Lobby
             if (playAgainButton != null) playAgainButton.onClick.RemoveListener(OnPlayAgainButtonClicked);
             if (backToHomeButton != null) backToHomeButton.onClick.RemoveListener(OnBackToHomeButtonClicked);
             if (networkIssueCloseButton != null) networkIssueCloseButton.onClick.RemoveListener(OnCloseNetworkIssueButtonClicked);
+        }
+
+        private void ClosePauseMenu()
+        {
+            pauseMenuOpen = false;
+            Time.timeScale = 1f;
+            gameManager?.SetPaused(false);
+            popupManager?.HideOverlayPopup();
+        }
+
+        private void ApplySavedPauseVolume()
+        {
+            float savedVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(PauseVolumePreferenceKey, 1f));
+            AudioListener.volume = savedVolume;
+            SyncPauseVolumeSlider();
+        }
+
+        private void SyncPauseVolumeSlider()
+        {
+            float currentVolume = Mathf.Clamp01(AudioListener.volume);
+            if (pauseVolumeSlider != null)
+            {
+                pauseVolumeSlider.SetValueWithoutNotify(currentVolume);
+            }
+
+            popupManager?.SetOverlayVolumeSliderValueWithoutNotify(currentVolume);
         }
 
         private static int CountOccupiedSeats(string[] chairs)
@@ -1430,140 +1387,6 @@ namespace StayAlive.Lobby
             }
 
             return count;
-        }
-
-        private GameObject FindNamedGameObjectUnderGameEnd(string name)
-        {
-            if (gameEndPanel == null)
-            {
-                return null;
-            }
-
-            Transform found = FindInChildren(gameEndPanel.transform, name);
-            return found != null ? found.gameObject : null;
-        }
-
-        private Transform FindUnderLobbyCanvas(string name)
-        {
-            if (lobbyCanvas != null)
-            {
-                return FindInChildren(lobbyCanvas.transform, name);
-            }
-
-            return FindInActiveScene(name);
-        }
-
-        private static Transform FindInActiveScene(string name)
-        {
-            Scene scene = SceneManager.GetActiveScene();
-            if (!scene.IsValid())
-            {
-                return null;
-            }
-
-            GameObject[] roots = scene.GetRootGameObjects();
-            for (int i = 0; i < roots.Length; i++)
-            {
-                Transform found = FindInChildren(roots[i].transform, name);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-
-            return null;
-        }
-
-        private static Transform FindInChildren(Transform root, string name)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            if (root.name == name)
-            {
-                return root;
-            }
-
-            for (int i = 0; i < root.childCount; i++)
-            {
-                Transform found = FindInChildren(root.GetChild(i), name);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-
-            return null;
-        }
-
-        private static Component FindComponentByTypeName(GameObject target, string typeName)
-        {
-            if (target == null || string.IsNullOrEmpty(typeName))
-            {
-                return null;
-            }
-
-            Component[] components = target.GetComponents<Component>();
-            for (int i = 0; i < components.Length; i++)
-            {
-                Component component = components[i];
-                if (component == null)
-                {
-                    continue;
-                }
-
-                Type componentType = component.GetType();
-                if (componentType.Name == typeName || componentType.FullName == typeName)
-                {
-                    return component;
-                }
-            }
-
-            return target.GetComponent(typeName);
-        }
-
-        private static Component FindInputFieldComponent(GameObject target)
-        {
-            Component inputField = FindComponentByTypeName(target, "TMP_InputField");
-            if (inputField != null)
-            {
-                return inputField;
-            }
-
-            return FindComponentByTypeName(target, "InputField");
-        }
-
-        private static Component FindTextComponent(GameObject root)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            Component[] components = root.GetComponentsInChildren<Component>(true);
-            for (int i = 0; i < components.Length; i++)
-            {
-                Component component = components[i];
-                if (component == null)
-                {
-                    continue;
-                }
-
-                if (component is Text)
-                {
-                    return component;
-                }
-
-                PropertyInfo property = GetProperty(component.GetType(), "text");
-                if (property != null && property.PropertyType == typeof(string) && property.CanRead)
-                {
-                    return component;
-                }
-            }
-
-            return null;
         }
 
         private static void SetPopup(GameObject target, bool isVisible)
@@ -1653,54 +1476,12 @@ namespace StayAlive.Lobby
                 : null;
         }
 
-#if UNITY_EDITOR
-        private void OnValidate()
+        private void LogMissingReference(bool isMissing, string fieldName)
         {
-            if (Application.isPlaying)
+            if (isMissing)
             {
-                return;
-            }
-
-            EnsureReferences();
-
-            if (!useNetworkLobby)
-            {
-                return;
-            }
-
-            if (networkClient == null)
-            {
-                networkClient = GetComponent<StayAliveLobbyNetworkClient>();
-            }
-
-            if (onlineMatchController == null)
-            {
-                onlineMatchController = GetComponent<StayAliveOnlineMatchController>();
-            }
-
-            if (popupManager == null)
-            {
-                popupManager = GetComponent<StayAlivePopupManager>();
-            }
-
-            if (networkClient == null)
-            {
-                networkClient = gameObject.AddComponent<StayAliveLobbyNetworkClient>();
-                EditorUtility.SetDirty(gameObject);
-            }
-
-            if (onlineMatchController == null)
-            {
-                onlineMatchController = gameObject.AddComponent<StayAliveOnlineMatchController>();
-                EditorUtility.SetDirty(gameObject);
-            }
-
-            if (popupManager == null)
-            {
-                popupManager = gameObject.AddComponent<StayAlivePopupManager>();
-                EditorUtility.SetDirty(gameObject);
+                Debug.LogWarning($"StayAliveLobbyManager: Assign '{fieldName}' in the inspector.", this);
             }
         }
-#endif
     }
 }

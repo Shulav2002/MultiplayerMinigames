@@ -157,6 +157,8 @@ namespace StayAlive
         private int targetSpinShiftCount;
         private StayAliveGameSettings sourceSettings;
         private bool localSimulationEnabled = true;
+        private bool isPaused;
+        private StayAliveStateSnapshotPayload deferredSnapshotWhilePaused;
         private bool startupHandled;
         private AudioSource musicSource;
         private AudioSource sfxSource;
@@ -200,6 +202,7 @@ namespace StayAlive
         public bool IsExplosionActive => phase == MatchPhase.Explosion;
         public bool IsMatchOver => phase == MatchPhase.GameOver;
         public bool IsSpinning => phase == MatchPhase.Spinning;
+        public bool IsPaused => isPaused;
         public bool LocalSimulationEnabled => localSimulationEnabled;
         public IReadOnlyList<StayAlivePlayer> Players => allPlayers;
         public bool AreBotsAllowedToMove =>
@@ -256,6 +259,12 @@ namespace StayAlive
 
         private void Update()
         {
+            if (isPaused)
+            {
+                UpdateTimerLabel();
+                return;
+            }
+
             if (phase == MatchPhase.GameOver || phase == MatchPhase.None)
             {
                 UpdateTimerLabel();
@@ -320,6 +329,8 @@ namespace StayAlive
         public void StartMatch()
         {
             startupHandled = true;
+            isPaused = false;
+            deferredSnapshotWhilePaused = null;
             localSimulationEnabled = true;
             if (!ValidateSceneSetup())
             {
@@ -376,6 +387,8 @@ namespace StayAlive
         public void StartOnlineGame(StayAliveRosterEntry[] roster, string localUserId, bool simulationAuthority, float countdownSeconds = 3f)
         {
             startupHandled = true;
+            isPaused = false;
+            deferredSnapshotWhilePaused = null;
             if (roster == null || roster.Length == 0)
             {
                 Debug.LogError("StayAliveGameManager: Cannot start online game without a roster.");
@@ -1555,6 +1568,14 @@ namespace StayAlive
                 return;
             }
 
+            if (isPaused)
+            {
+                deferredSnapshotWhilePaused = snapshot;
+                return;
+            }
+
+            deferredSnapshotWhilePaused = null;
+
             MatchPhase previousPhase = phase;
             int[] previousSymbols = CloneIntArray(symbolIndices);
             int[] previousBombCells = GetSortedIndices(activeBombCellIndices);
@@ -1604,6 +1625,22 @@ namespace StayAlive
             }
 
             UpdateTimerLabel();
+        }
+
+        public void SetPaused(bool paused)
+        {
+            if (isPaused == paused)
+            {
+                return;
+            }
+
+            isPaused = paused;
+            if (!isPaused && deferredSnapshotWhilePaused != null && !localSimulationEnabled)
+            {
+                StayAliveStateSnapshotPayload snapshot = deferredSnapshotWhilePaused;
+                deferredSnapshotWhilePaused = null;
+                ApplyStateSnapshot(snapshot);
+            }
         }
 
         private void RefreshBoardVisualsFromSnapshot(MatchPhase previousPhase, bool symbolsChanged, bool bombCellsChanged)
@@ -1809,15 +1846,9 @@ namespace StayAlive
 
         private void EnsureTimerLabelReference()
         {
-            if (timerLabel != null)
+            if (timerLabel == null)
             {
-                return;
-            }
-
-            Transform found = FindInActiveScene("TimerText");
-            if (found != null)
-            {
-                timerLabel = FindTextComponent(found.gameObject);
+                Debug.LogWarning("StayAliveGameManager: Assign 'timerLabel' in the inspector.", this);
             }
         }
 
@@ -2317,81 +2348,6 @@ namespace StayAlive
             }
 
             return sourceSettings;
-        }
-
-        private static Transform FindInActiveScene(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return null;
-            }
-
-            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            if (!scene.IsValid())
-            {
-                return null;
-            }
-
-            GameObject[] roots = scene.GetRootGameObjects();
-            for (int i = 0; i < roots.Length; i++)
-            {
-                Transform found = FindInChildren(roots[i].transform, name);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-
-            return null;
-        }
-
-        private static Transform FindInChildren(Transform root, string name)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            if (root.name == name)
-            {
-                return root;
-            }
-
-            for (int i = 0; i < root.childCount; i++)
-            {
-                Transform found = FindInChildren(root.GetChild(i), name);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-
-            return null;
-        }
-
-        private static Component FindTextComponent(GameObject root)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            Component[] components = root.GetComponentsInChildren<Component>(true);
-            for (int i = 0; i < components.Length; i++)
-            {
-                Component component = components[i];
-                if (component == null)
-                {
-                    continue;
-                }
-
-                if (GetTextProperty(component.GetType()) != null)
-                {
-                    return component;
-                }
-            }
-
-            return null;
         }
 
         private static void SetTextComponentText(Component component, string value)
