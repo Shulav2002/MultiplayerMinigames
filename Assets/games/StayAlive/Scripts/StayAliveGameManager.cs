@@ -163,6 +163,7 @@ namespace StayAlive
         private AudioSource musicSource;
         private AudioSource sfxSource;
         private AudioSource spinLoopSource;
+        private AudioSource explosionSfxSource;
         private float lastCollisionSfxTime = float.NegativeInfinity;
         private int lastCountdownDisplayNumber = int.MinValue;
 
@@ -2211,6 +2212,11 @@ namespace StayAlive
             {
                 spinLoopSource = CreateAudioSource(loop: true);
             }
+
+            if (explosionSfxSource == null)
+            {
+                explosionSfxSource = CreateAudioSource(loop: false);
+            }
         }
 
         private AudioSource CreateAudioSource(bool loop)
@@ -2297,12 +2303,19 @@ namespace StayAlive
             }
 
             EnsureAudioSources();
-            if (sfxSource == null)
+            if (explosionSfxSource == null)
             {
                 return;
             }
 
-            sfxSource.PlayOneShot(explosionClip, explosionVolume);
+            if (explosionSfxSource.isPlaying)
+            {
+                explosionSfxSource.Stop();
+            }
+
+            explosionSfxSource.clip = explosionClip;
+            explosionSfxSource.volume = explosionVolume;
+            explosionSfxSource.Play();
         }
 
         private void StartSpinLoop()
