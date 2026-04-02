@@ -55,6 +55,9 @@ namespace StayAlive.Lobby
         [SerializeField] private GameObject greenWinnerPanel;
         [SerializeField] private GameObject redWinnerPanel;
         [SerializeField] private GameObject yellowWinnerPanel;
+        [SerializeField] private GameObject winnerAnimationRoot;
+        [SerializeField] private Animator winnerAnimator;
+        [SerializeField] private GameObject tieResultRoot;
         [SerializeField] private Button playAgainButton;
         [SerializeField] private Button backToHomeButton;
 
@@ -100,6 +103,11 @@ namespace StayAlive.Lobby
         private bool missingReferencesLogged;
 
         private const string PauseVolumePreferenceKey = "StayAlive.MasterVolume";
+        private const string WinnerAnimationLayerName = "Base Layer";
+        private const string WinnerStateBlue = "BlueCharacter";
+        private const string WinnerStateGreen = "GreenCharacter";
+        private const string WinnerStateRed = "RedCharacter";
+        private const string WinnerStateYellow = "YellowCharacter";
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
@@ -790,6 +798,8 @@ namespace StayAlive.Lobby
             }
 
             SetWinnerPanels(false, false, false, false);
+            ShowTieResult(false);
+            ShowWinnerAnimation(false, null);
         }
 
         private void HideWaiting()
@@ -941,6 +951,23 @@ namespace StayAlive.Lobby
                 green: green,
                 red: red,
                 yellow: yellow);
+
+            if (appearanceIndices.Length == 0)
+            {
+                ShowTieResult(false);
+                ShowWinnerAnimation(false, null);
+                return;
+            }
+
+            if (appearanceIndices.Length > 1)
+            {
+                ShowTieResult(true);
+                ShowWinnerAnimation(false, null);
+                return;
+            }
+
+            ShowTieResult(false);
+            ShowWinnerAnimation(true, ResolveWinnerAnimationStateName(appearanceIndices[0]));
         }
 
         private int[] ResolveWinningAppearanceIndices(int[] winningChairIds)
@@ -976,6 +1003,69 @@ namespace StayAlive.Lobby
             if (greenWinnerPanel != null) greenWinnerPanel.SetActive(green);
             if (redWinnerPanel != null) redWinnerPanel.SetActive(red);
             if (yellowWinnerPanel != null) yellowWinnerPanel.SetActive(yellow);
+        }
+
+        private void ShowTieResult(bool visible)
+        {
+            if (tieResultRoot != null)
+            {
+                tieResultRoot.SetActive(visible);
+            }
+        }
+
+        private void ShowWinnerAnimation(bool visible, string stateName)
+        {
+            if (winnerAnimationRoot != null)
+            {
+                winnerAnimationRoot.SetActive(visible);
+            }
+
+            if (!visible || winnerAnimator == null || string.IsNullOrWhiteSpace(stateName))
+            {
+                return;
+            }
+
+            string fullStateName = $"{WinnerAnimationLayerName}.{stateName}";
+            int fullStateHash = Animator.StringToHash(fullStateName);
+            int shortStateHash = Animator.StringToHash(stateName);
+            winnerAnimator.Rebind();
+            winnerAnimator.Update(0f);
+
+            if (winnerAnimator.HasState(0, fullStateHash))
+            {
+                winnerAnimator.Play(fullStateHash, 0, 0f);
+            }
+            else if (winnerAnimator.HasState(0, shortStateHash))
+            {
+                winnerAnimator.Play(shortStateHash, 0, 0f);
+            }
+            else
+            {
+                Debug.LogWarning($"StayAliveLobbyManager: Winner animation state '{stateName}' was not found on controller '{winnerAnimator.runtimeAnimatorController}'.");
+            }
+
+            winnerAnimator.Update(0f);
+        }
+
+        private static string ResolveWinnerAnimationStateName(int appearanceIndex)
+        {
+            switch (appearanceIndex)
+            {
+                case 0:
+                    return WinnerStateRed;
+
+                case 1:
+                    return WinnerStateBlue;
+
+                case 2:
+                    return WinnerStateGreen;
+
+                case 3:
+                    return WinnerStateYellow;
+
+                default:
+                    return WinnerStateBlue;
+            }
         }
 
         private void HandleGameEnded(int[] winningChairIds)
