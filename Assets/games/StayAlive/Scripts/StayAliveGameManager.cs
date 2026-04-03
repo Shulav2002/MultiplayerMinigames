@@ -93,11 +93,6 @@ namespace StayAlive
         [SerializeField, Min(1)] private int targetSafeCellsAtTimeUp = 1;
         [SerializeField] private bool autoStartSpinOnPlay = false;
 
-        [Header("Spin Button")]
-        [SerializeField] private bool showSpinButton = true;
-        [SerializeField] private string spinButtonLabel = "SPIN";
-        [SerializeField] private Rect spinButtonRect = new Rect(20f, 20f, 180f, 56f);
-
         [Header("Explosion FX")]
         [SerializeField] private RuntimeAnimatorController explosionEffectController;
         [SerializeField, Min(0)] private int explosionEffectSortingOrderOffset = 8;
