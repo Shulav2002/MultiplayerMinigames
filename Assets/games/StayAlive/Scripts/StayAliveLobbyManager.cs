@@ -430,7 +430,7 @@ namespace StayAlive.Lobby
             {
                 joinRequestInFlight = false;
                 dismissPrivateRoomRequested = false;
-                Debug.LogError($"StayAliveLobbyManager: Failed to connect or join backend room. {exception.Message}");
+                Debug.LogError($"StayAliveLobbyManager: Failed to connect or join backend room.\n{exception}");
                 if (createRoom && roomPanelMode == RoomPanelMode.PrivateWaitingHost && currentOccupiedSeats <= 1)
                 {
                     HideRoomPanel();

@@ -15068,7 +15068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8d15860a2f41c88557639ef67234df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: StayAlive::StayAlive.Networking.StayAliveLobbyNetworkClient
-  serverUrl: wss://mini-games.checkmygame.live/ws
+  serverUrl: wss://mini-games.checkmygame.live/ws/
   gameId: StayAlive
   roomCapacity: 4
   connectOnStart: 0

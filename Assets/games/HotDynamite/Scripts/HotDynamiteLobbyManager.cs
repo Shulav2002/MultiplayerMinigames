@@ -367,7 +367,7 @@ namespace HotDynamite.Lobby
             catch (Exception exception)
             {
                 joinRequestInFlight = false;
-                Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
+                Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room.\n{exception}");
                 if (createRoom)
                 {
                     HideCreateRoomPopup();
