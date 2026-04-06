@@ -79,6 +79,7 @@ namespace StayAlive.Lobby
         private int displayedRandomWaitingSeats;
         private float nextRandomWaitingAdvanceAt;
         private bool missingReferencesLogged;
+        private float currentPauseVolume = 1f;
 
         private const string PauseVolumePreferenceKey = "StayAlive.MasterVolume";
         private const string WinnerAnimationLayerName = "Base Layer";
@@ -343,10 +344,7 @@ namespace StayAlive.Lobby
 
         public void OnPauseVolumeSliderValueChanged(float value)
         {
-            float clampedValue = Mathf.Clamp01(value);
-            AudioListener.volume = clampedValue;
-            PlayerPrefs.SetFloat(PauseVolumePreferenceKey, clampedValue);
-            PlayerPrefs.Save();
+            ApplyPauseVolume(value, savePreference: true);
         }
 
         public void OnJoinRoomInputValueChanged(string value)
@@ -1334,20 +1332,41 @@ namespace StayAlive.Lobby
 
         private void ApplySavedPauseVolume()
         {
-            float savedVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(PauseVolumePreferenceKey, 1f));
-            AudioListener.volume = savedVolume;
-            SyncPauseVolumeSlider();
+            currentPauseVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(PauseVolumePreferenceKey, 1f));
+            ApplyPauseVolume(currentPauseVolume, savePreference: false);
         }
 
         private void SyncPauseVolumeSlider()
         {
-            float currentVolume = Mathf.Clamp01(AudioListener.volume);
             if (pauseVolumeSlider != null)
             {
-                pauseVolumeSlider.SetValueWithoutNotify(currentVolume);
+                pauseVolumeSlider.SetValueWithoutNotify(currentPauseVolume);
             }
 
-            popupManager?.SetOverlayVolumeSliderValueWithoutNotify(currentVolume);
+            popupManager?.SetOverlayVolumeSliderValueWithoutNotify(currentPauseVolume);
+        }
+
+        private void ApplyPauseVolume(float value, bool savePreference)
+        {
+            float clampedValue = Mathf.Clamp01(value);
+            currentPauseVolume = clampedValue;
+            AudioListener.volume = 1f;
+            gameManager?.SetMasterVolume(clampedValue);
+
+            if (pauseVolumeSlider != null)
+            {
+                pauseVolumeSlider.SetValueWithoutNotify(clampedValue);
+            }
+
+            popupManager?.SetOverlayVolumeSliderValueWithoutNotify(clampedValue);
+
+            if (!savePreference)
+            {
+                return;
+            }
+
+            PlayerPrefs.SetFloat(PauseVolumePreferenceKey, clampedValue);
+            PlayerPrefs.Save();
         }
 
         private static int CountOccupiedSeats(string[] chairs)

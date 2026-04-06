@@ -48,10 +48,22 @@ namespace StayAlive
                 return false;
             }
 
+            if (activeFingerId >= 0 || Input.touchCount > 0)
+            {
+                return true;
+            }
+
             if (Application.isMobilePlatform)
             {
                 return true;
             }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (Input.touchSupported)
+            {
+                return true;
+            }
+#endif
 
             return forceMobileJoystickInEditor;
         }
@@ -73,11 +85,15 @@ namespace StayAlive
                 return Vector2.zero;
             }
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
             if (forceMobileJoystickInEditor)
             {
                 return ReadMouseJoystickInput();
             }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return ReadMouseJoystickInput();
+#endif
 #endif
 
             return Vector2.zero;
@@ -137,7 +153,7 @@ namespace StayAlive
             return false;
         }
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
         private Vector2 ReadMouseJoystickInput()
         {
             if (Input.GetMouseButtonDown(0))

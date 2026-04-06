@@ -159,6 +159,7 @@ namespace StayAlive
         private AudioSource sfxSource;
         private AudioSource spinLoopSource;
         private AudioSource explosionSfxSource;
+        private float masterVolume = 1f;
         private float lastCollisionSfxTime = float.NegativeInfinity;
         private int lastCountdownDisplayNumber = int.MinValue;
 
@@ -962,7 +963,13 @@ namespace StayAlive
             }
 
             lastCollisionSfxTime = Time.unscaledTime;
-            sfxSource.PlayOneShot(playerCollisionClip, playerCollisionVolume);
+            sfxSource.PlayOneShot(playerCollisionClip, ApplyMasterVolume(playerCollisionVolume));
+        }
+
+        public void SetMasterVolume(float value)
+        {
+            masterVolume = Mathf.Clamp01(value);
+            ApplyCurrentAudioSourceVolumes();
         }
 
         private bool IsPlayerTouchingBombCell(StayAlivePlayer player)
@@ -2216,7 +2223,7 @@ namespace StayAlive
             source.playOnAwake = false;
             source.loop = loop;
             source.spatialBlend = 0f;
-            source.volume = 1f;
+            source.volume = ApplyMasterVolume(1f);
             return source;
         }
 
@@ -2234,7 +2241,7 @@ namespace StayAlive
             }
 
             musicSource.clip = backgroundMusic;
-            musicSource.volume = backgroundMusicVolume;
+            musicSource.volume = ApplyMasterVolume(backgroundMusicVolume);
             musicSource.Play();
         }
 
@@ -2251,7 +2258,7 @@ namespace StayAlive
                 return;
             }
 
-            sfxSource.PlayOneShot(countdownTickClip, countdownTickVolume);
+            sfxSource.PlayOneShot(countdownTickClip, ApplyMasterVolume(countdownTickVolume));
         }
 
         private void PlayStartWhistle()
@@ -2267,7 +2274,7 @@ namespace StayAlive
                 return;
             }
 
-            sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
+            sfxSource.PlayOneShot(startWhistleClip, ApplyMasterVolume(startWhistleVolume));
         }
 
         private void PlaySpinStopSfx()
@@ -2283,7 +2290,7 @@ namespace StayAlive
                 return;
             }
 
-            sfxSource.PlayOneShot(spinStopClip, spinStopVolume);
+            sfxSource.PlayOneShot(spinStopClip, ApplyMasterVolume(spinStopVolume));
         }
 
         private void PlayExplosionSfx()
@@ -2305,7 +2312,7 @@ namespace StayAlive
             }
 
             explosionSfxSource.clip = explosionClip;
-            explosionSfxSource.volume = explosionVolume;
+            explosionSfxSource.volume = ApplyMasterVolume(explosionVolume);
             explosionSfxSource.Play();
         }
 
@@ -2327,7 +2334,7 @@ namespace StayAlive
                 spinLoopSource.clip = spinLoopClip;
             }
 
-            spinLoopSource.volume = spinLoopVolume;
+            spinLoopSource.volume = ApplyMasterVolume(spinLoopVolume);
             if (!spinLoopSource.isPlaying)
             {
                 spinLoopSource.Play();
@@ -2342,6 +2349,34 @@ namespace StayAlive
             }
 
             spinLoopSource.Stop();
+        }
+
+        private void ApplyCurrentAudioSourceVolumes()
+        {
+            if (musicSource != null)
+            {
+                musicSource.volume = ApplyMasterVolume(backgroundMusicVolume);
+            }
+
+            if (sfxSource != null)
+            {
+                sfxSource.volume = ApplyMasterVolume(1f);
+            }
+
+            if (spinLoopSource != null)
+            {
+                spinLoopSource.volume = ApplyMasterVolume(spinLoopVolume);
+            }
+
+            if (explosionSfxSource != null)
+            {
+                explosionSfxSource.volume = ApplyMasterVolume(explosionVolume);
+            }
+        }
+
+        private float ApplyMasterVolume(float baseVolume)
+        {
+            return Mathf.Clamp01(baseVolume) * masterVolume;
         }
 
         private StayAliveGameSettings ResolveSettingsSource()
