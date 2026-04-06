@@ -84,6 +84,7 @@ namespace StayAlive.Lobby
 
         [Header("Pause Overlay")]
         [SerializeField] private Button pauseHomeButton;
+        [SerializeField] private Button pauseRestartButton;
         [SerializeField] private Slider pauseVolumeSlider;
 
         private ReplayMode lastReplayMode;
@@ -99,7 +100,9 @@ namespace StayAlive.Lobby
         private bool subscribedToGameEvents;
         private bool subscribedToPopupEvents;
         private Coroutine showGameEndCoroutine;
-        private bool pauseMenuOpen;
+        private bool randomWaitingProgressActive;
+        private int displayedRandomWaitingSeats;
+        private float nextRandomWaitingAdvanceAt;
         private bool missingReferencesLogged;
 
         private const string PauseVolumePreferenceKey = "StayAlive.MasterVolume";
@@ -108,11 +111,15 @@ namespace StayAlive.Lobby
         private const string WinnerStateGreen = "GreenCharacter";
         private const string WinnerStateRed = "RedCharacter";
         private const string WinnerStateYellow = "YellowCharacter";
+        private const float RandomWaitingFakeAdvanceMinSeconds = 0.9f;
+        private const float RandomWaitingFakeAdvanceMaxSeconds = 1.75f;
 
         private bool IsPrimaryLobbyManager => string.Equals(gameObject.name, "Manager", StringComparison.Ordinal);
 
         private void Update()
         {
+            UpdateRandomWaitingProgress();
+
             if (roomPanelMode == RoomPanelMode.JoinEntry)
             {
                 RefreshJoinEntryUi();
@@ -303,14 +310,16 @@ namespace StayAlive.Lobby
 
         public void OnPauseButtonClicked()
         {
-            if (!IsPrimaryLobbyManager || pauseMenuOpen || popupManager == null || gameContainer == null || !gameContainer.activeInHierarchy)
+            if (!IsPrimaryLobbyManager || popupManager == null || gameContainer == null || !gameContainer.activeInHierarchy || popupManager.IsOverlayPopupVisible)
             {
                 return;
             }
 
-            pauseMenuOpen = true;
-            Time.timeScale = 0f;
-            gameManager?.SetPaused(true);
+            if (pauseRestartButton != null)
+            {
+                pauseRestartButton.interactable = CanPauseRestart();
+            }
+
             popupManager.ShowPauseOverlayPopup();
             SyncPauseVolumeSlider();
         }
@@ -334,6 +343,29 @@ namespace StayAlive.Lobby
             }
 
             ClosePauseMenu();
+        }
+
+        public void OnPauseRestartButtonClicked()
+        {
+            if (!IsPrimaryLobbyManager || !CanPauseRestart())
+            {
+                return;
+            }
+
+            ClosePauseMenu();
+
+            switch (ResolveReplayModeForPauseRestart())
+            {
+                case ReplayMode.OfflineBots:
+                    StartGameLocalFlow(lastOfflineTotalPlayers, lastOfflineHumanPlayers);
+                    return;
+
+                case ReplayMode.QuickPlayOnline:
+                    RestartQuickPlayOnline();
+                    return;
+            }
+
+            ShowLobbyHome();
         }
 
         public void OnPauseVolumeSliderValueChanged(float value)
@@ -567,6 +599,29 @@ namespace StayAlive.Lobby
             return ReplayMode.None;
         }
 
+        private ReplayMode ResolveReplayModeForPauseRestart()
+        {
+            if (lastReplayMode == ReplayMode.OfflineBots)
+            {
+                return ReplayMode.OfflineBots;
+            }
+
+            if (useNetworkLobby
+                && networkClient != null
+                && networkClient.IsConnected
+                && networkClient.RoomMode == StayAliveRoomModes.Random)
+            {
+                return ReplayMode.QuickPlayOnline;
+            }
+
+            return ReplayMode.None;
+        }
+
+        private bool CanPauseRestart()
+        {
+            return ResolveReplayModeForPauseRestart() != ReplayMode.None;
+        }
+
         private async Task ReturnToHomeAsync()
         {
             dismissPrivateRoomRequested = false;
@@ -602,6 +657,7 @@ namespace StayAlive.Lobby
             HideGameEnd();
             HideNetworkIssue();
             ShowLobbyVisualState();
+            StartRandomWaitingProgress();
 
             if (waitingForPlayersPanel != null)
             {
@@ -611,7 +667,7 @@ namespace StayAlive.Lobby
 
             if (popupManager != null)
             {
-                popupManager.ShowWaitingForPlayersPopup();
+                popupManager.ShowWaitingForPlayersPopup(displayedRandomWaitingSeats, GetRandomWaitingCapacity());
             }
         }
 
@@ -653,6 +709,7 @@ namespace StayAlive.Lobby
 
         private void ShowPrivateWaitingPanel(bool isHost, string roomId, int occupiedSeats, int capacity)
         {
+            StopRandomWaitingProgress();
             roomPanelMode = isHost ? RoomPanelMode.PrivateWaitingHost : RoomPanelMode.PrivateWaitingGuest;
             currentOccupiedSeats = occupiedSeats;
             currentCapacity = capacity;
@@ -804,6 +861,8 @@ namespace StayAlive.Lobby
 
         private void HideWaiting()
         {
+            StopRandomWaitingProgress();
+
             if (waitingForPlayersPanel != null)
             {
                 waitingForPlayersPanel.SetActive(false);
@@ -1093,6 +1152,7 @@ namespace StayAlive.Lobby
             HideGameEnd();
             HideWaiting();
             HideNetworkIssue();
+            popupManager?.HideLobbyPopup();
 
             if (lobbyRoot != null)
             {
@@ -1130,6 +1190,7 @@ namespace StayAlive.Lobby
             LogMissingReference(backToHomeButton == null, "backToHomeButton");
             LogMissingReference(gameManager == null, "gameManager");
             LogMissingReference(pauseHomeButton == null, "pauseHomeButton");
+            LogMissingReference(pauseRestartButton == null, "pauseRestartButton");
             LogMissingReference(pauseVolumeSlider == null, "pauseVolumeSlider");
 
             if (useNetworkLobby)
@@ -1146,7 +1207,7 @@ namespace StayAlive.Lobby
                 return;
             }
 
-            onlineMatchController.Initialize(gameManager, lobbyCanvas, gameContainer, networkClient);
+            onlineMatchController.Initialize(gameManager, lobbyCanvas, gameContainer, networkClient, popupManager);
         }
 
         private void SubscribeToGameEvents()
@@ -1260,6 +1321,7 @@ namespace StayAlive.Lobby
             currentOccupiedSeats = occupiedSeats;
             currentCapacity = capacity;
             RefreshPrivateWaitingUi();
+            RefreshRandomWaitingProgressUi();
         }
 
         private void HandleRoomReady(string[] chairs)
@@ -1436,9 +1498,6 @@ namespace StayAlive.Lobby
 
         private void ClosePauseMenu()
         {
-            pauseMenuOpen = false;
-            Time.timeScale = 1f;
-            gameManager?.SetPaused(false);
             popupManager?.HideOverlayPopup();
         }
 
@@ -1477,6 +1536,91 @@ namespace StayAlive.Lobby
             }
 
             return count;
+        }
+
+        private void UpdateRandomWaitingProgress()
+        {
+            if (!randomWaitingProgressActive || Time.unscaledTime < nextRandomWaitingAdvanceAt)
+            {
+                return;
+            }
+
+            int capacity = GetRandomWaitingCapacity();
+            int realOccupiedSeats = Mathf.Clamp(currentOccupiedSeats, 0, capacity);
+            int fakeAdvanceCap = Mathf.Max(1, capacity - 1);
+            int nextDisplayedSeats = Mathf.Max(displayedRandomWaitingSeats, realOccupiedSeats);
+
+            if (nextDisplayedSeats < fakeAdvanceCap)
+            {
+                displayedRandomWaitingSeats = nextDisplayedSeats + 1;
+            }
+            else
+            {
+                displayedRandomWaitingSeats = nextDisplayedSeats;
+            }
+
+            ScheduleNextRandomWaitingAdvance();
+            RefreshRandomWaitingProgressUi();
+        }
+
+        private void StartRandomWaitingProgress()
+        {
+            int capacity = GetRandomWaitingCapacity();
+            int baselineSeats = Mathf.Max(1, Mathf.Clamp(currentOccupiedSeats, 0, capacity));
+
+            if (!randomWaitingProgressActive)
+            {
+                displayedRandomWaitingSeats = baselineSeats;
+            }
+            else
+            {
+                displayedRandomWaitingSeats = Mathf.Clamp(Mathf.Max(displayedRandomWaitingSeats, baselineSeats), 1, capacity);
+            }
+
+            randomWaitingProgressActive = true;
+            ScheduleNextRandomWaitingAdvance();
+            RefreshRandomWaitingProgressUi();
+        }
+
+        private void StopRandomWaitingProgress()
+        {
+            randomWaitingProgressActive = false;
+            displayedRandomWaitingSeats = 0;
+            nextRandomWaitingAdvanceAt = -1f;
+        }
+
+        private void ScheduleNextRandomWaitingAdvance()
+        {
+            nextRandomWaitingAdvanceAt = Time.unscaledTime + UnityEngine.Random.Range(RandomWaitingFakeAdvanceMinSeconds, RandomWaitingFakeAdvanceMaxSeconds);
+        }
+
+        private void RefreshRandomWaitingProgressUi()
+        {
+            if (!randomWaitingProgressActive || popupManager == null || popupManager.LobbyIntent != StayAlivePopupIntent.WaitingForPlayers)
+            {
+                return;
+            }
+
+            int capacity = GetRandomWaitingCapacity();
+            int realOccupiedSeats = Mathf.Clamp(currentOccupiedSeats, 0, capacity);
+            int visibleSeats = Mathf.Clamp(Mathf.Max(displayedRandomWaitingSeats, realOccupiedSeats), 1, capacity);
+            displayedRandomWaitingSeats = visibleSeats;
+            popupManager.ShowWaitingForPlayersPopup(visibleSeats, capacity);
+        }
+
+        private int GetRandomWaitingCapacity()
+        {
+            if (currentCapacity > 0)
+            {
+                return Mathf.Max(2, currentCapacity);
+            }
+
+            if (networkClient != null && networkClient.RoomCapacity > 0)
+            {
+                return Mathf.Max(2, networkClient.RoomCapacity);
+            }
+
+            return 4;
         }
 
         private static void SetPopup(GameObject target, bool isVisible)

@@ -75,7 +75,9 @@ namespace StayAlive.Lobby
         public event Action<StayAlivePopupCanvasType, StayAlivePopupIntent, StayAlivePopupButtonType> ButtonClicked;
 
         public StayAlivePopupIntent LobbyIntent => lobbyPopup.currentIntent;
-        public StayAlivePopupIntent OverlayIntent => overlayPopup.currentIntent;
+        public bool IsOverlayPopupVisible => overlayPopup != null
+            && overlayPopup.popupPanel != null
+            && overlayPopup.popupPanel.activeInHierarchy;
 
         private void Awake()
         {
@@ -101,10 +103,15 @@ namespace StayAlive.Lobby
 
         public void ShowWaitingForPlayersPopup()
         {
+            ShowWaitingForPlayersPopup(1, 4);
+        }
+
+        public void ShowWaitingForPlayersPopup(int connectedPlayers, int capacity)
+        {
             ShowLobbyPopup(
                 StayAlivePopupIntent.WaitingForPlayers,
                 "Finding Players",
-                "Searching for available players.");
+                BuildRandomMatchDetails(connectedPlayers, capacity));
         }
 
         public void ShowPrivateRoomWaitingPopup(bool isHost, string roomId, int occupiedSeats, int capacity, bool canStart)
@@ -230,33 +237,10 @@ namespace StayAlive.Lobby
             RaiseButtonClicked(StayAlivePopupCanvasType.Lobby, StayAlivePopupButtonType.Primary);
         }
 
-        public void OnLobbySecondaryButtonClicked()
-        {
-            RaiseButtonClicked(StayAlivePopupCanvasType.Lobby, StayAlivePopupButtonType.Secondary);
-            HideLobbyPopup();
-        }
-
         public void OnLobbyCloseButtonClicked()
         {
             RaiseButtonClicked(StayAlivePopupCanvasType.Lobby, StayAlivePopupButtonType.Close);
             HideLobbyPopup();
-        }
-
-        public void OnOverlayPrimaryButtonClicked()
-        {
-            RaiseButtonClicked(StayAlivePopupCanvasType.Overlay, StayAlivePopupButtonType.Primary);
-        }
-
-        public void OnOverlaySecondaryButtonClicked()
-        {
-            RaiseButtonClicked(StayAlivePopupCanvasType.Overlay, StayAlivePopupButtonType.Secondary);
-            HideOverlayPopup();
-        }
-
-        public void OnOverlayCloseButtonClicked()
-        {
-            RaiseButtonClicked(StayAlivePopupCanvasType.Overlay, StayAlivePopupButtonType.Close);
-            HideOverlayPopup();
         }
 
         private void EnsureReferences()
@@ -527,6 +511,13 @@ namespace StayAlive.Lobby
                 : "Waiting for the host to start the match.";
 
             return string.Format("Room ID\n{0}\n\nPlayers\n{1}\n\n{2}", normalizedRoomId, statusLine, instructions);
+        }
+
+        private static string BuildRandomMatchDetails(int connectedPlayers, int capacity)
+        {
+            int normalizedCapacity = Mathf.Max(1, capacity);
+            int normalizedConnectedPlayers = Mathf.Clamp(connectedPlayers, 0, normalizedCapacity);
+            return string.Format("Players\n{0}/{1} connected\n\nSearching for available players.", normalizedConnectedPlayers, normalizedCapacity);
         }
 
         private static void LogMissingBindingReferences(string bindingName, PopupCanvasBinding binding)

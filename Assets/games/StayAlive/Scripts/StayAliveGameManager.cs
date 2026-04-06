@@ -249,10 +249,6 @@ namespace StayAlive
             StartMatch();
         }
 
-        private void OnGUI()
-        {
-        }
-
         private void Update()
         {
             if (isPaused)

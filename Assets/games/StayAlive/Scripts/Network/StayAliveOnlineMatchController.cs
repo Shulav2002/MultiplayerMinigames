@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using StayAlive.Lobby;
 
 namespace StayAlive.Networking
 {
@@ -20,6 +21,7 @@ namespace StayAlive.Networking
         private StayAliveLobbyNetworkClient networkClient;
         private GameObject lobbyCanvas;
         private GameObject gameContainer;
+        private StayAlivePopupManager popupManager;
 
         private bool isInitialized;
         private bool isSubscribed;
@@ -59,7 +61,8 @@ namespace StayAlive.Networking
             StayAliveGameManager gameManager,
             GameObject lobbyCanvas,
             GameObject gameContainer,
-            StayAliveLobbyNetworkClient networkClient)
+            StayAliveLobbyNetworkClient networkClient,
+            StayAlivePopupManager popupManager)
         {
             if (gameManager == null || networkClient == null)
             {
@@ -70,6 +73,7 @@ namespace StayAlive.Networking
             this.gameManager = gameManager;
             this.lobbyCanvas = lobbyCanvas;
             this.gameContainer = gameContainer;
+            this.popupManager = popupManager;
 
             if (this.networkClient != networkClient)
             {
@@ -519,6 +523,8 @@ namespace StayAlive.Networking
                 ResetToLobbyState();
                 return;
             }
+
+            popupManager?.HideLobbyPopup();
 
             if (lobbyCanvas != null)
             {
