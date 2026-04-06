@@ -71,8 +71,6 @@ namespace HotDynamite.Lobby
 
         [Header("Room Popup Labels")]
         [SerializeField] private string joinRoomConfirmLabel = "Join";
-        [SerializeField] private string hostStartLabel = "Start";
-        [SerializeField] private string guestWaitingLabel = "Waiting...";
         [SerializeField] private string networkIssueTitle = "Network Error";
         [SerializeField] private string networkIssueConnectMessage = "Unable to connect to the server. Please check your internet connection and try again.";
         [SerializeField] private string networkIssueDisconnectMessage = "Connection to the server was lost. Please check your internet connection and try again.";
@@ -367,7 +365,7 @@ namespace HotDynamite.Lobby
             catch (Exception exception)
             {
                 joinRequestInFlight = false;
-                Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room. {exception.Message}");
+                Debug.LogError($"HotDynamiteLobbyManager: Failed to connect or join backend room.\n{exception}");
                 if (createRoom)
                 {
                     HideCreateRoomPopup();

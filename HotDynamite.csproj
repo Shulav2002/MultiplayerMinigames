@@ -1190,6 +1190,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="StayAlive.csproj">
+      <Project>{25AD898F-0071-DB2F-6501-030065018401}</Project>
+      <Name>StayAlive</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

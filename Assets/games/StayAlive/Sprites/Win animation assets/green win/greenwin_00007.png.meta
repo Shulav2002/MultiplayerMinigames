@@ -1,0 +1,5681 @@
+fileFormatVersion: 2
+guid: 5ea79844b52f72a409302b7a9c3653f2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -13410769710890925
+    second: greenwin_00007_0
+  - first:
+      213: 2709672385019127572
+    second: greenwin_00007_1
+  - first:
+      213: -4125537097606419024
+    second: greenwin_00007_2
+  - first:
+      213: 2928539392835738227
+    second: greenwin_00007_3
+  - first:
+      213: 1877248504284682672
+    second: greenwin_00007_4
+  - first:
+      213: 6855922604352480910
+    second: greenwin_00007_5
+  - first:
+      213: -5846686267960087253
+    second: greenwin_00007_6
+  - first:
+      213: 5275541108888806910
+    second: greenwin_00007_7
+  - first:
+      213: -5442686130016260692
+    second: greenwin_00007_8
+  - first:
+      213: -4460743769120606430
+    second: greenwin_00007_9
+  - first:
+      213: 2811264128382380899
+    second: greenwin_00007_10
+  - first:
+      213: -2647037227951135858
+    second: greenwin_00007_11
+  - first:
+      213: -6110285593745745984
+    second: greenwin_00007_12
+  - first:
+      213: 2051368160265635722
+    second: greenwin_00007_13
+  - first:
+      213: -7974029116733128495
+    second: greenwin_00007_14
+  - first:
+      213: 5652299379543610640
+    second: greenwin_00007_15
+  - first:
+      213: -8001421195797260139
+    second: greenwin_00007_16
+  - first:
+      213: -9217201873105575940
+    second: greenwin_00007_17
+  - first:
+      213: 5976843077582831065
+    second: greenwin_00007_18
+  - first:
+      213: 297607722979197055
+    second: greenwin_00007_19
+  - first:
+      213: 333935066218829409
+    second: greenwin_00007_20
+  - first:
+      213: 3375237204812929869
+    second: greenwin_00007_21
+  - first:
+      213: 5326534002332121465
+    second: greenwin_00007_22
+  - first:
+      213: -6839321346132537419
+    second: greenwin_00007_23
+  - first:
+      213: 6544550982814489091
+    second: greenwin_00007_24
+  - first:
+      213: 4442012188100935144
+    second: greenwin_00007_25
+  - first:
+      213: 2882830072039887281
+    second: greenwin_00007_26
+  - first:
+      213: 2483080517305797615
+    second: greenwin_00007_27
+  - first:
+      213: 2638247109770827536
+    second: greenwin_00007_28
+  - first:
+      213: -6231695201355866372
+    second: greenwin_00007_29
+  - first:
+      213: 5672282231499914581
+    second: greenwin_00007_30
+  - first:
+      213: 7412350601362080056
+    second: greenwin_00007_31
+  - first:
+      213: 7942800338968751014
+    second: greenwin_00007_32
+  - first:
+      213: 1145069912827202930
+    second: greenwin_00007_33
+  - first:
+      213: -2674412856428274569
+    second: greenwin_00007_34
+  - first:
+      213: -8194583574918417775
+    second: greenwin_00007_35
+  - first:
+      213: 6304504412381580266
+    second: greenwin_00007_36
+  - first:
+      213: -1677269230108559862
+    second: greenwin_00007_37
+  - first:
+      213: 8930619822595672826
+    second: greenwin_00007_38
+  - first:
+      213: -577635299579998165
+    second: greenwin_00007_39
+  - first:
+      213: -7923076584130747415
+    second: greenwin_00007_40
+  - first:
+      213: -1350217881266196101
+    second: greenwin_00007_41
+  - first:
+      213: -380197393545534581
+    second: greenwin_00007_42
+  - first:
+      213: -7751912980883701805
+    second: greenwin_00007_43
+  - first:
+      213: -5947317322884322988
+    second: greenwin_00007_44
+  - first:
+      213: -1567385308880116940
+    second: greenwin_00007_45
+  - first:
+      213: -7292847135180708787
+    second: greenwin_00007_46
+  - first:
+      213: -2521759478581236329
+    second: greenwin_00007_47
+  - first:
+      213: -6605703059360731884
+    second: greenwin_00007_48
+  - first:
+      213: 8199819209377457379
+    second: greenwin_00007_49
+  - first:
+      213: -448801380056400125
+    second: greenwin_00007_50
+  - first:
+      213: -3099961960588896505
+    second: greenwin_00007_51
+  - first:
+      213: -6553589907338744432
+    second: greenwin_00007_52
+  - first:
+      213: 7227121828068264372
+    second: greenwin_00007_53
+  - first:
+      213: -2115358171430576793
+    second: greenwin_00007_54
+  - first:
+      213: -4020290694350909074
+    second: greenwin_00007_55
+  - first:
+      213: -5582593215233159706
+    second: greenwin_00007_56
+  - first:
+      213: 6331338551801341580
+    second: greenwin_00007_57
+  - first:
+      213: 2474793072019969778
+    second: greenwin_00007_58
+  - first:
+      213: 2529331448837117247
+    second: greenwin_00007_59
+  - first:
+      213: -5323228274071350769
+    second: greenwin_00007_60
+  - first:
+      213: -5564777357611225240
+    second: greenwin_00007_61
+  - first:
+      213: -9033739445451119605
+    second: greenwin_00007_62
+  - first:
+      213: 6965666941369688210
+    second: greenwin_00007_63
+  - first:
+      213: -8535729960996186545
+    second: greenwin_00007_64
+  - first:
+      213: -7660349847528818348
+    second: greenwin_00007_65
+  - first:
+      213: -1949582215222779351
+    second: greenwin_00007_66
+  - first:
+      213: -8235213277554177173
+    second: greenwin_00007_67
+  - first:
+      213: 1295288445474629266
+    second: greenwin_00007_68
+  - first:
+      213: 3487420508521892168
+    second: greenwin_00007_69
+  - first:
+      213: 8549979771714857563
+    second: greenwin_00007_70
+  - first:
+      213: 6451169507642920100
+    second: greenwin_00007_71
+  - first:
+      213: -886993225600032250
+    second: greenwin_00007_72
+  - first:
+      213: 1869416275381677931
+    second: greenwin_00007_73
+  - first:
+      213: -5303233552955267145
+    second: greenwin_00007_74
+  - first:
+      213: 5040492509174899290
+    second: greenwin_00007_75
+  - first:
+      213: -6270473539003699950
+    second: greenwin_00007_76
+  - first:
+      213: 8196482876769665094
+    second: greenwin_00007_77
+  - first:
+      213: 1070488534816953902
+    second: greenwin_00007_78
+  - first:
+      213: 182182861835543131
+    second: greenwin_00007_79
+  - first:
+      213: 6129091452312216230
+    second: greenwin_00007_80
+  - first:
+      213: 7091278809504843509
+    second: greenwin_00007_81
+  - first:
+      213: 7998852337867875486
+    second: greenwin_00007_82
+  - first:
+      213: 8002628590300147978
+    second: greenwin_00007_83
+  - first:
+      213: 7621828163877926741
+    second: greenwin_00007_84
+  - first:
+      213: 9172417714857701605
+    second: greenwin_00007_85
+  - first:
+      213: -5899084847368398159
+    second: greenwin_00007_86
+  - first:
+      213: -4431769944899066151
+    second: greenwin_00007_87
+  - first:
+      213: 623024542655946983
+    second: greenwin_00007_88
+  - first:
+      213: -6440714530976423383
+    second: greenwin_00007_89
+  - first:
+      213: 1055344908440132788
+    second: greenwin_00007_90
+  - first:
+      213: -7355717653166181267
+    second: greenwin_00007_91
+  - first:
+      213: -8744493803823011615
+    second: greenwin_00007_92
+  - first:
+      213: 8641757867096026934
+    second: greenwin_00007_93
+  - first:
+      213: 374424295929690520
+    second: greenwin_00007_94
+  - first:
+      213: 7004277819412299879
+    second: greenwin_00007_95
+  - first:
+      213: 1011520435851470679
+    second: greenwin_00007_96
+  - first:
+      213: 1710566080879651122
+    second: greenwin_00007_97
+  - first:
+      213: 1451744723090506165
+    second: greenwin_00007_98
+  - first:
+      213: -2298100854514840748
+    second: greenwin_00007_99
+  - first:
+      213: -3889247303865921334
+    second: greenwin_00007_100
+  - first:
+      213: -8856751406297156828
+    second: greenwin_00007_101
+  - first:
+      213: -4550932831215384095
+    second: greenwin_00007_102
+  - first:
+      213: -5837122446654551095
+    second: greenwin_00007_103
+  - first:
+      213: 7710014307721921888
+    second: greenwin_00007_104
+  - first:
+      213: -1736091556544892263
+    second: greenwin_00007_105
+  - first:
+      213: 7864891658139584404
+    second: greenwin_00007_106
+  - first:
+      213: -3836119567116552174
+    second: greenwin_00007_107
+  - first:
+      213: 2555190040577261044
+    second: greenwin_00007_108
+  - first:
+      213: 7586819991861682748
+    second: greenwin_00007_109
+  - first:
+      213: 2722142315762761517
+    second: greenwin_00007_110
+  - first:
+      213: -3233880563800560697
+    second: greenwin_00007_111
+  - first:
+      213: -842225032836152303
+    second: greenwin_00007_112
+  - first:
+      213: 8963517590097796113
+    second: greenwin_00007_113
+  - first:
+      213: 6363271362498717798
+    second: greenwin_00007_114
+  - first:
+      213: 4573311126198483121
+    second: greenwin_00007_115
+  - first:
+      213: -2318937397164303984
+    second: greenwin_00007_116
+  - first:
+      213: -3997161482177027886
+    second: greenwin_00007_117
+  - first:
+      213: -762718797460587236
+    second: greenwin_00007_118
+  - first:
+      213: 1871796553025630062
+    second: greenwin_00007_119
+  - first:
+      213: -1769592171331277030
+    second: greenwin_00007_120
+  - first:
+      213: 4163803967243016168
+    second: greenwin_00007_121
+  - first:
+      213: 2392597003816486176
+    second: greenwin_00007_122
+  - first:
+      213: -1947973957703210723
+    second: greenwin_00007_123
+  - first:
+      213: -4061406261381136845
+    second: greenwin_00007_124
+  - first:
+      213: 7067325879288525193
+    second: greenwin_00007_125
+  - first:
+      213: -2551849163697707578
+    second: greenwin_00007_126
+  - first:
+      213: -628055553624763659
+    second: greenwin_00007_127
+  - first:
+      213: -2374306683386229173
+    second: greenwin_00007_128
+  - first:
+      213: 6376000178745431805
+    second: greenwin_00007_129
+  - first:
+      213: -5636778004959303506
+    second: greenwin_00007_130
+  - first:
+      213: -4876469639110849141
+    second: greenwin_00007_131
+  - first:
+      213: -6999514197582106112
+    second: greenwin_00007_132
+  - first:
+      213: 5134616675588975225
+    second: greenwin_00007_133
+  - first:
+      213: -7700984798499139756
+    second: greenwin_00007_134
+  - first:
+      213: 8743032499171718290
+    second: greenwin_00007_135
+  - first:
+      213: -6452354161828286917
+    second: greenwin_00007_136
+  - first:
+      213: 3643383893937954046
+    second: greenwin_00007_137
+  - first:
+      213: -6414132870598380032
+    second: greenwin_00007_138
+  - first:
+      213: 1524049854198860013
+    second: greenwin_00007_139
+  - first:
+      213: -272944576486213650
+    second: greenwin_00007_140
+  - first:
+      213: -3699566306587884913
+    second: greenwin_00007_141
+  - first:
+      213: 3060867162829221778
+    second: greenwin_00007_142
+  - first:
+      213: 5328992058350379360
+    second: greenwin_00007_143
+  - first:
+      213: -5018030063352498649
+    second: greenwin_00007_144
+  - first:
+      213: 2353800147332641375
+    second: greenwin_00007_145
+  - first:
+      213: 8272773249567986692
+    second: greenwin_00007_146
+  - first:
+      213: 5423683740255277806
+    second: greenwin_00007_147
+  - first:
+      213: 9190058879485371248
+    second: greenwin_00007_148
+  - first:
+      213: 1948901036116221553
+    second: greenwin_00007_149
+  - first:
+      213: -4313772650181159835
+    second: greenwin_00007_150
+  - first:
+      213: -6131655500381451144
+    second: greenwin_00007_151
+  - first:
+      213: -7552692625280562778
+    second: greenwin_00007_152
+  - first:
+      213: -91033588668068068
+    second: greenwin_00007_153
+  - first:
+      213: 5902631944844845787
+    second: greenwin_00007_154
+  - first:
+      213: -3495402545230657489
+    second: greenwin_00007_155
+  - first:
+      213: -3247067044768862701
+    second: greenwin_00007_156
+  - first:
+      213: 5037902612571874924
+    second: greenwin_00007_157
+  - first:
+      213: -6624820822677718885
+    second: greenwin_00007_158
+  - first:
+      213: 796172186736828074
+    second: greenwin_00007_159
+  - first:
+      213: -607476819020028115
+    second: greenwin_00007_160
+  - first:
+      213: 4418774728062965245
+    second: greenwin_00007_161
+  - first:
+      213: -132384332533956944
+    second: greenwin_00007_162
+  - first:
+      213: -6417274996818033046
+    second: greenwin_00007_163
+  - first:
+      213: -7586522661123414766
+    second: greenwin_00007_164
+  - first:
+      213: 1890039906121896242
+    second: greenwin_00007_165
+  - first:
+      213: 7357176811898043939
+    second: greenwin_00007_166
+  - first:
+      213: 7320654815455254303
+    second: greenwin_00007_167
+  - first:
+      213: -1410344216272532820
+    second: greenwin_00007_168
+  - first:
+      213: -1095707355597082114
+    second: greenwin_00007_169
+  - first:
+      213: -9033188214104954156
+    second: greenwin_00007_170
+  - first:
+      213: 3093754326430259301
+    second: greenwin_00007_171
+  - first:
+      213: -4623276463178560004
+    second: greenwin_00007_172
+  - first:
+      213: 4053138318037462401
+    second: greenwin_00007_173
+  - first:
+      213: -1671378650857705165
+    second: greenwin_00007_174
+  - first:
+      213: -6070593365919662065
+    second: greenwin_00007_175
+  - first:
+      213: -8054179503529329214
+    second: greenwin_00007_176
+  - first:
+      213: 4183238352784505878
+    second: greenwin_00007_177
+  - first:
+      213: -8816906182889398493
+    second: greenwin_00007_178
+  - first:
+      213: -3533634191790339628
+    second: greenwin_00007_179
+  - first:
+      213: -6404727161329577305
+    second: greenwin_00007_180
+  - first:
+      213: 5540077399395963240
+    second: greenwin_00007_181
+  - first:
+      213: -4682305160021137857
+    second: greenwin_00007_182
+  - first:
+      213: -3368821957131116014
+    second: greenwin_00007_183
+  - first:
+      213: -8364005367188413122
+    second: greenwin_00007_184
+  - first:
+      213: -3829509371828887149
+    second: greenwin_00007_185
+  - first:
+      213: 5204612983958129427
+    second: greenwin_00007_186
+  - first:
+      213: 6284839768775600778
+    second: greenwin_00007_187
+  - first:
+      213: -6947445441277695933
+    second: greenwin_00007_188
+  - first:
+      213: 2221913912978288549
+    second: greenwin_00007_189
+  - first:
+      213: -5065421377974758362
+    second: greenwin_00007_190
+  - first:
+      213: 7114577885815596606
+    second: greenwin_00007_191
+  - first:
+      213: 3616949843442073165
+    second: greenwin_00007_192
+  - first:
+      213: -4587044919921155190
+    second: greenwin_00007_193
+  - first:
+      213: 5811651466348219073
+    second: greenwin_00007_194
+  - first:
+      213: -7386886624437834381
+    second: greenwin_00007_195
+  - first:
+      213: -5861784800867856046
+    second: greenwin_00007_196
+  - first:
+      213: -871297213760199836
+    second: greenwin_00007_197
+  - first:
+      213: 5105117770446661355
+    second: greenwin_00007_198
+  - first:
+      213: 825287319656780967
+    second: greenwin_00007_199
+  - first:
+      213: -9145727008452586375
+    second: greenwin_00007_200
+  - first:
+      213: 5876180309477128014
+    second: greenwin_00007_201
+  - first:
+      213: 6832171462059518066
+    second: greenwin_00007_202
+  - first:
+      213: -7165718315406731895
+    second: greenwin_00007_203
+  - first:
+      213: -3373605566208565989
+    second: greenwin_00007_204
+  - first:
+      213: -7388203549975656978
+    second: greenwin_00007_205
+  - first:
+      213: 450213023911204045
+    second: greenwin_00007_206
+  - first:
+      213: 3489018144890031690
+    second: greenwin_00007_207
+  - first:
+      213: 2047535838516194497
+    second: greenwin_00007_208
+  - first:
+      213: 9011134267359090374
+    second: greenwin_00007_209
+  - first:
+      213: 5242881478906346503
+    second: greenwin_00007_210
+  - first:
+      213: 4877063682776344951
+    second: greenwin_00007_211
+  - first:
+      213: -5056851887686059447
+    second: greenwin_00007_212
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: greenwin_00007_0
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 923
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350c73bd9fa50dff0800000000000000
+      internalID: -13410769710890925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_1
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 906
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41720ce7da0ba9520800000000000000
+      internalID: 2709672385019127572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_2
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 827
+        width: 105
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bd29752ed52fb6c0800000000000000
+      internalID: -4125537097606419024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_3
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 935
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37a56bccf0344a820800000000000000
+      internalID: 2928539392835738227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_4
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 901
+        width: 13
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b9950d81935d0a10800000000000000
+      internalID: 1877248504284682672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_5
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 941
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e862000d841252f50800000000000000
+      internalID: 6855922604352480910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_6
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 912
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2da51df0d56cdea0800000000000000
+      internalID: -5846686267960087253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_7
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 935
+        width: 39
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef5a94100bc763940800000000000000
+      internalID: 5275541108888806910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_8
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 934
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cad6f642dc1b774b0800000000000000
+      internalID: -5442686130016260692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_9
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 900
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 227778f0d214812c0800000000000000
+      internalID: -4460743769120606430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_10
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 906
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36ba70e74dd930720800000000000000
+      internalID: 2811264128382380899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_11
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 912
+        width: 67
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e83ecb07aa5d34bd0800000000000000
+      internalID: -2647037227951135858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_12
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 900
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c7199c40a7e33ba0800000000000000
+      internalID: -6110285593745745984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_13
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 766
+        width: 98
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a870e20297ce77c10800000000000000
+      internalID: 2051368160265635722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_14
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 906
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d0008c34ce865190800000000000000
+      internalID: -7974029116733128495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_15
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 912
+        width: 74
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0159bd9a650017e40800000000000000
+      internalID: 5652299379543610640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_16
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 912
+        width: 17
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5981936d0dd35f090800000000000000
+      internalID: -8001421195797260139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_17
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 900
+        width: 51
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cff1a723bbbe51080800000000000000
+      internalID: -9217201873105575940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_18
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 906
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ddb395cc1302f250800000000000000
+      internalID: 5976843077582831065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_19
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 890
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f708692b5a0512400800000000000000
+      internalID: 297607722979197055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_20
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 881
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16615086c2062a400800000000000000
+      internalID: 333935066218829409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_21
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 871
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4b9e81ea5047de20800000000000000
+      internalID: 3375237204812929869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_22
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 885
+        width: 18
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 979bb053476abe940800000000000000
+      internalID: 5326534002332121465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_23
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 836
+        width: 16
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bf0603d879d511a0800000000000000
+      internalID: -6839321346132537419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_24
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 871
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30a5711c17ae2da50800000000000000
+      internalID: 6544550982814489091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_25
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 830
+        width: 78
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ed36bfdc8235ad30800000000000000
+      internalID: 4442012188100935144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_26
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 871
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b150c73daed10820800000000000000
+      internalID: 2882830072039887281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_27
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 877
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: feb84b6139ca57220800000000000000
+      internalID: 2483080517305797615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_28
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 865
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 017579fa4cfec9420800000000000000
+      internalID: 2638247109770827536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_29
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 861
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfe5da63b329489a0800000000000000
+      internalID: -6231695201355866372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_30
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 855
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55dff42f2aef7be40800000000000000
+      internalID: 5672282231499914581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_31
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 877
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83107d08995fdd660800000000000000
+      internalID: 7412350601362080056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_32
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 865
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aba51653de7a3e60800000000000000
+      internalID: 7942800338968751014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_33
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 865
+        width: 39
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27d8d05d40b14ef00800000000000000
+      internalID: 1145069912827202930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_34
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 838
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77cdadd3da392ead0800000000000000
+      internalID: -2674412856428274569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_35
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 850
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 192bcb6c7adf64e80800000000000000
+      internalID: -8194583574918417775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_36
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 844
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeb03e04c591e7750800000000000000
+      internalID: 6304504412381580266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_37
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 836
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a06bfa2958429b8e0800000000000000
+      internalID: -1677269230108559862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_38
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 843
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afa80e5896fefeb70800000000000000
+      internalID: 8930619822595672826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_39
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 824
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b20dec661c3dbf7f0800000000000000
+      internalID: -577635299579998165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_40
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 830
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e3eba233d39b0290800000000000000
+      internalID: -7923076584130747415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_41
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 836
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b717fb1adff034de0800000000000000
+      internalID: -1350217881266196101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_42
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 828
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8360352c7449baf0800000000000000
+      internalID: -380197393545534581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_43
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 807
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dfffac173cab6490800000000000000
+      internalID: -7751912980883701805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_44
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 772
+        width: 17
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459e3f2b762e67da0800000000000000
+      internalID: -5947317322884322988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_45
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 806
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 433e80ead578f3ae0800000000000000
+      internalID: -1567385308880116940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_46
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 811
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4424527b2a9aca90800000000000000
+      internalID: -7292847135180708787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_47
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 805
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79de0367d19e00dd0800000000000000
+      internalID: -2521759478581236329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_48
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 795
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41da717e014d354a0800000000000000
+      internalID: -6605703059360731884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_49
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 807
+        width: 23
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e42e5d502c9bc170800000000000000
+      internalID: 8199819209377457379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_50
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 783
+        width: 17
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30f780fc58985c9f0800000000000000
+      internalID: -448801380056400125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_51
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 760
+        width: 51
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70710e96509baf4d0800000000000000
+      internalID: -3099961960588896505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_52
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 795
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09d2d71a3b8fc05a0800000000000000
+      internalID: -6553589907338744432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_53
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 766
+        width: 12
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b90b7ef205eb4460800000000000000
+      internalID: 7227121828068264372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_54
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 795
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76d192363fcb4a2e0800000000000000
+      internalID: -2115358171430576793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_55
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 796
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e61d765f9ee0538c0800000000000000
+      internalID: -4020290694350909074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_56
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 796
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ed85807c05a682b0800000000000000
+      internalID: -5582593215233159706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_57
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 785
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c86ead43ede6dd750800000000000000
+      internalID: 6331338551801341580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_58
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 65
+        width: 431
+        height: 712
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f6195edf2b385220800000000000000
+      internalID: 2474793072019969778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_59
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 657
+        width: 62
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f35192f3d8df91320800000000000000
+      internalID: 2529331448837117247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_60
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 774
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0259a1a6181026b0800000000000000
+      internalID: -5323228274071350769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_61
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 760
+        width: 25
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f22790a70f5c2b0800000000000000
+      internalID: -5564777357611225240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_62
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 762
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b04a37056d5b1a280800000000000000
+      internalID: -9033739445451119605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_63
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 771
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 290a5007d250ba060800000000000000
+      internalID: 6965666941369688210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_64
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 762
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f46d92023defa8980800000000000000
+      internalID: -8535729960996186545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_65
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 766
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459b3d26668f0b590800000000000000
+      internalID: -7660349847528818348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_66
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 736
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9222a39fd41b1f4e0800000000000000
+      internalID: -1949582215222779351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_67
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 725
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6b8dc5f725a6bd80800000000000000
+      internalID: -8235213277554177173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_68
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 731
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 296ee2a7af9c9f110800000000000000
+      internalID: 1295288445474629266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_69
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 663
+        width: 31
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8490cd0b97ec56030800000000000000
+      internalID: 3487420508521892168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_70
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 725
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5ae6d97d41a7a670800000000000000
+      internalID: 8549979771714857563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_71
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 713
+        width: 69
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac43e8cc78278950800000000000000
+      internalID: 6451169507642920100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_72
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 725
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 602aeed5c54c0b3f0800000000000000
+      internalID: -886993225600032250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_73
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6f6577a23081f910800000000000000
+      internalID: 1869416275381677931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_74
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 626
+        width: 61
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b72b2b6e212766b0800000000000000
+      internalID: -5303233552955267145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_75
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 689
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a52236e3b3d63f540800000000000000
+      internalID: 5040492509174899290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_76
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 686
+        width: 25
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21da236e98dcaf8a0800000000000000
+      internalID: -6270473539003699950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_77
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 625
+        width: 41
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6408d65efb1cfb170800000000000000
+      internalID: 8196482876769665094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_78
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 602
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2694e596a32bde00800000000000000
+      internalID: 1070488534816953902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_79
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 645
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b522fdbf85e378200800000000000000
+      internalID: 182182861835543131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_80
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 625
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a2e3fad338ee0550800000000000000
+      internalID: 6129091452312216230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_81
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 620
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f68acb8188496260800000000000000
+      internalID: 7091278809504843509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_82
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 602
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e94ea6152d1a10f60800000000000000
+      internalID: 7998852337867875486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_83
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 569
+        width: 17
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a01b93a9d4c0f0f60800000000000000
+      internalID: 8002628590300147978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_84
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 604
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 557f207355c26c960800000000000000
+      internalID: 7621828163877926741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_85
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 596
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e0f7996059fa4f70800000000000000
+      internalID: 9172417714857701605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_86
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 541
+        width: 44
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ba97b4069d322ea0800000000000000
+      internalID: -5899084847368398159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_87
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 465
+        width: 14
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d6e90437b03f72c0800000000000000
+      internalID: -4431769944899066151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_88
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 573
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e0ab57458d65a800800000000000000
+      internalID: 623024542655946983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_89
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 549
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9222479224cfd96a0800000000000000
+      internalID: -6440714530976423383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_90
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 526
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bc571f4a9655ae00800000000000000
+      internalID: 1055344908440132788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_91
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 550
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d64b5f644cd3be990800000000000000
+      internalID: -7355717653166181267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_92
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 485
+        width: 41
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e8668a373155a680800000000000000
+      internalID: -8744493803823011615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_93
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 581
+        width: 24
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63f223f7ef0bde770800000000000000
+      internalID: 8641757867096026934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_94
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 558
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8993a22d9e8323500800000000000000
+      internalID: 374424295929690520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_95
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 585
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 760c7360191343160800000000000000
+      internalID: 7004277819412299879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_96
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 526
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757a9f52a74a90e00800000000000000
+      internalID: 1011520435851470679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_97
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 575
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 239e9af99c62db710800000000000000
+      internalID: 1710566080879651122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_98
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 523
+        width: 32
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b18b5c4222a52410800000000000000
+      internalID: 1451744723090506165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_99
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 514
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45b0f9cd2718b10e0800000000000000
+      internalID: -2298100854514840748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_100
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 515
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac01d69ee2e960ac0800000000000000
+      internalID: -3889247303865921334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_101
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 405
+        width: 61
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42377b3658f761580800000000000000
+      internalID: -8856751406297156828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_102
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 514
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e98ebea3b6d7d0c0800000000000000
+      internalID: -4550932831215384095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_103
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 479
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cb42b8af006efea0800000000000000
+      internalID: -5837122446654551095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_104
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 484
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065c1f8d9297ffa60800000000000000
+      internalID: 7710014307721921888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_105
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 442
+        width: 49
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99236927de928e7e0800000000000000
+      internalID: -1736091556544892263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_106
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 460
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 497c7580b45b52d60800000000000000
+      internalID: 7864891658139584404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_107
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 456
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 218b71e049d53cac0800000000000000
+      internalID: -3836119567116552174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_108
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 456
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fd393ecdcbd57320800000000000000
+      internalID: 2555190040577261044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_109
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 452
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c326fbdf59cc94960800000000000000
+      internalID: 7586819991861682748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_110
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 435
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2f391f730ef6c520800000000000000
+      internalID: 2722142315762761517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_111
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 437
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cba0a4d2c2fe13d0800000000000000
+      internalID: -3233880563800560697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_112
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 444
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1140cd08bc0df44f0800000000000000
+      internalID: -842225032836152303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_113
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 444
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11c9eb7e1cfc46c70800000000000000
+      internalID: 8963517590097796113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_114
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 408
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 668e6231791ee4850800000000000000
+      internalID: 6363271362498717798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_115
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 409
+        width: 39
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8f6642d3aa77f30800000000000000
+      internalID: 4573311126198483121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_116
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 415
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09917a939ba71dfd0800000000000000
+      internalID: -2318937397164303984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_117
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 421
+        width: 15
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d0e6f05fca3788c0800000000000000
+      internalID: -3997161482177027886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_118
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 351
+        width: 23
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1d39d57b474a65f0800000000000000
+      internalID: -762718797460587236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_119
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 376
+        width: 27
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6fa4ea3c05f9f910800000000000000
+      internalID: 1871796553025630062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_120
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 371
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1fac7ebb452177e0800000000000000
+      internalID: -1769592171331277030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_121
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 375
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7d1edb5adc8c930800000000000000
+      internalID: 4163803967243016168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_122
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 363
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02545276c46343120800000000000000
+      internalID: 2392597003816486176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_123
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 339
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d19636b910867f4e0800000000000000
+      internalID: -1947973957703210723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_124
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 339
+        width: 51
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33e74d5068cf2a7c0800000000000000
+      internalID: -4061406261381136845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_125
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 281
+        width: 17
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981fae2617f241260800000000000000
+      internalID: 7067325879288525193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_126
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 283
+        width: 18
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c5ab65b4b2069cd0800000000000000
+      internalID: -2551849163697707578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_127
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 316
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f21cf23dc2b847f0800000000000000
+      internalID: -628055553624763659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_128
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 315
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4e8deca6a4cc0fd0800000000000000
+      internalID: -2374306683386229173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_129
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 315
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df6d2fd816a1c7850800000000000000
+      internalID: 6376000178745431805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_130
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 310
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea86aa8f44426c1b0800000000000000
+      internalID: -5636778004959303506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_131
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 298
+        width: 45
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8d02da23bc435cb0800000000000000
+      internalID: -4876469639110849141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_132
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 304
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 002b0dc1ceabcde90800000000000000
+      internalID: -6999514197582106112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_133
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 275
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97a274e79a2d14740800000000000000
+      internalID: 5134616675588975225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_134
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 275
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45f86c8902b902590800000000000000
+      internalID: -7700984798499139756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_135
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 269
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29473d44cbd755970800000000000000
+      internalID: 8743032499171718290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_136
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 275
+        width: 18
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3e263b6312a476a0800000000000000
+      internalID: -6452354161828286917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_137
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 252
+        width: 14
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efc1d8a1956ef8230800000000000000
+      internalID: 3643383893937954046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_138
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 246
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006b3d1432c6cf6a0800000000000000
+      internalID: -6414132870598380032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_139
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 245
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de842838443862510800000000000000
+      internalID: 1524049854198860013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_140
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 246
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee77b239a5e463cf0800000000000000
+      internalID: -272944576486213650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_141
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 249
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8243d89b0088acc0800000000000000
+      internalID: -3699566306587884913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_142
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 199
+        width: 51
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29fe719a7726a7a20800000000000000
+      internalID: 3060867162829221778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_143
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 211
+        width: 10
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0612ad8fa0264f940800000000000000
+      internalID: 5328992058350379360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_144
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 234
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 726b4a97e306c5ab0800000000000000
+      internalID: -5018030063352498649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_145
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 239
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f52360653c06aa020800000000000000
+      internalID: 2353800147332641375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_146
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 228
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4049adf707bcec270800000000000000
+      internalID: 8272773249567986692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_147
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 240
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee25af730abc44b40800000000000000
+      internalID: 5423683740255277806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_148
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 234
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07366a02cd5a98f70800000000000000
+      internalID: 9190058879485371248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_149
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 205
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17e1918aa23eb0b10800000000000000
+      internalID: 1948901036116221553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_150
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 205
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 564182841a66224c0800000000000000
+      internalID: -4313772650181159835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_151
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 208
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87c81be2fcbf7eaa0800000000000000
+      internalID: -6131655500381451144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_152
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 205
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9807cb2127f2790800000000000000
+      internalID: -7552692625280562778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_153
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 170
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f8fc4fe659cbef0800000000000000
+      internalID: -91033588668068068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_154
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 126
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd2a958fa7c5ae150800000000000000
+      internalID: 5902631944844845787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_155
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 173
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f28c78097e5dd7fc0800000000000000
+      internalID: -3495402545230657489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_156
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 176
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31eacaaf9b910f2d0800000000000000
+      internalID: -3247067044768862701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_157
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 135
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c66eb53fbb93ae540800000000000000
+      internalID: 5037902612571874924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_158
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 176
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98fea3cf88ef04a0800000000000000
+      internalID: -6624820822677718885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_159
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 131
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aae9e72b2629c0b00800000000000000
+      internalID: 796172186736828074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_160
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 120
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d27e6093d0fc197f0800000000000000
+      internalID: -607476819020028115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_161
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 131
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df59aa81434a25d30800000000000000
+      internalID: 4418774728062965245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_162
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 170
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0be7c75a62da92ef0800000000000000
+      internalID: -132384332533956944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_163
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 129
+        width: 51
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a664aacf36241f6a0800000000000000
+      internalID: -6417274996818033046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_164
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 164
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 215a947b5d147b690800000000000000
+      internalID: -7586522661123414766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_165
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 135
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23155bfd745ca3a10800000000000000
+      internalID: 1890039906121896242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_166
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 100
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32e7ce69451f91660800000000000000
+      internalID: 7357176811898043939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_167
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 106
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f179676a4c0389560800000000000000
+      internalID: 7320654815455254303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_168
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 94
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa8c0a58637d6ce0800000000000000
+      internalID: -1410344216272532820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_169
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 106
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef17ad327f34bc0f0800000000000000
+      internalID: -1095707355597082114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_170
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 94
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4da670ddd2ba3a280800000000000000
+      internalID: -9033188214104954156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_171
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 85
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56814312b293fea20800000000000000
+      internalID: 3093754326430259301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_172
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 94
+        width: 39
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfd41d94d82d6dfb0800000000000000
+      internalID: -4623276463178560004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_173
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 81
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18da52863d3af3830800000000000000
+      internalID: 4053138318037462401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_174
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 55
+        width: 37
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 331747ee8f11ec8e0800000000000000
+      internalID: -1671378650857705165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_175
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 55
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0004804f7be0cba0800000000000000
+      internalID: -6070593365919662065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_176
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 61
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cdf6e61a6ec93090800000000000000
+      internalID: -8054179503529329214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_177
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 67
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61cb28c3e19dd0a30800000000000000
+      internalID: 4183238352784505878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_178
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 67
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32f9ee66a8e04a580800000000000000
+      internalID: -8816906182889398493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_179
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 55
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d98920bc6206fec0800000000000000
+      internalID: -3533634191790339628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_180
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 61
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a297a99496dd17a0800000000000000
+      internalID: -6404727161329577305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_181
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8619a2bca0f42ec40800000000000000
+      internalID: 5540077399395963240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_182
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 55
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3626fec34c150fb0800000000000000
+      internalID: -4682305160021137857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_183
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 61
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 212e9ad574a8f31d0800000000000000
+      internalID: -3368821957131116014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_184
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 55
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e352645de651deb80800000000000000
+      internalID: -8364005367188413122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_185
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 55
+        width: 20
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3912c141489dadac0800000000000000
+      internalID: -3829509371828887149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_186
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 61
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31bc5360fef7a3840800000000000000
+      internalID: 5204612983958129427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_187
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 55
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a2e10a87c383750800000000000000
+      internalID: 6284839768775600778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_188
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 67
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3486c382e27b59f90800000000000000
+      internalID: -6947445441277695933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_189
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 67
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5afa1908ee2d5de10800000000000000
+      internalID: 2221913912978288549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_190
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 61
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6241520381204b9b0800000000000000
+      internalID: -5065421377974758362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_191
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 55
+        width: 22
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3663ea74ee0cb260800000000000000
+      internalID: 7114577885815596606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_192
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4ef4cc18bcf13230800000000000000
+      internalID: 3616949843442073165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_193
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a83e653d2fa8750c0800000000000000
+      internalID: -4587044919921155190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_194
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 55
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca401a973227a050800000000000000
+      internalID: 5811651466348219073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_195
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37d6c42a0c18c7990800000000000000
+      internalID: -7386886624437834381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_196
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 58
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 251dc7ad7c1c6aea0800000000000000
+      internalID: -5861784800867856046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_197
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4632908ecc788e3f0800000000000000
+      internalID: -871297213760199836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_198
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 55
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be6e10c609509d640800000000000000
+      internalID: 5105117770446661355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_199
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a4d6c5d172047b00800000000000000
+      internalID: 825287319656780967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_200
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 58
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 974dc70fdb9d31180800000000000000
+      internalID: -9145727008452586375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_201
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e47778eabd26c8150800000000000000
+      internalID: 5876180309477128014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_202
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 55
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2786e901fbfb0de50800000000000000
+      internalID: 6832171462059518066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_203
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 55
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 985dba168214e8c90800000000000000
+      internalID: -7165718315406731895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_204
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1d9bd59c9b8e21d0800000000000000
+      internalID: -3373605566208565989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_205
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 55
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee5cb630404d77990800000000000000
+      internalID: -7388203549975656978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_206
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc45b732c5a7f3600800000000000000
+      internalID: 450213023911204045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_207
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4e0015648b7b6030800000000000000
+      internalID: 3489018144890031690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_208
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 55
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cca3af2ffe4a6c10800000000000000
+      internalID: 2047535838516194497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_209
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 55
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c6d9458fdafd0d70800000000000000
+      internalID: 9011134267359090374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_210
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70cffa55de472c840800000000000000
+      internalID: 5242881478906346503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_211
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 779a7d6649fcea340800000000000000
+      internalID: 4877063682776344951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: greenwin_00007_212
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94a75b0200472d9b0800000000000000
+      internalID: -5056851887686059447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      greenwin_00007_0: -13410769710890925
+      greenwin_00007_1: 2709672385019127572
+      greenwin_00007_10: 2811264128382380899
+      greenwin_00007_100: -3889247303865921334
+      greenwin_00007_101: -8856751406297156828
+      greenwin_00007_102: -4550932831215384095
+      greenwin_00007_103: -5837122446654551095
+      greenwin_00007_104: 7710014307721921888
+      greenwin_00007_105: -1736091556544892263
+      greenwin_00007_106: 7864891658139584404
+      greenwin_00007_107: -3836119567116552174
+      greenwin_00007_108: 2555190040577261044
+      greenwin_00007_109: 7586819991861682748
+      greenwin_00007_11: -2647037227951135858
+      greenwin_00007_110: 2722142315762761517
+      greenwin_00007_111: -3233880563800560697
+      greenwin_00007_112: -842225032836152303
+      greenwin_00007_113: 8963517590097796113
+      greenwin_00007_114: 6363271362498717798
+      greenwin_00007_115: 4573311126198483121
+      greenwin_00007_116: -2318937397164303984
+      greenwin_00007_117: -3997161482177027886
+      greenwin_00007_118: -762718797460587236
+      greenwin_00007_119: 1871796553025630062
+      greenwin_00007_12: -6110285593745745984
+      greenwin_00007_120: -1769592171331277030
+      greenwin_00007_121: 4163803967243016168
+      greenwin_00007_122: 2392597003816486176
+      greenwin_00007_123: -1947973957703210723
+      greenwin_00007_124: -4061406261381136845
+      greenwin_00007_125: 7067325879288525193
+      greenwin_00007_126: -2551849163697707578
+      greenwin_00007_127: -628055553624763659
+      greenwin_00007_128: -2374306683386229173
+      greenwin_00007_129: 6376000178745431805
+      greenwin_00007_13: 2051368160265635722
+      greenwin_00007_130: -5636778004959303506
+      greenwin_00007_131: -4876469639110849141
+      greenwin_00007_132: -6999514197582106112
+      greenwin_00007_133: 5134616675588975225
+      greenwin_00007_134: -7700984798499139756
+      greenwin_00007_135: 8743032499171718290
+      greenwin_00007_136: -6452354161828286917
+      greenwin_00007_137: 3643383893937954046
+      greenwin_00007_138: -6414132870598380032
+      greenwin_00007_139: 1524049854198860013
+      greenwin_00007_14: -7974029116733128495
+      greenwin_00007_140: -272944576486213650
+      greenwin_00007_141: -3699566306587884913
+      greenwin_00007_142: 3060867162829221778
+      greenwin_00007_143: 5328992058350379360
+      greenwin_00007_144: -5018030063352498649
+      greenwin_00007_145: 2353800147332641375
+      greenwin_00007_146: 8272773249567986692
+      greenwin_00007_147: 5423683740255277806
+      greenwin_00007_148: 9190058879485371248
+      greenwin_00007_149: 1948901036116221553
+      greenwin_00007_15: 5652299379543610640
+      greenwin_00007_150: -4313772650181159835
+      greenwin_00007_151: -6131655500381451144
+      greenwin_00007_152: -7552692625280562778
+      greenwin_00007_153: -91033588668068068
+      greenwin_00007_154: 5902631944844845787
+      greenwin_00007_155: -3495402545230657489
+      greenwin_00007_156: -3247067044768862701
+      greenwin_00007_157: 5037902612571874924
+      greenwin_00007_158: -6624820822677718885
+      greenwin_00007_159: 796172186736828074
+      greenwin_00007_16: -8001421195797260139
+      greenwin_00007_160: -607476819020028115
+      greenwin_00007_161: 4418774728062965245
+      greenwin_00007_162: -132384332533956944
+      greenwin_00007_163: -6417274996818033046
+      greenwin_00007_164: -7586522661123414766
+      greenwin_00007_165: 1890039906121896242
+      greenwin_00007_166: 7357176811898043939
+      greenwin_00007_167: 7320654815455254303
+      greenwin_00007_168: -1410344216272532820
+      greenwin_00007_169: -1095707355597082114
+      greenwin_00007_17: -9217201873105575940
+      greenwin_00007_170: -9033188214104954156
+      greenwin_00007_171: 3093754326430259301
+      greenwin_00007_172: -4623276463178560004
+      greenwin_00007_173: 4053138318037462401
+      greenwin_00007_174: -1671378650857705165
+      greenwin_00007_175: -6070593365919662065
+      greenwin_00007_176: -8054179503529329214
+      greenwin_00007_177: 4183238352784505878
+      greenwin_00007_178: -8816906182889398493
+      greenwin_00007_179: -3533634191790339628
+      greenwin_00007_18: 5976843077582831065
+      greenwin_00007_180: -6404727161329577305
+      greenwin_00007_181: 5540077399395963240
+      greenwin_00007_182: -4682305160021137857
+      greenwin_00007_183: -3368821957131116014
+      greenwin_00007_184: -8364005367188413122
+      greenwin_00007_185: -3829509371828887149
+      greenwin_00007_186: 5204612983958129427
+      greenwin_00007_187: 6284839768775600778
+      greenwin_00007_188: -6947445441277695933
+      greenwin_00007_189: 2221913912978288549
+      greenwin_00007_19: 297607722979197055
+      greenwin_00007_190: -5065421377974758362
+      greenwin_00007_191: 7114577885815596606
+      greenwin_00007_192: 3616949843442073165
+      greenwin_00007_193: -4587044919921155190
+      greenwin_00007_194: 5811651466348219073
+      greenwin_00007_195: -7386886624437834381
+      greenwin_00007_196: -5861784800867856046
+      greenwin_00007_197: -871297213760199836
+      greenwin_00007_198: 5105117770446661355
+      greenwin_00007_199: 825287319656780967
+      greenwin_00007_2: -4125537097606419024
+      greenwin_00007_20: 333935066218829409
+      greenwin_00007_200: -9145727008452586375
+      greenwin_00007_201: 5876180309477128014
+      greenwin_00007_202: 6832171462059518066
+      greenwin_00007_203: -7165718315406731895
+      greenwin_00007_204: -3373605566208565989
+      greenwin_00007_205: -7388203549975656978
+      greenwin_00007_206: 450213023911204045
+      greenwin_00007_207: 3489018144890031690
+      greenwin_00007_208: 2047535838516194497
+      greenwin_00007_209: 9011134267359090374
+      greenwin_00007_21: 3375237204812929869
+      greenwin_00007_210: 5242881478906346503
+      greenwin_00007_211: 4877063682776344951
+      greenwin_00007_212: -5056851887686059447
+      greenwin_00007_22: 5326534002332121465
+      greenwin_00007_23: -6839321346132537419
+      greenwin_00007_24: 6544550982814489091
+      greenwin_00007_25: 4442012188100935144
+      greenwin_00007_26: 2882830072039887281
+      greenwin_00007_27: 2483080517305797615
+      greenwin_00007_28: 2638247109770827536
+      greenwin_00007_29: -6231695201355866372
+      greenwin_00007_3: 2928539392835738227
+      greenwin_00007_30: 5672282231499914581
+      greenwin_00007_31: 7412350601362080056
+      greenwin_00007_32: 7942800338968751014
+      greenwin_00007_33: 1145069912827202930
+      greenwin_00007_34: -2674412856428274569
+      greenwin_00007_35: -8194583574918417775
+      greenwin_00007_36: 6304504412381580266
+      greenwin_00007_37: -1677269230108559862
+      greenwin_00007_38: 8930619822595672826
+      greenwin_00007_39: -577635299579998165
+      greenwin_00007_4: 1877248504284682672
+      greenwin_00007_40: -7923076584130747415
+      greenwin_00007_41: -1350217881266196101
+      greenwin_00007_42: -380197393545534581
+      greenwin_00007_43: -7751912980883701805
+      greenwin_00007_44: -5947317322884322988
+      greenwin_00007_45: -1567385308880116940
+      greenwin_00007_46: -7292847135180708787
+      greenwin_00007_47: -2521759478581236329
+      greenwin_00007_48: -6605703059360731884
+      greenwin_00007_49: 8199819209377457379
+      greenwin_00007_5: 6855922604352480910
+      greenwin_00007_50: -448801380056400125
+      greenwin_00007_51: -3099961960588896505
+      greenwin_00007_52: -6553589907338744432
+      greenwin_00007_53: 7227121828068264372
+      greenwin_00007_54: -2115358171430576793
+      greenwin_00007_55: -4020290694350909074
+      greenwin_00007_56: -5582593215233159706
+      greenwin_00007_57: 6331338551801341580
+      greenwin_00007_58: 2474793072019969778
+      greenwin_00007_59: 2529331448837117247
+      greenwin_00007_6: -5846686267960087253
+      greenwin_00007_60: -5323228274071350769
+      greenwin_00007_61: -5564777357611225240
+      greenwin_00007_62: -9033739445451119605
+      greenwin_00007_63: 6965666941369688210
+      greenwin_00007_64: -8535729960996186545
+      greenwin_00007_65: -7660349847528818348
+      greenwin_00007_66: -1949582215222779351
+      greenwin_00007_67: -8235213277554177173
+      greenwin_00007_68: 1295288445474629266
+      greenwin_00007_69: 3487420508521892168
+      greenwin_00007_7: 5275541108888806910
+      greenwin_00007_70: 8549979771714857563
+      greenwin_00007_71: 6451169507642920100
+      greenwin_00007_72: -886993225600032250
+      greenwin_00007_73: 1869416275381677931
+      greenwin_00007_74: -5303233552955267145
+      greenwin_00007_75: 5040492509174899290
+      greenwin_00007_76: -6270473539003699950
+      greenwin_00007_77: 8196482876769665094
+      greenwin_00007_78: 1070488534816953902
+      greenwin_00007_79: 182182861835543131
+      greenwin_00007_8: -5442686130016260692
+      greenwin_00007_80: 6129091452312216230
+      greenwin_00007_81: 7091278809504843509
+      greenwin_00007_82: 7998852337867875486
+      greenwin_00007_83: 8002628590300147978
+      greenwin_00007_84: 7621828163877926741
+      greenwin_00007_85: 9172417714857701605
+      greenwin_00007_86: -5899084847368398159
+      greenwin_00007_87: -4431769944899066151
+      greenwin_00007_88: 623024542655946983
+      greenwin_00007_89: -6440714530976423383
+      greenwin_00007_9: -4460743769120606430
+      greenwin_00007_90: 1055344908440132788
+      greenwin_00007_91: -7355717653166181267
+      greenwin_00007_92: -8744493803823011615
+      greenwin_00007_93: 8641757867096026934
+      greenwin_00007_94: 374424295929690520
+      greenwin_00007_95: 7004277819412299879
+      greenwin_00007_96: 1011520435851470679
+      greenwin_00007_97: 1710566080879651122
+      greenwin_00007_98: 1451744723090506165
+      greenwin_00007_99: -2298100854514840748
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

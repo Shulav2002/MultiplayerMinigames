@@ -1913,7 +1913,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77dd9325b8689994ba4cdbe5ee293a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: HotDynamite::HotDynamite.Networking.HotDynamiteLobbyNetworkClient
-  serverUrl: wss://mini-games.checkmygame.live/ws
+  serverUrl: wss://mini-games.checkmygame.live/ws/
   gameId: HotDynamite
   roomCapacity: 4
   connectOnStart: 0

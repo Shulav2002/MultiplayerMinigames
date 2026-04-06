@@ -144,7 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useMobileJoystick: 1
   showJoystick: 1
-  limitToLeftHalf: 1
+  limitToLeftHalf: 0
   joystickRadiusPixels: 120
   deadZone: 0.1
   forceMobileJoystickInEditor: 1
@@ -197,7 +197,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 30e3cf0b44e444cbbfd734430d4f24d3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ba9dd5afd94017e44873c81577218bd4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -217,7 +217,7 @@ Animator:
   m_GameObject: {fileID: 3595157825266331713}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d7a6644a8d024206b2d1a63ffc54d81b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 12aee3f95a3d4d29be38a86d23ba81bd, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

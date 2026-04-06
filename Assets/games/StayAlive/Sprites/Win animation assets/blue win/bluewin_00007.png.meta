@@ -1,0 +1,5941 @@
+fileFormatVersion: 2
+guid: 123abd4e69cbe104589bfeb9f1465fdd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3556712768876158251
+    second: bluewin_00007_0
+  - first:
+      213: 4985193607223444461
+    second: bluewin_00007_1
+  - first:
+      213: -226683105664495116
+    second: bluewin_00007_2
+  - first:
+      213: -1713854929005154249
+    second: bluewin_00007_3
+  - first:
+      213: 9127747105637591881
+    second: bluewin_00007_4
+  - first:
+      213: 1099403238731631771
+    second: bluewin_00007_5
+  - first:
+      213: -2808345553873370245
+    second: bluewin_00007_6
+  - first:
+      213: -1776659908783599362
+    second: bluewin_00007_7
+  - first:
+      213: -4694263146409585823
+    second: bluewin_00007_8
+  - first:
+      213: -5110983339504406221
+    second: bluewin_00007_9
+  - first:
+      213: -2971165582178324626
+    second: bluewin_00007_10
+  - first:
+      213: -5684375691354543200
+    second: bluewin_00007_11
+  - first:
+      213: -4555539889761116918
+    second: bluewin_00007_12
+  - first:
+      213: 3309612847459544153
+    second: bluewin_00007_13
+  - first:
+      213: -2997471776770958915
+    second: bluewin_00007_14
+  - first:
+      213: 8445391818539419302
+    second: bluewin_00007_15
+  - first:
+      213: -3870921436115431974
+    second: bluewin_00007_16
+  - first:
+      213: -6298048749379056893
+    second: bluewin_00007_17
+  - first:
+      213: 1154046368824935222
+    second: bluewin_00007_18
+  - first:
+      213: -1394283747485972738
+    second: bluewin_00007_19
+  - first:
+      213: -5956273234026280757
+    second: bluewin_00007_20
+  - first:
+      213: -4128502339235913143
+    second: bluewin_00007_21
+  - first:
+      213: 2366007860681220351
+    second: bluewin_00007_22
+  - first:
+      213: -1628468880315644173
+    second: bluewin_00007_23
+  - first:
+      213: -661132147197068445
+    second: bluewin_00007_24
+  - first:
+      213: 8362470115124667384
+    second: bluewin_00007_25
+  - first:
+      213: 301900151774314391
+    second: bluewin_00007_26
+  - first:
+      213: -8071589100659626268
+    second: bluewin_00007_27
+  - first:
+      213: 4844735456189200875
+    second: bluewin_00007_28
+  - first:
+      213: 976899724453846590
+    second: bluewin_00007_29
+  - first:
+      213: 123502438093455452
+    second: bluewin_00007_30
+  - first:
+      213: -7681092010008499375
+    second: bluewin_00007_31
+  - first:
+      213: -3422580941070018174
+    second: bluewin_00007_32
+  - first:
+      213: -4893174947734438846
+    second: bluewin_00007_33
+  - first:
+      213: -2725848953401034842
+    second: bluewin_00007_34
+  - first:
+      213: -8698695742524913307
+    second: bluewin_00007_35
+  - first:
+      213: -8868304989892162916
+    second: bluewin_00007_36
+  - first:
+      213: -8725846058049477194
+    second: bluewin_00007_37
+  - first:
+      213: -3253118413517654158
+    second: bluewin_00007_38
+  - first:
+      213: 4260180126839910498
+    second: bluewin_00007_39
+  - first:
+      213: 5119583479445632433
+    second: bluewin_00007_40
+  - first:
+      213: -7109919731665306486
+    second: bluewin_00007_41
+  - first:
+      213: -507095540960054914
+    second: bluewin_00007_42
+  - first:
+      213: -6709452874918795079
+    second: bluewin_00007_43
+  - first:
+      213: -5089057065602241638
+    second: bluewin_00007_44
+  - first:
+      213: -9116897086681163589
+    second: bluewin_00007_45
+  - first:
+      213: -5739221877714629525
+    second: bluewin_00007_46
+  - first:
+      213: 4020099034124684472
+    second: bluewin_00007_47
+  - first:
+      213: 3746844823715344307
+    second: bluewin_00007_48
+  - first:
+      213: -3840945592870029704
+    second: bluewin_00007_49
+  - first:
+      213: 2822939031614844788
+    second: bluewin_00007_50
+  - first:
+      213: -2688709088482869692
+    second: bluewin_00007_51
+  - first:
+      213: -1076096603416394772
+    second: bluewin_00007_52
+  - first:
+      213: -3564642148014805206
+    second: bluewin_00007_53
+  - first:
+      213: 1884308936068044541
+    second: bluewin_00007_54
+  - first:
+      213: -9140850335422970878
+    second: bluewin_00007_55
+  - first:
+      213: -8201316502002803678
+    second: bluewin_00007_56
+  - first:
+      213: -7125259978473955051
+    second: bluewin_00007_57
+  - first:
+      213: -5943889296872648382
+    second: bluewin_00007_58
+  - first:
+      213: 4672081147790750144
+    second: bluewin_00007_59
+  - first:
+      213: -2773510815503802521
+    second: bluewin_00007_60
+  - first:
+      213: 7043612227638897285
+    second: bluewin_00007_61
+  - first:
+      213: -8152628341252105901
+    second: bluewin_00007_62
+  - first:
+      213: 8559499132851013506
+    second: bluewin_00007_63
+  - first:
+      213: -4826187816666478524
+    second: bluewin_00007_64
+  - first:
+      213: -608901100503057911
+    second: bluewin_00007_65
+  - first:
+      213: -5929774871686185159
+    second: bluewin_00007_66
+  - first:
+      213: 2571584268288598225
+    second: bluewin_00007_67
+  - first:
+      213: 738769082435011192
+    second: bluewin_00007_68
+  - first:
+      213: 7843758430650351076
+    second: bluewin_00007_69
+  - first:
+      213: 3843465324944023564
+    second: bluewin_00007_70
+  - first:
+      213: 3117398878808224928
+    second: bluewin_00007_71
+  - first:
+      213: -6189678729299381347
+    second: bluewin_00007_72
+  - first:
+      213: -2800464998701776315
+    second: bluewin_00007_73
+  - first:
+      213: -7114586343196088756
+    second: bluewin_00007_74
+  - first:
+      213: 180931596549938398
+    second: bluewin_00007_75
+  - first:
+      213: -3670153489046529306
+    second: bluewin_00007_76
+  - first:
+      213: 849912261488638414
+    second: bluewin_00007_77
+  - first:
+      213: -2442925191956455928
+    second: bluewin_00007_78
+  - first:
+      213: 2053712678008609115
+    second: bluewin_00007_79
+  - first:
+      213: 6659900321126545434
+    second: bluewin_00007_80
+  - first:
+      213: 2339075098626787612
+    second: bluewin_00007_81
+  - first:
+      213: -117877349153138434
+    second: bluewin_00007_82
+  - first:
+      213: -204506532396922798
+    second: bluewin_00007_83
+  - first:
+      213: 8447638702809049858
+    second: bluewin_00007_84
+  - first:
+      213: 8747942406393576828
+    second: bluewin_00007_85
+  - first:
+      213: -7729547900738715240
+    second: bluewin_00007_86
+  - first:
+      213: 8374924086436419996
+    second: bluewin_00007_87
+  - first:
+      213: 1073447016571081259
+    second: bluewin_00007_88
+  - first:
+      213: 4970868188520807171
+    second: bluewin_00007_89
+  - first:
+      213: 489106515721439170
+    second: bluewin_00007_90
+  - first:
+      213: 6230579192485547493
+    second: bluewin_00007_91
+  - first:
+      213: -2441832332355310512
+    second: bluewin_00007_92
+  - first:
+      213: -1672506459406840911
+    second: bluewin_00007_93
+  - first:
+      213: -9136517735517522223
+    second: bluewin_00007_94
+  - first:
+      213: -1877790091327879707
+    second: bluewin_00007_95
+  - first:
+      213: 8441920633350232871
+    second: bluewin_00007_96
+  - first:
+      213: -456885174613119591
+    second: bluewin_00007_97
+  - first:
+      213: -501784638296627042
+    second: bluewin_00007_98
+  - first:
+      213: -1894918900554101154
+    second: bluewin_00007_99
+  - first:
+      213: 2788657443820668104
+    second: bluewin_00007_100
+  - first:
+      213: 1858539642625083988
+    second: bluewin_00007_101
+  - first:
+      213: 8272028534937140389
+    second: bluewin_00007_102
+  - first:
+      213: -5059664597583224911
+    second: bluewin_00007_103
+  - first:
+      213: 1877852033423579035
+    second: bluewin_00007_104
+  - first:
+      213: -5857263416291258618
+    second: bluewin_00007_105
+  - first:
+      213: 6599570666129187391
+    second: bluewin_00007_106
+  - first:
+      213: 4885907503665370820
+    second: bluewin_00007_107
+  - first:
+      213: 9097046217430775570
+    second: bluewin_00007_108
+  - first:
+      213: -3904235018606672562
+    second: bluewin_00007_109
+  - first:
+      213: 695892942984642111
+    second: bluewin_00007_110
+  - first:
+      213: -4198000221196922895
+    second: bluewin_00007_111
+  - first:
+      213: 4125020135971632408
+    second: bluewin_00007_112
+  - first:
+      213: 6288643042500671456
+    second: bluewin_00007_113
+  - first:
+      213: 1207847449308975567
+    second: bluewin_00007_114
+  - first:
+      213: 8720657655619977413
+    second: bluewin_00007_115
+  - first:
+      213: -2787029767871301441
+    second: bluewin_00007_116
+  - first:
+      213: -2383589259075205879
+    second: bluewin_00007_117
+  - first:
+      213: -956605632247632403
+    second: bluewin_00007_118
+  - first:
+      213: 7663737928530284736
+    second: bluewin_00007_119
+  - first:
+      213: 2792514071957928718
+    second: bluewin_00007_120
+  - first:
+      213: 403695401548306478
+    second: bluewin_00007_121
+  - first:
+      213: 6991578252814203720
+    second: bluewin_00007_122
+  - first:
+      213: 3609020160417291555
+    second: bluewin_00007_123
+  - first:
+      213: -4546402688395776071
+    second: bluewin_00007_124
+  - first:
+      213: -2456276445600332023
+    second: bluewin_00007_125
+  - first:
+      213: -1923796770045516310
+    second: bluewin_00007_126
+  - first:
+      213: -8131125871631162001
+    second: bluewin_00007_127
+  - first:
+      213: 8907652749354371262
+    second: bluewin_00007_128
+  - first:
+      213: -5901293540113502130
+    second: bluewin_00007_129
+  - first:
+      213: -2968711209509431209
+    second: bluewin_00007_130
+  - first:
+      213: 545746508437587339
+    second: bluewin_00007_131
+  - first:
+      213: -7458649376589070226
+    second: bluewin_00007_132
+  - first:
+      213: 2088736231627783684
+    second: bluewin_00007_133
+  - first:
+      213: 2973711197863149052
+    second: bluewin_00007_134
+  - first:
+      213: -668777007512775366
+    second: bluewin_00007_135
+  - first:
+      213: 6382029962671822577
+    second: bluewin_00007_136
+  - first:
+      213: -2956672097402106010
+    second: bluewin_00007_137
+  - first:
+      213: 4153413211807208165
+    second: bluewin_00007_138
+  - first:
+      213: 5059752379175051031
+    second: bluewin_00007_139
+  - first:
+      213: -6893747823806046501
+    second: bluewin_00007_140
+  - first:
+      213: -6216773420643872283
+    second: bluewin_00007_141
+  - first:
+      213: 7226830655091507432
+    second: bluewin_00007_142
+  - first:
+      213: -2312143523501878148
+    second: bluewin_00007_143
+  - first:
+      213: -1637737180262734937
+    second: bluewin_00007_144
+  - first:
+      213: -3948472893158647184
+    second: bluewin_00007_145
+  - first:
+      213: -4272232708215613418
+    second: bluewin_00007_146
+  - first:
+      213: -6719642462087480740
+    second: bluewin_00007_147
+  - first:
+      213: 1104042399724683314
+    second: bluewin_00007_148
+  - first:
+      213: 3914651608303507858
+    second: bluewin_00007_149
+  - first:
+      213: 8578868507632700097
+    second: bluewin_00007_150
+  - first:
+      213: 1072037609261228970
+    second: bluewin_00007_151
+  - first:
+      213: 4660266342569356085
+    second: bluewin_00007_152
+  - first:
+      213: 3878267219609562749
+    second: bluewin_00007_153
+  - first:
+      213: 9034953715550252248
+    second: bluewin_00007_154
+  - first:
+      213: 7901140313824465747
+    second: bluewin_00007_155
+  - first:
+      213: -7089726246107408824
+    second: bluewin_00007_156
+  - first:
+      213: -7212804775543278836
+    second: bluewin_00007_157
+  - first:
+      213: 7080377793641828374
+    second: bluewin_00007_158
+  - first:
+      213: 2362703383427070268
+    second: bluewin_00007_159
+  - first:
+      213: 4249990918655762581
+    second: bluewin_00007_160
+  - first:
+      213: 1620500509552412131
+    second: bluewin_00007_161
+  - first:
+      213: 2030671289542886250
+    second: bluewin_00007_162
+  - first:
+      213: 249179501468030804
+    second: bluewin_00007_163
+  - first:
+      213: -3394322596006334604
+    second: bluewin_00007_164
+  - first:
+      213: 6049621722067933802
+    second: bluewin_00007_165
+  - first:
+      213: 8264413339914356147
+    second: bluewin_00007_166
+  - first:
+      213: 5923620557711205687
+    second: bluewin_00007_167
+  - first:
+      213: -8316924020981731107
+    second: bluewin_00007_168
+  - first:
+      213: 6476900710496460411
+    second: bluewin_00007_169
+  - first:
+      213: 7097883596768911544
+    second: bluewin_00007_170
+  - first:
+      213: -5023101173357391557
+    second: bluewin_00007_171
+  - first:
+      213: -5282300201708011622
+    second: bluewin_00007_172
+  - first:
+      213: 4263287549984523347
+    second: bluewin_00007_173
+  - first:
+      213: 5005350131905611422
+    second: bluewin_00007_174
+  - first:
+      213: 4260950332999866232
+    second: bluewin_00007_175
+  - first:
+      213: -967586089582465012
+    second: bluewin_00007_176
+  - first:
+      213: -544133865998346430
+    second: bluewin_00007_177
+  - first:
+      213: -6396180556922701759
+    second: bluewin_00007_178
+  - first:
+      213: 3420671538561063158
+    second: bluewin_00007_179
+  - first:
+      213: 4961670110391522493
+    second: bluewin_00007_180
+  - first:
+      213: 6554015826570985145
+    second: bluewin_00007_181
+  - first:
+      213: 1240562801925740647
+    second: bluewin_00007_182
+  - first:
+      213: -5337576353085005356
+    second: bluewin_00007_183
+  - first:
+      213: 6001023987814706784
+    second: bluewin_00007_184
+  - first:
+      213: 2742708028989816743
+    second: bluewin_00007_185
+  - first:
+      213: -624852057473105564
+    second: bluewin_00007_186
+  - first:
+      213: -4571934739007959593
+    second: bluewin_00007_187
+  - first:
+      213: 446623024403221012
+    second: bluewin_00007_188
+  - first:
+      213: 7382788758187178649
+    second: bluewin_00007_189
+  - first:
+      213: -582729718572296330
+    second: bluewin_00007_190
+  - first:
+      213: -3409140045551380789
+    second: bluewin_00007_191
+  - first:
+      213: 4936107933078671438
+    second: bluewin_00007_192
+  - first:
+      213: -2850622848180899609
+    second: bluewin_00007_193
+  - first:
+      213: 2207983555481238080
+    second: bluewin_00007_194
+  - first:
+      213: -3957655208099385336
+    second: bluewin_00007_195
+  - first:
+      213: -4312387030146355683
+    second: bluewin_00007_196
+  - first:
+      213: 2996065785135438496
+    second: bluewin_00007_197
+  - first:
+      213: -1549156361154574346
+    second: bluewin_00007_198
+  - first:
+      213: 2467862221098757705
+    second: bluewin_00007_199
+  - first:
+      213: -5086273910734473121
+    second: bluewin_00007_200
+  - first:
+      213: -8796508159390073600
+    second: bluewin_00007_201
+  - first:
+      213: -8021917416981663174
+    second: bluewin_00007_202
+  - first:
+      213: -7972991520219069102
+    second: bluewin_00007_203
+  - first:
+      213: -5677196629532812627
+    second: bluewin_00007_204
+  - first:
+      213: -2824297203515814751
+    second: bluewin_00007_205
+  - first:
+      213: -8075907878055982455
+    second: bluewin_00007_206
+  - first:
+      213: -2480943483374222625
+    second: bluewin_00007_207
+  - first:
+      213: -1910844805013470729
+    second: bluewin_00007_208
+  - first:
+      213: 1815436322920415631
+    second: bluewin_00007_209
+  - first:
+      213: 564913621018434926
+    second: bluewin_00007_210
+  - first:
+      213: 7612378117462765289
+    second: bluewin_00007_211
+  - first:
+      213: -2109899003641317438
+    second: bluewin_00007_212
+  - first:
+      213: 3096509961065775156
+    second: bluewin_00007_213
+  - first:
+      213: 4856875229234834913
+    second: bluewin_00007_214
+  - first:
+      213: -2777796089026170585
+    second: bluewin_00007_215
+  - first:
+      213: 7051952221025503503
+    second: bluewin_00007_216
+  - first:
+      213: -7593521145273374507
+    second: bluewin_00007_217
+  - first:
+      213: -4877253605390543167
+    second: bluewin_00007_218
+  - first:
+      213: -2574423287465852146
+    second: bluewin_00007_219
+  - first:
+      213: -6944201061374742133
+    second: bluewin_00007_220
+  - first:
+      213: -2283282542100515352
+    second: bluewin_00007_221
+  - first:
+      213: 454475277277091008
+    second: bluewin_00007_222
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: bluewin_00007_0
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 923
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d26a0bb49404aec0800000000000000
+      internalID: -3556712768876158251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_1
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 906
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de30a1f4c27fe2540800000000000000
+      internalID: 4985193607223444461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_2
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 826
+        width: 92
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f1194a9ae8aadcf0800000000000000
+      internalID: -226683105664495116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_3
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 935
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7307810c50a2738e0800000000000000
+      internalID: -1713854929005154249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_4
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 901
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94be027b1a54cae70800000000000000
+      internalID: 9127747105637591881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_5
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 925
+        width: 8
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9c4385bb6dd14f00800000000000000
+      internalID: 1099403238731631771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_6
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 941
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7384d61990c609d0800000000000000
+      internalID: -2808345553873370245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_7
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 911
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef09642e9390857e0800000000000000
+      internalID: -1776659908783599362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_8
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 925
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1639c042a80aadeb0800000000000000
+      internalID: -4694263146409585823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_9
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 935
+        width: 39
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33176eb5bb32219b0800000000000000
+      internalID: -5110983339504406221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_10
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 900
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6fe46915ac44c6d0800000000000000
+      internalID: -2971165582178324626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_11
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 906
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ab62f20d6a0d11b0800000000000000
+      internalID: -5684375691354543200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_12
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 911
+        width: 67
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0d9aa64b9877c0c0800000000000000
+      internalID: -4555539889761116918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_13
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 900
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95c25e4895b1eed20800000000000000
+      internalID: 3309612847459544153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_14
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 906
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db9de41ec47d666d0800000000000000
+      internalID: -2997471776770958915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_15
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 835
+        width: 92
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a648050d1f043570800000000000000
+      internalID: 8445391818539419302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_16
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 911
+        width: 76
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: add05ee7679b74ac0800000000000000
+      internalID: -3870921436115431974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_17
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 911
+        width: 17
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b0b2be706d898a0800000000000000
+      internalID: -6298048749379056893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_18
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 900
+        width: 51
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 633c32cde0ff30010800000000000000
+      internalID: 1154046368824935222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_19
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 906
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef68ff2a15286ace0800000000000000
+      internalID: -1394283747485972738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_20
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 889
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc842b42d01175da0800000000000000
+      internalID: -5956273234026280757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_21
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 889
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94269770ffc94b6c0800000000000000
+      internalID: -4128502339235913143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_22
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 865
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff0afa71d9fb5d020800000000000000
+      internalID: 2366007860681220351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_23
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 881
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f6020d6e248669e0800000000000000
+      internalID: -1628468880315644173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_24
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 876
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36b3ab0a0df23d6f0800000000000000
+      internalID: -661132147197068445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_25
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 870
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f363d073467d0470800000000000000
+      internalID: 8362470115124667384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_26
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 876
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79ff428a690903400800000000000000
+      internalID: 301900151774314391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_27
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 870
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eea4426a74fbff80800000000000000
+      internalID: -8071589100659626268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_28
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 865
+        width: 39
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be9b5e89a35fb3340800000000000000
+      internalID: 4844735456189200875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_29
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 830
+        width: 78
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3e9f31af15ae8d00800000000000000
+      internalID: 976899724453846590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_30
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 870
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c50847720d4c6b100800000000000000
+      internalID: 123502438093455452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_31
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 865
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15b2a585387476590800000000000000
+      internalID: -7681092010008499375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_32
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 861
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 289df7884cc8080d0800000000000000
+      internalID: -3422580941070018174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_33
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 832
+        width: 17
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24cb2786f43f71cb0800000000000000
+      internalID: -4893174947734438846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_34
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 865
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a7392da1d6db2ad0800000000000000
+      internalID: -2725848953401034842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_35
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 838
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56989915f46084780800000000000000
+      internalID: -8698695742524913307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_36
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 850
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9a47a519937de480800000000000000
+      internalID: -8868304989892162916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_37
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 835
+        width: 45
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b5e731ed3197e680800000000000000
+      internalID: -8725846058049477194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_38
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 824
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2777ff5e90a9ad2d0800000000000000
+      internalID: -3253118413517654158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_39
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 830
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 260b87301433f1b30800000000000000
+      internalID: 4260180126839910498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_40
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 835
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b5b052cc0a6c0740800000000000000
+      internalID: 5119583479445632433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_41
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 843
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c7c8c8cad745d90800000000000000
+      internalID: -7109919731665306486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_42
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 835
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7134edca4f66f8f0800000000000000
+      internalID: -507095540960054914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_43
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 828
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b8ed31982c33e2a0800000000000000
+      internalID: -6709452874918795079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_44
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 806
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9b2613df890069b0800000000000000
+      internalID: -5089057065602241638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_45
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 771
+        width: 17
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb8539e27664a7180800000000000000
+      internalID: -9116897086681163589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_46
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 806
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6c4ba32c103a50b0800000000000000
+      internalID: -5739221877714629525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_47
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 811
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bc84eaa5c24ac730800000000000000
+      internalID: 4020099034124684472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_48
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 805
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bf601af3877ff330800000000000000
+      internalID: 3746844823715344307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_49
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 795
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 876316f555832bac0800000000000000
+      internalID: -3840945592870029704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_50
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 795
+        width: 57
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47fecf9b7181d2720800000000000000
+      internalID: 2822939031614844788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_51
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 765
+        width: 67
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44e3d945459cfaad0800000000000000
+      internalID: -2688709088482869692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_52
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 783
+        width: 17
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce38c5137dfe011f0800000000000000
+      internalID: -1076096603416394772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_53
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 760
+        width: 51
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f21384ad8d78ec0800000000000000
+      internalID: -3564642148014805206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_54
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 795
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df61e6d6ef8662a10800000000000000
+      internalID: 1884308936068044541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_55
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 765
+        width: 12
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2048a1cdc0d252180800000000000000
+      internalID: -9140850335422970878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_56
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 794
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22cd29708121f2e80800000000000000
+      internalID: -8201316502002803678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_57
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 796
+        width: 20
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 511a0c20dcdfd1d90800000000000000
+      internalID: -7125259978473955051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_58
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 785
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 241d8a33d20138da0800000000000000
+      internalID: -5943889296872648382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_59
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 65
+        width: 431
+        height: 712
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1fdd7dc0196d040800000000000000
+      internalID: 4672081147790750144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_60
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 657
+        width: 63
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76f1135ab928289d0800000000000000
+      internalID: -2773510815503802521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_61
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 773
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58aa30c9000ffb160800000000000000
+      internalID: 7043612227638897285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_62
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 760
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 359d2e5d7bb0cde80800000000000000
+      internalID: -8152628341252105901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_63
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 768
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28749d47c1379c670800000000000000
+      internalID: 8559499132851013506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_64
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 762
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 448c64040cfe50db0800000000000000
+      internalID: -4826187816666478524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_65
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 762
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90abb29dcafbc87f0800000000000000
+      internalID: -608901100503057911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_66
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 771
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93f7b17eb2535bda0800000000000000
+      internalID: -5929774871686185159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_67
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 765
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d02355644a10b320800000000000000
+      internalID: 2571584268288598225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_68
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 759
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8728499f092a04a00800000000000000
+      internalID: 738769082435011192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_69
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 736
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4edb3e21cb0aadc60800000000000000
+      internalID: 7843758430650351076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_70
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 724
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00e1d7795bb65530800000000000000
+      internalID: 3843465324944023564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_71
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 730
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a4b09a73c9334b20800000000000000
+      internalID: 3117398878808224928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_72
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 663
+        width: 32
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d93b1527df7d91aa0800000000000000
+      internalID: -6189678729299381347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_73
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 725
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5424772dbefb229d0800000000000000
+      internalID: -2800464998701776315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_74
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 713
+        width: 69
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c46a3f16a69e34d90800000000000000
+      internalID: -7114586343196088756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_75
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 724
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edcd005145cc28200800000000000000
+      internalID: 180931596549938398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_76
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea9836d8def01dc0800000000000000
+      internalID: -3670153489046529306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_77
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 686
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec97744e2be7bcb00800000000000000
+      internalID: 849912261488638414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_78
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 695
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e15982b7cf81ed0800000000000000
+      internalID: -2442925191956455928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_79
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 573
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b595b63bcc0408c10800000000000000
+      internalID: 2053712678008609115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_80
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 602
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a18f1407e08bc6c50800000000000000
+      internalID: 6659900321126545434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_81
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 569
+        width: 17
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c198c94c860167020800000000000000
+      internalID: 2339075098626787612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_82
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 625
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef899acec273d5ef0800000000000000
+      internalID: -117877349153138434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_83
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 549
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2580c3e6462792df0800000000000000
+      internalID: -204506532396922798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_84
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 549
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20b66c784aa0c3570800000000000000
+      internalID: 8447638702809049858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_85
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 625
+        width: 41
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d3aa0254fe66970800000000000000
+      internalID: 8747942406393576828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_86
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 604
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8914a1e13212bb490800000000000000
+      internalID: -7729547900738715240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_87
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 581
+        width: 24
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c99d7e89515b93470800000000000000
+      internalID: 8374924086436419996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_88
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 557
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b221cebcf56a5ee00800000000000000
+      internalID: 1073447016571081259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_89
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 602
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b721ad7421cf440800000000000000
+      internalID: 4970868188520807171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_90
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 596
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7c7eed8c7a9c600800000000000000
+      internalID: 489106515721439170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_91
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 584
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ed8a09b3c6777650800000000000000
+      internalID: 6230579192485547493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_92
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 625
+        width: 12
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05ce5ec5e6edc1ed0800000000000000
+      internalID: -2441832332355310512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_93
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 546
+        width: 51
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bb428a8c301ac8e0800000000000000
+      internalID: -1672506459406840911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_94
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 520
+        width: 10
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d6fb62e681943180800000000000000
+      internalID: -9136517735517522223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_95
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 523
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e547a36cdfb0f5e0800000000000000
+      internalID: -1877790091327879707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_96
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 645
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72b91ecb61ab72570800000000000000
+      internalID: 8441920633350232871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_97
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 585
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99dea08ba51d8a9f0800000000000000
+      internalID: -456885174613119591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_98
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 620
+        width: 23
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e98e490b78d4909f0800000000000000
+      internalID: -501784638296627042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_99
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 575
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5e8c46bc45e3b5e0800000000000000
+      internalID: -1894918900554101154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_100
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 645
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c40e239b2d43b620800000000000000
+      internalID: 2788657443820668104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_101
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 667
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45a46af35fbdac910800000000000000
+      internalID: 1858539642625083988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_102
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 465
+        width: 14
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5acb2dc10262cc270800000000000000
+      internalID: 8272028534937140389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_103
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 526
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bf9e621bd578c9b0800000000000000
+      internalID: -5059664597583224911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_104
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 485
+        width: 41
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9715f0a9787f0a10800000000000000
+      internalID: 1877852033423579035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_105
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 526
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60f811cb4f1d6bea0800000000000000
+      internalID: -5857263416291258618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_106
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 514
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f32e7b80e82669b50800000000000000
+      internalID: 6599570666129187391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_107
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 514
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6d369ecfa3ec340800000000000000
+      internalID: 4885907503665370820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_108
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 404
+        width: 62
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 217b54726533f3e70800000000000000
+      internalID: 9097046217430775570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_109
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 514
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e450f44afee51d9c0800000000000000
+      internalID: -3904235018606672562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_110
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 479
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3efc44d1fe48a900800000000000000
+      internalID: 695892942984642111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_111
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 484
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ffcb807a05bdb5c0800000000000000
+      internalID: -4198000221196922895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_112
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 441
+        width: 49
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8153ce755f30f3930800000000000000
+      internalID: 4125020135971632408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_113
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 460
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e7fb7b478fb54750800000000000000
+      internalID: 6288643042500671456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_114
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 456
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc15cee0bd223c010800000000000000
+      internalID: 1207847449308975567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_115
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 455
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c0050b0feff50970800000000000000
+      internalID: 8720657655619977413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_116
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 452
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb87793413b7259d0800000000000000
+      internalID: -2787029767871301441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_117
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 441
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 905c26a923acbeed0800000000000000
+      internalID: -2383589259075205879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_118
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 409
+        width: 41
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dededbbee3479b2f0800000000000000
+      internalID: -956605632247632403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_119
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 437
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c05cb1ba011b5a60800000000000000
+      internalID: 7663737928530284736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_120
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 443
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0bf459c0c001c620800000000000000
+      internalID: 2792514071957928718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_121
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 434
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e28debe24d63a9500800000000000000
+      internalID: 403695401548306478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_122
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 408
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b3652c063170160800000000000000
+      internalID: 6991578252814203720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_123
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 415
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32d55e8e6b0d51230800000000000000
+      internalID: 3609020160417291555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_124
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 421
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bfe940c7dee7e0c0800000000000000
+      internalID: -4546402688395776071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_125
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 351
+        width: 23
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90745dd269d89edd0800000000000000
+      internalID: -2456276445600332023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_126
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 376
+        width: 28
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae5a465c70d4d45e0800000000000000
+      internalID: -1923796770045516310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_127
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 386
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f65af6da910782f80800000000000000
+      internalID: -8131125871631162001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_128
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 375
+        width: 6
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb88cc31bf65e9b70800000000000000
+      internalID: 8907652749354371262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_129
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 359
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e403a3aaac46a1ea0800000000000000
+      internalID: -5901293540113502130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_130
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 362
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 758587442e40dc6d0800000000000000
+      internalID: -2968711209509431209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_131
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 339
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8505d4de81e29700800000000000000
+      internalID: 545746508437587339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_132
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 347
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e60483cd8ed8d7890800000000000000
+      internalID: -7458649376589070226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_133
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 339
+        width: 51
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40e79ab398eacfc10800000000000000
+      internalID: 2088736231627783684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_134
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 281
+        width: 17
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfdfb3d349eb44920800000000000000
+      internalID: 2973711197863149052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_135
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 283
+        width: 19
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a359041ead608b6f0800000000000000
+      internalID: -668777007512775366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_136
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 316
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f614f60076819850800000000000000
+      internalID: 6382029962671822577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_137
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 314
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66fc90d746ac7f6d0800000000000000
+      internalID: -2956672097402106010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_138
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 315
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e2de277f43e3a930800000000000000
+      internalID: 4153413211807208165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_139
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 310
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71f9a2c2bf9d73640800000000000000
+      internalID: 5059752379175051031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_140
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 298
+        width: 45
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bde1beef0ec7450a0800000000000000
+      internalID: -6893747823806046501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_141
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 304
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e19e65038599b9a0800000000000000
+      internalID: -6216773420643872283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_142
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 251
+        width: 14
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e002a0013cda4460800000000000000
+      internalID: 7226830655091507432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_143
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 275
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7453f337bd99efd0800000000000000
+      internalID: -2312143523501878148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_144
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 275
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a36dfe26b69549e0800000000000000
+      internalID: -1637737180262734937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_145
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 269
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a1506d2d43439c0800000000000000
+      internalID: -3948472893158647184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_146
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 275
+        width: 18
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 618d005bcfaf5b4c0800000000000000
+      internalID: -4272232708215613418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_147
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 246
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5af4ad68c80fb2a0800000000000000
+      internalID: -6719642462087480740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_148
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 245
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2304f8c86b8525f00800000000000000
+      internalID: 1104042399724683314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_149
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 246
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2999754a5e2a35630800000000000000
+      internalID: 3914651608303507858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_150
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 249
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca8b3474734e0770800000000000000
+      internalID: 8578868507632700097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_151
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 199
+        width: 51
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa3efd59684a0ee00800000000000000
+      internalID: 1072037609261228970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_152
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 211
+        width: 10
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53b2e832c879ca040800000000000000
+      internalID: 4660266342569356085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_153
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 234
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7eaed00d7f52d530800000000000000
+      internalID: 3878267219609562749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_154
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 238
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dce779f88a926d70800000000000000
+      internalID: 9034953715550252248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_155
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 228
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 353960ed04d76ad60800000000000000
+      internalID: 7901140313824465747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_156
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 240
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 846110aca8b3c9d90800000000000000
+      internalID: -7089726246107408824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_157
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 234
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c03708f8548f6eb90800000000000000
+      internalID: -7212804775543278836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_158
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 205
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 610d591071e824260800000000000000
+      internalID: 7080377793641828374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_159
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 205
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c39b8c685320ac020800000000000000
+      internalID: 2362703383427070268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_160
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 208
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 590ec1d19300bfa30800000000000000
+      internalID: 4249990918655762581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_161
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 205
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e5063ea0ac2d7610800000000000000
+      internalID: 1620500509552412131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_162
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 170
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a63c9c467c46e2c10800000000000000
+      internalID: 2030671289542886250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_163
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 122
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4579f46bf63457300800000000000000
+      internalID: 249179501468030804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_164
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 173
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47fe5f33591f4e0d0800000000000000
+      internalID: -3394322596006334604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_165
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 176
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6a985967e294f350800000000000000
+      internalID: 6049621722067933802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_166
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 135
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b5489a552811b270800000000000000
+      internalID: 8264413339914356147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_167
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 176
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 735e396338de43250800000000000000
+      internalID: 5923620557711205687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_168
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 131
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd07879faa9549c80800000000000000
+      internalID: -8316924020981731107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_169
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 119
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7edd9e41e292e950800000000000000
+      internalID: 6476900710496460411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_170
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 131
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0ab7a668fb08260800000000000000
+      internalID: 7097883596768911544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_171
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 170
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b315f2ba81c5a4ab0800000000000000
+      internalID: -5023101173357391557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_172
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 129
+        width: 51
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9f383014ff71b6b0800000000000000
+      internalID: -5282300201708011622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_173
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 164
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3544c28507d3a2b30800000000000000
+      internalID: 4263287549984523347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_174
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 135
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9640bcec63967540800000000000000
+      internalID: 5005350131905611422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_175
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 100
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8771a0c90cfe12b30800000000000000
+      internalID: 4260950332999866232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_176
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 106
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00f3d8f3917292f0800000000000000
+      internalID: -967586089582465012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_177
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 105
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24798eeb129d278f0800000000000000
+      internalID: -544133865998346430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_178
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 94
+        width: 40
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 148bc510ca33c37a0800000000000000
+      internalID: -6396180556922701759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_179
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 94
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8983d04aaa87f20800000000000000
+      internalID: 3420671538561063158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_180
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 94
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db45f866da46bd440800000000000000
+      internalID: 4961670110391522493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_181
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 82
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9be3d0b6baa84fa50800000000000000
+      internalID: 6554015826570985145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_182
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 78
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 768d85aab4d573110800000000000000
+      internalID: 1240562801925740647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_183
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 81
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d1e7d8269e1de5b0800000000000000
+      internalID: -5337576353085005356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_184
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 61
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06e2b4aa58be74350800000000000000
+      internalID: 6001023987814706784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_185
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 55
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7afbc8ebb6e001620800000000000000
+      internalID: 2742708028989816743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_186
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 61
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 461c4254d541457f0800000000000000
+      internalID: -624852057473105564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_187
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 67
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dd8929f3993d80c0800000000000000
+      internalID: -4571934739007959593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_188
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 67
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41a801e3649b23600800000000000000
+      internalID: 446623024403221012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_189
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 55
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99a7e77824fe47660800000000000000
+      internalID: 7382788758187178649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_190
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 61
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6775f6c886ab9e7f0800000000000000
+      internalID: -582729718572296330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_191
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc6d953e03d40b0d0800000000000000
+      internalID: -3409140045551380789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_192
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 55
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4054243304908440800000000000000
+      internalID: 4936107933078671438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_193
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 61
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e0b0917f9d8078d0800000000000000
+      internalID: -2850622848180899609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_194
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 55
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04afc56685554ae10800000000000000
+      internalID: 2207983555481238080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_195
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 55
+        width: 20
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 800f2c98e859319c0800000000000000
+      internalID: -3957655208099385336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_196
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 61
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1eef1618d25724c0800000000000000
+      internalID: -4312387030146355683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_197
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 55
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aa13be25f9249920800000000000000
+      internalID: 2996065785135438496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_198
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 67
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f748df4f7a408ae0800000000000000
+      internalID: -1549156361154574346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_199
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 67
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94ea2336d9b9f3220800000000000000
+      internalID: 2467862221098757705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_200
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 55
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f58b55093dce969b0800000000000000
+      internalID: -5086273910734473121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_201
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 55
+        width: 22
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00dbab75f668ce580800000000000000
+      internalID: -8796508159390073600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_202
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a32f9477c9c6ca090800000000000000
+      internalID: -8021917416981663174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_203
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 55
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2550420847e3a5190800000000000000
+      internalID: -7972991520219069102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_204
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 55
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daad6a89ebb8631b0800000000000000
+      internalID: -5677196629532812627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_205
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac8f4c38a41ec8d0800000000000000
+      internalID: -2824297203515814751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_206
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98ac1b9a29c9cef80800000000000000
+      internalID: -8075907878055982455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_207
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd2c8a5eb0be19dd0800000000000000
+      internalID: -2480943483374222625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_208
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 55
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f1854026c05b75e0800000000000000
+      internalID: -1910844805013470729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_209
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f81430497b9b13910800000000000000
+      internalID: 1815436322920415631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_210
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6d559df1f9f6d700800000000000000
+      internalID: 564913621018434926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_211
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ee2353d09994a960800000000000000
+      internalID: 7612378117462765289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_212
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 55
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c73200f80228b2e0800000000000000
+      internalID: -2109899003641317438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_213
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 55
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 430c8c0576309fa20800000000000000
+      internalID: 3096509961065775156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_214
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1edafe4c946176340800000000000000
+      internalID: 4856875229234834913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_215
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 55
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7213027ac294379d0800000000000000
+      internalID: -2777796089026170585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_216
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f098043ae219dd160800000000000000
+      internalID: 7051952221025503503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_217
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d8209520c46e9690800000000000000
+      internalID: -7593521145273374507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_218
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 55
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c6143bcfa3805cb0800000000000000
+      internalID: -4877253605390543167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_219
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 55
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e03ca11f8afc54cd0800000000000000
+      internalID: -2574423287465852146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_220
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b813ed73ded31af90800000000000000
+      internalID: -6944201061374742133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_221
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 58
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e57f3410a62050e0800000000000000
+      internalID: -2283282542100515352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bluewin_00007_222
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 55
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c45c455bde9e4600800000000000000
+      internalID: 454475277277091008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      bluewin_00007_0: -3556712768876158251
+      bluewin_00007_1: 4985193607223444461
+      bluewin_00007_10: -2971165582178324626
+      bluewin_00007_100: 2788657443820668104
+      bluewin_00007_101: 1858539642625083988
+      bluewin_00007_102: 8272028534937140389
+      bluewin_00007_103: -5059664597583224911
+      bluewin_00007_104: 1877852033423579035
+      bluewin_00007_105: -5857263416291258618
+      bluewin_00007_106: 6599570666129187391
+      bluewin_00007_107: 4885907503665370820
+      bluewin_00007_108: 9097046217430775570
+      bluewin_00007_109: -3904235018606672562
+      bluewin_00007_11: -5684375691354543200
+      bluewin_00007_110: 695892942984642111
+      bluewin_00007_111: -4198000221196922895
+      bluewin_00007_112: 4125020135971632408
+      bluewin_00007_113: 6288643042500671456
+      bluewin_00007_114: 1207847449308975567
+      bluewin_00007_115: 8720657655619977413
+      bluewin_00007_116: -2787029767871301441
+      bluewin_00007_117: -2383589259075205879
+      bluewin_00007_118: -956605632247632403
+      bluewin_00007_119: 7663737928530284736
+      bluewin_00007_12: -4555539889761116918
+      bluewin_00007_120: 2792514071957928718
+      bluewin_00007_121: 403695401548306478
+      bluewin_00007_122: 6991578252814203720
+      bluewin_00007_123: 3609020160417291555
+      bluewin_00007_124: -4546402688395776071
+      bluewin_00007_125: -2456276445600332023
+      bluewin_00007_126: -1923796770045516310
+      bluewin_00007_127: -8131125871631162001
+      bluewin_00007_128: 8907652749354371262
+      bluewin_00007_129: -5901293540113502130
+      bluewin_00007_13: 3309612847459544153
+      bluewin_00007_130: -2968711209509431209
+      bluewin_00007_131: 545746508437587339
+      bluewin_00007_132: -7458649376589070226
+      bluewin_00007_133: 2088736231627783684
+      bluewin_00007_134: 2973711197863149052
+      bluewin_00007_135: -668777007512775366
+      bluewin_00007_136: 6382029962671822577
+      bluewin_00007_137: -2956672097402106010
+      bluewin_00007_138: 4153413211807208165
+      bluewin_00007_139: 5059752379175051031
+      bluewin_00007_14: -2997471776770958915
+      bluewin_00007_140: -6893747823806046501
+      bluewin_00007_141: -6216773420643872283
+      bluewin_00007_142: 7226830655091507432
+      bluewin_00007_143: -2312143523501878148
+      bluewin_00007_144: -1637737180262734937
+      bluewin_00007_145: -3948472893158647184
+      bluewin_00007_146: -4272232708215613418
+      bluewin_00007_147: -6719642462087480740
+      bluewin_00007_148: 1104042399724683314
+      bluewin_00007_149: 3914651608303507858
+      bluewin_00007_15: 8445391818539419302
+      bluewin_00007_150: 8578868507632700097
+      bluewin_00007_151: 1072037609261228970
+      bluewin_00007_152: 4660266342569356085
+      bluewin_00007_153: 3878267219609562749
+      bluewin_00007_154: 9034953715550252248
+      bluewin_00007_155: 7901140313824465747
+      bluewin_00007_156: -7089726246107408824
+      bluewin_00007_157: -7212804775543278836
+      bluewin_00007_158: 7080377793641828374
+      bluewin_00007_159: 2362703383427070268
+      bluewin_00007_16: -3870921436115431974
+      bluewin_00007_160: 4249990918655762581
+      bluewin_00007_161: 1620500509552412131
+      bluewin_00007_162: 2030671289542886250
+      bluewin_00007_163: 249179501468030804
+      bluewin_00007_164: -3394322596006334604
+      bluewin_00007_165: 6049621722067933802
+      bluewin_00007_166: 8264413339914356147
+      bluewin_00007_167: 5923620557711205687
+      bluewin_00007_168: -8316924020981731107
+      bluewin_00007_169: 6476900710496460411
+      bluewin_00007_17: -6298048749379056893
+      bluewin_00007_170: 7097883596768911544
+      bluewin_00007_171: -5023101173357391557
+      bluewin_00007_172: -5282300201708011622
+      bluewin_00007_173: 4263287549984523347
+      bluewin_00007_174: 5005350131905611422
+      bluewin_00007_175: 4260950332999866232
+      bluewin_00007_176: -967586089582465012
+      bluewin_00007_177: -544133865998346430
+      bluewin_00007_178: -6396180556922701759
+      bluewin_00007_179: 3420671538561063158
+      bluewin_00007_18: 1154046368824935222
+      bluewin_00007_180: 4961670110391522493
+      bluewin_00007_181: 6554015826570985145
+      bluewin_00007_182: 1240562801925740647
+      bluewin_00007_183: -5337576353085005356
+      bluewin_00007_184: 6001023987814706784
+      bluewin_00007_185: 2742708028989816743
+      bluewin_00007_186: -624852057473105564
+      bluewin_00007_187: -4571934739007959593
+      bluewin_00007_188: 446623024403221012
+      bluewin_00007_189: 7382788758187178649
+      bluewin_00007_19: -1394283747485972738
+      bluewin_00007_190: -582729718572296330
+      bluewin_00007_191: -3409140045551380789
+      bluewin_00007_192: 4936107933078671438
+      bluewin_00007_193: -2850622848180899609
+      bluewin_00007_194: 2207983555481238080
+      bluewin_00007_195: -3957655208099385336
+      bluewin_00007_196: -4312387030146355683
+      bluewin_00007_197: 2996065785135438496
+      bluewin_00007_198: -1549156361154574346
+      bluewin_00007_199: 2467862221098757705
+      bluewin_00007_2: -226683105664495116
+      bluewin_00007_20: -5956273234026280757
+      bluewin_00007_200: -5086273910734473121
+      bluewin_00007_201: -8796508159390073600
+      bluewin_00007_202: -8021917416981663174
+      bluewin_00007_203: -7972991520219069102
+      bluewin_00007_204: -5677196629532812627
+      bluewin_00007_205: -2824297203515814751
+      bluewin_00007_206: -8075907878055982455
+      bluewin_00007_207: -2480943483374222625
+      bluewin_00007_208: -1910844805013470729
+      bluewin_00007_209: 1815436322920415631
+      bluewin_00007_21: -4128502339235913143
+      bluewin_00007_210: 564913621018434926
+      bluewin_00007_211: 7612378117462765289
+      bluewin_00007_212: -2109899003641317438
+      bluewin_00007_213: 3096509961065775156
+      bluewin_00007_214: 4856875229234834913
+      bluewin_00007_215: -2777796089026170585
+      bluewin_00007_216: 7051952221025503503
+      bluewin_00007_217: -7593521145273374507
+      bluewin_00007_218: -4877253605390543167
+      bluewin_00007_219: -2574423287465852146
+      bluewin_00007_22: 2366007860681220351
+      bluewin_00007_220: -6944201061374742133
+      bluewin_00007_221: -2283282542100515352
+      bluewin_00007_222: 454475277277091008
+      bluewin_00007_23: -1628468880315644173
+      bluewin_00007_24: -661132147197068445
+      bluewin_00007_25: 8362470115124667384
+      bluewin_00007_26: 301900151774314391
+      bluewin_00007_27: -8071589100659626268
+      bluewin_00007_28: 4844735456189200875
+      bluewin_00007_29: 976899724453846590
+      bluewin_00007_3: -1713854929005154249
+      bluewin_00007_30: 123502438093455452
+      bluewin_00007_31: -7681092010008499375
+      bluewin_00007_32: -3422580941070018174
+      bluewin_00007_33: -4893174947734438846
+      bluewin_00007_34: -2725848953401034842
+      bluewin_00007_35: -8698695742524913307
+      bluewin_00007_36: -8868304989892162916
+      bluewin_00007_37: -8725846058049477194
+      bluewin_00007_38: -3253118413517654158
+      bluewin_00007_39: 4260180126839910498
+      bluewin_00007_4: 9127747105637591881
+      bluewin_00007_40: 5119583479445632433
+      bluewin_00007_41: -7109919731665306486
+      bluewin_00007_42: -507095540960054914
+      bluewin_00007_43: -6709452874918795079
+      bluewin_00007_44: -5089057065602241638
+      bluewin_00007_45: -9116897086681163589
+      bluewin_00007_46: -5739221877714629525
+      bluewin_00007_47: 4020099034124684472
+      bluewin_00007_48: 3746844823715344307
+      bluewin_00007_49: -3840945592870029704
+      bluewin_00007_5: 1099403238731631771
+      bluewin_00007_50: 2822939031614844788
+      bluewin_00007_51: -2688709088482869692
+      bluewin_00007_52: -1076096603416394772
+      bluewin_00007_53: -3564642148014805206
+      bluewin_00007_54: 1884308936068044541
+      bluewin_00007_55: -9140850335422970878
+      bluewin_00007_56: -8201316502002803678
+      bluewin_00007_57: -7125259978473955051
+      bluewin_00007_58: -5943889296872648382
+      bluewin_00007_59: 4672081147790750144
+      bluewin_00007_6: -2808345553873370245
+      bluewin_00007_60: -2773510815503802521
+      bluewin_00007_61: 7043612227638897285
+      bluewin_00007_62: -8152628341252105901
+      bluewin_00007_63: 8559499132851013506
+      bluewin_00007_64: -4826187816666478524
+      bluewin_00007_65: -608901100503057911
+      bluewin_00007_66: -5929774871686185159
+      bluewin_00007_67: 2571584268288598225
+      bluewin_00007_68: 738769082435011192
+      bluewin_00007_69: 7843758430650351076
+      bluewin_00007_7: -1776659908783599362
+      bluewin_00007_70: 3843465324944023564
+      bluewin_00007_71: 3117398878808224928
+      bluewin_00007_72: -6189678729299381347
+      bluewin_00007_73: -2800464998701776315
+      bluewin_00007_74: -7114586343196088756
+      bluewin_00007_75: 180931596549938398
+      bluewin_00007_76: -3670153489046529306
+      bluewin_00007_77: 849912261488638414
+      bluewin_00007_78: -2442925191956455928
+      bluewin_00007_79: 2053712678008609115
+      bluewin_00007_8: -4694263146409585823
+      bluewin_00007_80: 6659900321126545434
+      bluewin_00007_81: 2339075098626787612
+      bluewin_00007_82: -117877349153138434
+      bluewin_00007_83: -204506532396922798
+      bluewin_00007_84: 8447638702809049858
+      bluewin_00007_85: 8747942406393576828
+      bluewin_00007_86: -7729547900738715240
+      bluewin_00007_87: 8374924086436419996
+      bluewin_00007_88: 1073447016571081259
+      bluewin_00007_89: 4970868188520807171
+      bluewin_00007_9: -5110983339504406221
+      bluewin_00007_90: 489106515721439170
+      bluewin_00007_91: 6230579192485547493
+      bluewin_00007_92: -2441832332355310512
+      bluewin_00007_93: -1672506459406840911
+      bluewin_00007_94: -9136517735517522223
+      bluewin_00007_95: -1877790091327879707
+      bluewin_00007_96: 8441920633350232871
+      bluewin_00007_97: -456885174613119591
+      bluewin_00007_98: -501784638296627042
+      bluewin_00007_99: -1894918900554101154
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

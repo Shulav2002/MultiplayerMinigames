@@ -16,4 +16,4 @@ MonoBehaviour:
   rows: 8
   cellSize: 1
   cellGap: 0
-  boardCenter: {x: 0, y: 0}
+  boardCenter: {x: 0, y: -0.65}

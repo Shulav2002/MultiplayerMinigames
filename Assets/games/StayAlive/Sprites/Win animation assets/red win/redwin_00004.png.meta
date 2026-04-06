@@ -1,0 +1,1105 @@
+fileFormatVersion: 2
+guid: f3017582474d30644bb25dc80aae86ea
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3238129898814735408
+    second: redwin_00004_0
+  - first:
+      213: 7868923642820852008
+    second: redwin_00004_1
+  - first:
+      213: -8205008291047566772
+    second: redwin_00004_2
+  - first:
+      213: -739806887989089752
+    second: redwin_00004_3
+  - first:
+      213: -5178099788154483354
+    second: redwin_00004_4
+  - first:
+      213: -2621441041999690774
+    second: redwin_00004_5
+  - first:
+      213: -201324624550298410
+    second: redwin_00004_6
+  - first:
+      213: -3677348268669070862
+    second: redwin_00004_7
+  - first:
+      213: 8212208488632997462
+    second: redwin_00004_8
+  - first:
+      213: 6091760172697933207
+    second: redwin_00004_9
+  - first:
+      213: 902799126778068699
+    second: redwin_00004_10
+  - first:
+      213: 795939848001461397
+    second: redwin_00004_11
+  - first:
+      213: -2037120562241724085
+    second: redwin_00004_12
+  - first:
+      213: -1522837209110736241
+    second: redwin_00004_13
+  - first:
+      213: 1349554745625102779
+    second: redwin_00004_14
+  - first:
+      213: 436131528162010967
+    second: redwin_00004_15
+  - first:
+      213: 8153782577528060022
+    second: redwin_00004_16
+  - first:
+      213: 6340825027264138112
+    second: redwin_00004_17
+  - first:
+      213: 8312159087556975783
+    second: redwin_00004_18
+  - first:
+      213: -4326032049096624372
+    second: redwin_00004_19
+  - first:
+      213: -4409562120164383433
+    second: redwin_00004_20
+  - first:
+      213: 2202655126242366529
+    second: redwin_00004_21
+  - first:
+      213: 2323025607424154043
+    second: redwin_00004_22
+  - first:
+      213: 2031592333847268903
+    second: redwin_00004_23
+  - first:
+      213: 883425991830652380
+    second: redwin_00004_24
+  - first:
+      213: 4954986563624338474
+    second: redwin_00004_25
+  - first:
+      213: -6123094023766507097
+    second: redwin_00004_26
+  - first:
+      213: 3641892959722696765
+    second: redwin_00004_27
+  - first:
+      213: 8821512007929168020
+    second: redwin_00004_28
+  - first:
+      213: 3864315301086635092
+    second: redwin_00004_29
+  - first:
+      213: -1831083229797887153
+    second: redwin_00004_30
+  - first:
+      213: 8273361425439284933
+    second: redwin_00004_31
+  - first:
+      213: -5958001699792322742
+    second: redwin_00004_32
+  - first:
+      213: -3657972329233174663
+    second: redwin_00004_33
+  - first:
+      213: -6395127940715987524
+    second: redwin_00004_34
+  - first:
+      213: 8957483178034164620
+    second: redwin_00004_35
+  - first:
+      213: 4367217301709024326
+    second: redwin_00004_36
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: redwin_00004_0
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 861
+        width: 197
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0db739c630adf03d0800000000000000
+      internalID: -3238129898814735408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_1
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 768
+        width: 115
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 829720f9c58043d60800000000000000
+      internalID: 7868923642820852008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_2
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 61
+        width: 412
+        height: 752
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4299f86e64f12e80800000000000000
+      internalID: -8205008291047566772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_3
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 628
+        width: 72
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82ae5071e8dabb5f0800000000000000
+      internalID: -739806887989089752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_4
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 582
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66dc68b6da1b328b0800000000000000
+      internalID: -5178099788154483354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_5
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 482
+        width: 11
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae38af3e245ce9bd0800000000000000
+      internalID: -2621441041999690774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_6
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 371
+        width: 42
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dcf3251250c43df0800000000000000
+      internalID: -201324624550298410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_7
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 429
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f1159aab3f67fcc0800000000000000
+      internalID: -3677348268669070862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_8
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 392
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 656da6a3c10a7f170800000000000000
+      internalID: 8212208488632997462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_9
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 379
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 795588ef9974a8450800000000000000
+      internalID: 6091760172697933207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_10
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 359
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdeb327c503678c00800000000000000
+      internalID: 902799126778068699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_11
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 277
+        width: 43
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59c94be131fbb0b00800000000000000
+      internalID: 795939848001461397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_12
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 301
+        width: 22
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4120fa44a1bab3e0800000000000000
+      internalID: -2037120562241724085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_13
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 333
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f82153c60abcddae0800000000000000
+      internalID: -1522837209110736241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_14
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 312
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb94de114e49ab210800000000000000
+      internalID: 1349554745625102779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_15
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 283
+        width: 27
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757e17b60537d0600800000000000000
+      internalID: 436131528162010967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_16
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 277
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 678345dbd0e082170800000000000000
+      internalID: 8153782577528060022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_17
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 263
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b4cf464c22ff750800000000000000
+      internalID: 6340825027264138112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_18
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 239
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ac5e5286a8ba5370800000000000000
+      internalID: 8312159087556975783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_19
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 236
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c07f3aa85c8d6f3c0800000000000000
+      internalID: -4326032049096624372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_20
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 231
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73565945d961ec2c0800000000000000
+      internalID: -4409562120164383433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_21
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 241
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1449e5aca27619e10800000000000000
+      internalID: 2202655126242366529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_22
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 213
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb917a66b7b0d3020800000000000000
+      internalID: 2323025607424154043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_23
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 225
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72e8f5bb67aa13c10800000000000000
+      internalID: 2031592333847268903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_24
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 207
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd5c96c424f824c00800000000000000
+      internalID: 883425991830652380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_25
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 208
+        width: 6
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2489a7e606a3c440800000000000000
+      internalID: 4954986563624338474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_26
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 143
+        width: 15
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1841b4d66660ba0800000000000000
+      internalID: -6123094023766507097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_27
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 154
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d30744ee95a9a8230800000000000000
+      internalID: 3641892959722696765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_28
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 107
+        width: 7
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 490067ece6e4c6a70800000000000000
+      internalID: 8821512007929168020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_29
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 131
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4542065da4ec0a530800000000000000
+      internalID: 3864315301086635092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_30
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 88
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f43d8b5018fa696e0800000000000000
+      internalID: -1831083229797887153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_31
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 81
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ce5abdd162e0d270800000000000000
+      internalID: 8273361425439284933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_32
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 79
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4f74b8550de05da0800000000000000
+      internalID: -5958001699792322742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_33
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 78
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97f29dd1c854c3dc0800000000000000
+      internalID: -3657972329233174663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_34
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 55
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbdb2705501ff37a0800000000000000
+      internalID: -6395127940715987524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_35
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 55
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c83734cdd7f5f4c70800000000000000
+      internalID: 8957483178034164620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: redwin_00004_36
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 55
+        width: 25
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64c6e455ff87b9c30800000000000000
+      internalID: 4367217301709024326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      redwin_00004_0: -3238129898814735408
+      redwin_00004_1: 7868923642820852008
+      redwin_00004_10: 902799126778068699
+      redwin_00004_11: 795939848001461397
+      redwin_00004_12: -2037120562241724085
+      redwin_00004_13: -1522837209110736241
+      redwin_00004_14: 1349554745625102779
+      redwin_00004_15: 436131528162010967
+      redwin_00004_16: 8153782577528060022
+      redwin_00004_17: 6340825027264138112
+      redwin_00004_18: 8312159087556975783
+      redwin_00004_19: -4326032049096624372
+      redwin_00004_2: -8205008291047566772
+      redwin_00004_20: -4409562120164383433
+      redwin_00004_21: 2202655126242366529
+      redwin_00004_22: 2323025607424154043
+      redwin_00004_23: 2031592333847268903
+      redwin_00004_24: 883425991830652380
+      redwin_00004_25: 4954986563624338474
+      redwin_00004_26: -6123094023766507097
+      redwin_00004_27: 3641892959722696765
+      redwin_00004_28: 8821512007929168020
+      redwin_00004_29: 3864315301086635092
+      redwin_00004_3: -739806887989089752
+      redwin_00004_30: -1831083229797887153
+      redwin_00004_31: 8273361425439284933
+      redwin_00004_32: -5958001699792322742
+      redwin_00004_33: -3657972329233174663
+      redwin_00004_34: -6395127940715987524
+      redwin_00004_35: 8957483178034164620
+      redwin_00004_36: 4367217301709024326
+      redwin_00004_4: -5178099788154483354
+      redwin_00004_5: -2621441041999690774
+      redwin_00004_6: -201324624550298410
+      redwin_00004_7: -3677348268669070862
+      redwin_00004_8: 8212208488632997462
+      redwin_00004_9: 6091760172697933207
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

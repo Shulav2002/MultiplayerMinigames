@@ -1,0 +1,1027 @@
+fileFormatVersion: 2
+guid: 8ddfc56776e341b43af8875496e375e0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8647837169097384204
+    second: yellowin_00031_0
+  - first:
+      213: -2614845620658408232
+    second: yellowin_00031_1
+  - first:
+      213: -5519074753796708340
+    second: yellowin_00031_2
+  - first:
+      213: -3198124697431899587
+    second: yellowin_00031_3
+  - first:
+      213: 407750195582103351
+    second: yellowin_00031_4
+  - first:
+      213: -1541428700362223551
+    second: yellowin_00031_5
+  - first:
+      213: 4621607671068761418
+    second: yellowin_00031_6
+  - first:
+      213: 8109368516272598169
+    second: yellowin_00031_7
+  - first:
+      213: -8474980927381595344
+    second: yellowin_00031_8
+  - first:
+      213: 81954185279986248
+    second: yellowin_00031_9
+  - first:
+      213: -6103444445614363850
+    second: yellowin_00031_10
+  - first:
+      213: -3126473587600685162
+    second: yellowin_00031_11
+  - first:
+      213: -6792546578101457813
+    second: yellowin_00031_12
+  - first:
+      213: 3743664642157456699
+    second: yellowin_00031_13
+  - first:
+      213: 538208403764113785
+    second: yellowin_00031_14
+  - first:
+      213: -8732216547252578839
+    second: yellowin_00031_15
+  - first:
+      213: 9038193893050057599
+    second: yellowin_00031_16
+  - first:
+      213: 5830557557117874840
+    second: yellowin_00031_17
+  - first:
+      213: 3177523849916164108
+    second: yellowin_00031_18
+  - first:
+      213: -5554347375865050261
+    second: yellowin_00031_19
+  - first:
+      213: -3980805515346236612
+    second: yellowin_00031_20
+  - first:
+      213: -3383275050702809392
+    second: yellowin_00031_21
+  - first:
+      213: 8326213130779581652
+    second: yellowin_00031_22
+  - first:
+      213: 7296288923602901526
+    second: yellowin_00031_23
+  - first:
+      213: -2934809054941973642
+    second: yellowin_00031_24
+  - first:
+      213: 5548232176649207721
+    second: yellowin_00031_25
+  - first:
+      213: 6324523240223378611
+    second: yellowin_00031_26
+  - first:
+      213: 2037936532082382368
+    second: yellowin_00031_27
+  - first:
+      213: 2304689453108629185
+    second: yellowin_00031_28
+  - first:
+      213: 356372156022871011
+    second: yellowin_00031_29
+  - first:
+      213: -3303550067063995712
+    second: yellowin_00031_30
+  - first:
+      213: -2388551819244099967
+    second: yellowin_00031_31
+  - first:
+      213: 4222604273013970897
+    second: yellowin_00031_32
+  - first:
+      213: -2851872731847719506
+    second: yellowin_00031_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 65
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: yellowin_00031_0
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 924
+        width: 25
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fed784b9e5bcf780800000000000000
+      internalID: -8647837169097384204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_1
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 857
+        width: 70
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d47b2613c336bbd0800000000000000
+      internalID: -2614845620658408232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_2
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 877
+        width: 9
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c08ee13b0ce4863b0800000000000000
+      internalID: -5519074753796708340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_3
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 795
+        width: 48
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d320b26388afd93d0800000000000000
+      internalID: -3198124697431899587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_4
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 821
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73f64cc74ae98a500800000000000000
+      internalID: 407750195582103351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_5
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 711
+        width: 113
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 140515c83cebb9ae0800000000000000
+      internalID: -1541428700362223551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_6
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 56
+        width: 429
+        height: 714
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4d1645c0bf332040800000000000000
+      internalID: 4621607671068761418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_7
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 796
+        width: 41
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99c2a2543b34a8070800000000000000
+      internalID: 8109368516272598169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_8
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 779
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b9539bfb1d26a80800000000000000
+      internalID: -8474980927381595344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_9
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 765
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84a5875b5e8232100800000000000000
+      internalID: 81954185279986248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_10
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 697
+        width: 71
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63b23d83d953c4ba0800000000000000
+      internalID: -6103444445614363850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_11
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 511
+        width: 48
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6978b6b36d88c94d0800000000000000
+      internalID: -3126473587600685162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_12
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 583
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6ca7fb20e60cb1a0800000000000000
+      internalID: -6792546578101457813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_13
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 582
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3d2cf1482b24f330800000000000000
+      internalID: 3743664642157456699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_14
+      rect:
+        serializedVersion: 2
+        x: 506
+        y: 564
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9717d7111b9187700800000000000000
+      internalID: 538208403764113785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_15
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 502
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e5d837c05fe0d680800000000000000
+      internalID: -8732216547252578839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_16
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 284
+        width: 42
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f738a56957d1e6d70800000000000000
+      internalID: 9038193893050057599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_17
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 384
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 892fa72e43d4ae050800000000000000
+      internalID: 5830557557117874840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_18
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 441
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c08a5933b15d81c20800000000000000
+      internalID: 3177523849916164108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_19
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 418
+        width: 33
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6bc0766d7efae2b0800000000000000
+      internalID: -5554347375865050261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_20
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 393
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3b2fd9997651c8c0800000000000000
+      internalID: -3980805515346236612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_21
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 360
+        width: 32
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d6da6944413c01d0800000000000000
+      internalID: -3383275050702809392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_22
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 490
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dc5f407ab6ac8370800000000000000
+      internalID: 8326213130779581652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_23
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 328
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61ad7fd5e10a14560800000000000000
+      internalID: 7296288923602901526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_24
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 278
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 673759cb6b67547d0800000000000000
+      internalID: -2934809054941973642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_25
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 248
+        width: 41
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9af7194d4c74ffc40800000000000000
+      internalID: 5548232176649207721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_26
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 211
+        width: 27
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc8733d06835c750800000000000000
+      internalID: 6324523240223378611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_27
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 208
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 026df8d7a74384c10800000000000000
+      internalID: 2037936532082382368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_28
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 148
+        width: 28
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ce012ac8d6ebff10800000000000000
+      internalID: 2304689453108629185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_29
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 155
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e35597769612f400800000000000000
+      internalID: 356372156022871011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_30
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 126
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c2ceea87be6722d0800000000000000
+      internalID: -3303550067063995712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_31
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 62
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 186a75686c82aded0800000000000000
+      internalID: -2388551819244099967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_32
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 55
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d75b08c634b99a30800000000000000
+      internalID: 4222604273013970897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yellowin_00031_33
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 56
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea508993cdc1c68d0800000000000000
+      internalID: -2851872731847719506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      yellowin_00031_0: -8647837169097384204
+      yellowin_00031_1: -2614845620658408232
+      yellowin_00031_10: -6103444445614363850
+      yellowin_00031_11: -3126473587600685162
+      yellowin_00031_12: -6792546578101457813
+      yellowin_00031_13: 3743664642157456699
+      yellowin_00031_14: 538208403764113785
+      yellowin_00031_15: -8732216547252578839
+      yellowin_00031_16: 9038193893050057599
+      yellowin_00031_17: 5830557557117874840
+      yellowin_00031_18: 3177523849916164108
+      yellowin_00031_19: -5554347375865050261
+      yellowin_00031_2: -5519074753796708340
+      yellowin_00031_20: -3980805515346236612
+      yellowin_00031_21: -3383275050702809392
+      yellowin_00031_22: 8326213130779581652
+      yellowin_00031_23: 7296288923602901526
+      yellowin_00031_24: -2934809054941973642
+      yellowin_00031_25: 5548232176649207721
+      yellowin_00031_26: 6324523240223378611
+      yellowin_00031_27: 2037936532082382368
+      yellowin_00031_28: 2304689453108629185
+      yellowin_00031_29: 356372156022871011
+      yellowin_00031_3: -3198124697431899587
+      yellowin_00031_30: -3303550067063995712
+      yellowin_00031_31: -2388551819244099967
+      yellowin_00031_32: 4222604273013970897
+      yellowin_00031_33: -2851872731847719506
+      yellowin_00031_4: 407750195582103351
+      yellowin_00031_5: -1541428700362223551
+      yellowin_00031_6: 4621607671068761418
+      yellowin_00031_7: 8109368516272598169
+      yellowin_00031_8: -8474980927381595344
+      yellowin_00031_9: 81954185279986248
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

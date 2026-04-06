@@ -1,6 +1,7 @@
 {
   "name": "HotDynamite",
   "references": [
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "StayAlive"
   ]
 }

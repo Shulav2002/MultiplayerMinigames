@@ -1,4 +1,5 @@
 using UnityEngine;
+using StayAlive.Networking;
 
 namespace StayAlive
 {
@@ -7,6 +8,8 @@ namespace StayAlive
     {
         private const float MovementInputNormalizeThreshold = 1f;
         private const float VectorEpsilonSqr = 0.0001f;
+        private const float LocalAuthorityCorrectionMultiplier = 0.75f;
+
         [SerializeField] private StayAlivePlayerInput humanInput;
         [SerializeField] private StayAliveBotController botInput;
         [SerializeField] private Rigidbody2D body;
@@ -30,25 +33,43 @@ namespace StayAlive
         [SerializeField, Min(0f)] private float localPlayerIndicatorPulseAmount = 0.14f;
         [SerializeField, Min(0f)] private float localPlayerIndicatorPulseSpeed = 3.25f;
         [SerializeField] private int localPlayerIndicatorSortingOrderOffset = 20;
+        [Header("Networking")]
+        [SerializeField, Min(0f)] private float remotePositionSmoothness = 12f;
+        [SerializeField, Min(0f)] private float remoteFacingSmoothness = 18f;
+        [SerializeField, Min(0f)] private float networkSnapDistance = 1.25f;
 
         private StayAliveGameManager manager;
         private bool isHuman;
         private bool isAlive = true;
+        private string userId;
         private int chairId = -1;
+        private bool isBotParticipant;
+        private StayAlivePlayerControlMode controlMode;
         private int appearanceIndex;
         private Vector2 estimatedVelocity;
+        private Vector2 networkMoveVector;
         private Vector2 bounceVelocity;
         private float bounceCooldownUntil = -1f;
         private float bounceInputSuppressionUntil = -1f;
         private AnimatorOverrideController runAnimatorOverride;
         private Transform localPlayerIndicatorTransform;
         private Vector3 localPlayerIndicatorBaseScale = Vector3.one;
+        private Vector2 authoritativePosition;
+        private float authoritativeFacingAngle;
+        private Vector2 authoritativeVelocity;
+        private bool hasAuthoritativeState;
 
         public bool IsAlive => isAlive;
         public bool IsHuman => isHuman;
+        public string UserId => userId;
         public int ChairId => chairId;
+        public bool IsBotParticipant => isBotParticipant;
+        public StayAlivePlayerControlMode ControlMode => controlMode;
+        public int AppearanceIndex => appearanceIndex;
+        public StayAlivePlayerInput HumanInput => humanInput;
         public Vector2 Position => GetCurrentPosition();
         public Vector2 EstimatedVelocity => estimatedVelocity;
+        public float FacingAngle => facingTransform != null ? facingTransform.localEulerAngles.z : transform.localEulerAngles.z;
         public Bounds WorldBounds => hitCollider != null ? hitCollider.bounds : new Bounds(transform.position, Vector3.zero);
 
         public void SetAppearanceIndex(int index)
@@ -69,9 +90,27 @@ namespace StayAlive
 
         public void Initialize(StayAliveGameManager manager, bool isHuman, int chairId)
         {
+            Initialize(
+                manager,
+                isHuman ? StayAlivePlayerControlMode.LocalHuman : StayAlivePlayerControlMode.Bot,
+                userId: null,
+                chairId: chairId,
+                isBotParticipant: !isHuman);
+        }
+
+        public void Initialize(
+            StayAliveGameManager manager,
+            StayAlivePlayerControlMode controlMode,
+            string userId = null,
+            int chairId = -1,
+            bool isBotParticipant = false)
+        {
             this.manager = manager;
-            this.isHuman = isHuman;
+            this.controlMode = controlMode;
+            this.isHuman = controlMode == StayAlivePlayerControlMode.LocalHuman;
+            this.userId = userId;
             this.chairId = chairId;
+            this.isBotParticipant = isBotParticipant;
 
             CacheRequiredComponents();
             ApplyAppearanceVariant();
@@ -94,18 +133,28 @@ namespace StayAlive
 
             isAlive = true;
             estimatedVelocity = Vector2.zero;
+            networkMoveVector = Vector2.zero;
+            authoritativePosition = Position;
+            authoritativeFacingAngle = FacingAngle;
+            authoritativeVelocity = Vector2.zero;
+            hasAuthoritativeState = false;
             ResetBounceState();
             gameObject.SetActive(true);
-            SetLocalPlayerIndicatorVisible(isHuman);
+            SetLocalPlayerIndicatorVisible(controlMode == StayAlivePlayerControlMode.LocalHuman);
             UpdateRunAnimation(Vector2.zero);
+            RefreshPhysicsSimulationState();
         }
 
         private void FixedUpdate()
         {
             if (!CanSimulateMovement())
             {
-                estimatedVelocity = Vector2.zero;
-                if (body != null)
+                if (!UsesAuthoritativeTransform())
+                {
+                    estimatedVelocity = Vector2.zero;
+                }
+
+                if (body != null && body.simulated)
                 {
                     body.linearVelocity = Vector2.zero;
                 }
@@ -118,11 +167,17 @@ namespace StayAlive
             UpdateFacing(input);
             ApplyPhysicsMovement();
             ClampToBoardBounds();
+            ApplyAuthoritativeCorrection(Time.fixedDeltaTime);
             DecayBounceVelocity();
         }
 
         private void Update()
         {
+            if (manager == null || !manager.IsPaused)
+            {
+                UpdateSnapshotPresentation(Time.deltaTime);
+            }
+
             UpdateLocalPlayerIndicator();
         }
 
@@ -136,6 +191,62 @@ namespace StayAlive
             TryBounceOnPlayerCollision(collision);
         }
 
+        public void SetNetworkMoveInput(Vector2 moveInput)
+        {
+            networkMoveVector = Vector2.ClampMagnitude(moveInput, 1f);
+        }
+
+        public void ApplyStateSnapshot(StayAlivePlayerStateSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            bool wasAlive = isAlive;
+
+            if (appearanceIndex != snapshot.appearanceIndex)
+            {
+                SetAppearanceIndex(snapshot.appearanceIndex);
+            }
+
+            isBotParticipant = snapshot.isBot;
+            isAlive = snapshot.isAlive;
+            authoritativePosition = new Vector2(snapshot.x, snapshot.y);
+            authoritativeFacingAngle = snapshot.facingAngle;
+            authoritativeVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
+
+            bool hadAuthoritativeState = hasAuthoritativeState;
+            hasAuthoritativeState = true;
+
+            if (UsesAuthoritativeTransform())
+            {
+                estimatedVelocity = authoritativeVelocity;
+                if (!hadAuthoritativeState)
+                {
+                    ApplyAuthoritativeTransformImmediate();
+                }
+            }
+
+            if (!isAlive)
+            {
+                networkMoveVector = Vector2.zero;
+                estimatedVelocity = authoritativeVelocity;
+                ResetBounceState();
+            }
+
+            if (wasAlive && !isAlive && manager != null)
+            {
+                manager.NotifyPlayerEliminated(this);
+            }
+
+            RefreshInputEnabledState();
+            ResetPhysicsVelocity();
+            UpdateRunAnimation(authoritativeVelocity);
+            SetLocalPlayerIndicatorVisible(isAlive && controlMode == StayAlivePlayerControlMode.LocalHuman);
+            gameObject.SetActive(snapshot.isAlive);
+        }
+
         public void Eliminate()
         {
             if (!isAlive)
@@ -144,8 +255,11 @@ namespace StayAlive
             }
 
             isAlive = false;
+            networkMoveVector = Vector2.zero;
             estimatedVelocity = Vector2.zero;
             ResetBounceState();
+
+            RefreshInputEnabledState();
 
             if (body != null)
             {
@@ -153,23 +267,51 @@ namespace StayAlive
                 body.angularVelocity = 0f;
             }
 
-            if (humanInput != null)
-            {
-                humanInput.enabled = false;
-            }
-
-            if (botInput != null)
-            {
-                botInput.enabled = false;
-            }
-
             SetLocalPlayerIndicatorVisible(false);
             gameObject.SetActive(false);
+
+            if (manager != null)
+            {
+                manager.NotifyPlayerEliminated(this);
+            }
         }
 
         private bool CanSimulateMovement()
         {
-            return isAlive && manager != null && body != null && !manager.IsMatchOver;
+            return isAlive
+                && manager != null
+                && body != null
+                && ShouldSimulateLocally()
+                && !manager.IsMatchOver
+                && !manager.IsPaused;
+        }
+
+        private bool ShouldSimulateLocally()
+        {
+            if (controlMode == StayAlivePlayerControlMode.LocalHuman)
+            {
+                return true;
+            }
+
+            if (manager == null || !manager.LocalSimulationEnabled)
+            {
+                return false;
+            }
+
+            return controlMode == StayAlivePlayerControlMode.Bot
+                || controlMode == StayAlivePlayerControlMode.NetworkDriven;
+        }
+
+        private bool UsesAuthoritativeTransform()
+        {
+            return controlMode == StayAlivePlayerControlMode.SnapshotOnly;
+        }
+
+        private bool ShouldReconcileWithAuthority()
+        {
+            return controlMode == StayAlivePlayerControlMode.LocalHuman
+                && manager != null
+                && !manager.LocalSimulationEnabled;
         }
 
         private void CacheRequiredComponents()
@@ -212,47 +354,61 @@ namespace StayAlive
 
         private void ConfigureInputSources()
         {
-            if (humanInput != null)
-            {
-                humanInput.enabled = isHuman;
-            }
-
-            if (!isHuman && botInput == null)
+            if (controlMode == StayAlivePlayerControlMode.Bot && botInput == null)
             {
                 botInput = gameObject.AddComponent<StayAliveBotController>();
             }
 
+            RefreshInputEnabledState();
+
+            if (botInput != null && controlMode == StayAlivePlayerControlMode.Bot)
+            {
+                botInput.Initialize(manager, this);
+            }
+        }
+
+        private void RefreshInputEnabledState()
+        {
+            if (humanInput != null)
+            {
+                humanInput.enabled = isAlive && controlMode == StayAlivePlayerControlMode.LocalHuman;
+            }
+
             if (botInput != null)
             {
-                botInput.enabled = !isHuman;
-                if (!isHuman)
-                {
-                    botInput.Initialize(manager, this);
-                }
+                botInput.enabled = isAlive && controlMode == StayAlivePlayerControlMode.Bot;
             }
         }
 
         private Vector2 GetNormalizedMoveInput()
         {
-            Vector2 input = Vector2.zero;
-            if (isHuman)
-            {
-                if (humanInput != null)
-                {
-                    input = humanInput.MoveVector;
-                }
-            }
-            else if (botInput != null)
-            {
-                input = botInput.MoveVector;
-            }
-
+            Vector2 input = ReadMoveInput();
             if (input.sqrMagnitude > MovementInputNormalizeThreshold)
             {
                 input.Normalize();
             }
 
             return input;
+        }
+
+        private Vector2 ReadMoveInput()
+        {
+            if (controlMode == StayAlivePlayerControlMode.LocalHuman && humanInput != null)
+            {
+                return humanInput.MoveVector;
+            }
+
+            if (controlMode == StayAlivePlayerControlMode.Bot && botInput != null)
+            {
+                return botInput.MoveVector;
+            }
+
+            if (controlMode == StayAlivePlayerControlMode.NetworkDriven)
+            {
+                return networkMoveVector;
+            }
+
+            return Vector2.zero;
         }
 
         private Vector2 CalculateEstimatedVelocity(Vector2 input)
@@ -271,6 +427,94 @@ namespace StayAlive
             }
 
             body.linearVelocity = estimatedVelocity;
+        }
+
+        private void ApplyAuthoritativeCorrection(float deltaTime)
+        {
+            if (!ShouldReconcileWithAuthority() || !hasAuthoritativeState)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                SetCurrentPosition(authoritativePosition);
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness * LocalAuthorityCorrectionMultiplier, deltaTime);
+                float correctedAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, correctedAngle);
+            }
+        }
+
+        private void UpdateSnapshotPresentation(float deltaTime)
+        {
+            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(0f, networkSnapDistance);
+            float positionError = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
+            if (positionError > snapDistance)
+            {
+                SetCurrentPosition(authoritativePosition);
+            }
+            else
+            {
+                float interpolation = GetInterpolationFactor(remotePositionSmoothness, deltaTime);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, interpolation));
+            }
+
+            if (facingTransform != null)
+            {
+                float interpolation = GetInterpolationFactor(remoteFacingSmoothness, deltaTime);
+                float nextAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, interpolation);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, nextAngle);
+            }
+
+            estimatedVelocity = authoritativeVelocity;
+            UpdateRunAnimation(authoritativeVelocity);
+        }
+
+        private void ApplyAuthoritativeTransformImmediate()
+        {
+            SetCurrentPosition(authoritativePosition);
+
+            if (facingTransform != null)
+            {
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
+            }
+        }
+
+        private void ResetPhysicsVelocity()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+
+        private static float GetInterpolationFactor(float smoothness, float deltaTime)
+        {
+            if (smoothness <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f - Mathf.Exp(-smoothness * Mathf.Max(0f, deltaTime));
         }
 
         private void DecayBounceVelocity()
@@ -401,6 +645,7 @@ namespace StayAlive
 
             ApplyBounceImpulse(-direction);
             otherPlayer.ApplyBounceImpulse(direction);
+            manager.NotifyPlayerCollision();
         }
 
         private void ApplyBounceImpulse(Vector2 direction)
@@ -414,7 +659,7 @@ namespace StayAlive
                 bounceVelocity = bounceVelocity.normalized * maxBounce;
             }
 
-            if (body != null)
+            if (body != null && body.simulated)
             {
                 // Apply the recoil immediately so the bounce is visible on the contact frame.
                 body.linearVelocity = bounceVelocity;
@@ -440,7 +685,7 @@ namespace StayAlive
                 localPlayerIndicatorTransform.localPosition = localPlayerIndicatorOffset;
             }
 
-            SetLocalPlayerIndicatorVisible(isAlive && isHuman);
+            SetLocalPlayerIndicatorVisible(isAlive && controlMode == StayAlivePlayerControlMode.LocalHuman);
         }
 
         private void EnsureLocalPlayerIndicator()
@@ -505,7 +750,7 @@ namespace StayAlive
 
         private void UpdateLocalPlayerIndicator()
         {
-            bool shouldShow = isHuman && isAlive;
+            bool shouldShow = controlMode == StayAlivePlayerControlMode.LocalHuman && isAlive;
             SetLocalPlayerIndicatorVisible(shouldShow);
 
             if (!shouldShow || localPlayerIndicatorTransform == null || localPlayerIndicatorRenderer == null || !localPlayerIndicatorRenderer.enabled)
@@ -549,6 +794,27 @@ namespace StayAlive
             }
 
             return transform.position;
+        }
+
+        private void SetCurrentPosition(Vector2 position)
+        {
+            if (body != null && body.simulated)
+            {
+                body.position = position;
+                return;
+            }
+
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
+        }
+
+        private void RefreshPhysicsSimulationState()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.simulated = ShouldSimulateLocally();
         }
 
         private void OnDestroy()

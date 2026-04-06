@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using StayAlive.Networking;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -26,9 +28,17 @@ namespace StayAlive
         private const string DefaultSettingsPath = "Assets/games/StayAlive/Data/StayAliveGameSettings.asset";
         private const string DefaultPlayerPrefabPath = "Assets/games/StayAlive/Prefabs/Player.prefab";
         private const string DefaultExplosionControllerPath = "Assets/games/StayAlive/Anims/Explosion.controller";
+        private const string DefaultBackgroundMusicPath = "Assets/games/StayAlive/audio/bg loop.mp3";
+        private const string DefaultCountdownTickPath = "Assets/games/StayAlive/audio/Countdown.mp3";
+        private const string DefaultPlayerCollisionPath = "Assets/games/StayAlive/audio/Dynamic Bounce Jump.mp3";
+        private const string DefaultExplosionSfxPath = "Assets/games/StayAlive/audio/Explosion.mp3";
+        private const string DefaultSpinLoopPath = "Assets/games/StayAlive/audio/spin 2.mp3";
+        private const string DefaultStartWhistlePath = "Assets/games/StayAlive/audio/sports-whistle-04.mp3";
+        private const string DefaultSpinStopPath = "Assets/games/StayAlive/audio/stop.mp3";
         private const int RequiredSafeSpriteCount = 4;
         private const float MinCellSize = 0.2f;
         private const float MinSwapInterval = 0.02f;
+        private const float CollisionSfxCooldownSeconds = 0.06f;
 
         [Header("Player Source")]
         [SerializeField] private StayAliveGameSettings settings;
@@ -61,6 +71,8 @@ namespace StayAlive
 
         [Header("Round Flow")]
         [SerializeField] private bool spawnPlayers = true;
+        [SerializeField] private bool autoStartLocalGame = true;
+        [SerializeField, Min(1f)] private float matchDurationSeconds = 60f;
         [SerializeField, Min(1)] private int totalPlayers = 1;
         [SerializeField, Min(1)] private int humanPlayers = 1;
         [SerializeField, Min(0f)] private float startCountdownSeconds = 3f;
@@ -78,17 +90,32 @@ namespace StayAlive
         [SerializeField, Min(0)] private int easyBombIncreasePerSpin = 5;
         [SerializeField, Min(0)] private int normalBombIncreasePerSpin = 7;
         [SerializeField, Min(0)] private int hardBombIncreasePerSpin = 10;
+        [SerializeField, Min(1)] private int targetSafeCellsAtTimeUp = 1;
         [SerializeField] private bool autoStartSpinOnPlay = false;
-
-        [Header("Spin Button")]
-        [SerializeField] private bool showSpinButton = true;
-        [SerializeField] private string spinButtonLabel = "SPIN";
-        [SerializeField] private Rect spinButtonRect = new Rect(20f, 20f, 180f, 56f);
 
         [Header("Explosion FX")]
         [SerializeField] private RuntimeAnimatorController explosionEffectController;
         [SerializeField, Min(0)] private int explosionEffectSortingOrderOffset = 8;
         [SerializeField, Min(0.1f)] private float explosionEffectScale = 1.2f;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip backgroundMusic;
+        [SerializeField] private AudioClip countdownTickClip;
+        [SerializeField] private AudioClip playerCollisionClip;
+        [SerializeField] private AudioClip spinLoopClip;
+        [SerializeField] private AudioClip spinStopClip;
+        [SerializeField] private AudioClip startWhistleClip;
+        [SerializeField] private AudioClip explosionClip;
+        [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
+        [SerializeField, Range(0f, 1f)] private float countdownTickVolume = 0.95f;
+        [SerializeField, Range(0f, 1f)] private float playerCollisionVolume = 0.65f;
+        [SerializeField, Range(0f, 1f)] private float spinLoopVolume = 0.55f;
+        [SerializeField, Range(0f, 1f)] private float spinStopVolume = 0.85f;
+        [SerializeField, Range(0f, 1f)] private float startWhistleVolume = 0.9f;
+        [SerializeField, Range(0f, 1f)] private float explosionVolume = 0.9f;
+
+        [Header("UI")]
+        [SerializeField] private Component timerLabel;
 
         [Header("Movement")]
         [SerializeField, Min(0.1f)] private float moveSpeed = 5f;
@@ -107,6 +134,7 @@ namespace StayAlive
         private readonly List<StayAliveCell> cells = new List<StayAliveCell>();
         private readonly List<StayAlivePlayer> alivePlayers = new List<StayAlivePlayer>();
         private readonly List<StayAlivePlayer> allPlayers = new List<StayAlivePlayer>();
+        private readonly Dictionary<int, StayAlivePlayer> playersByChair = new Dictionary<int, StayAlivePlayer>();
         private readonly HashSet<int> activeBombCellIndices = new HashSet<int>();
         private readonly HashSet<int> queuedBombCellIndices = new HashSet<int>();
         private readonly List<GameObject> activeExplosionEffects = new List<GameObject>();
@@ -116,12 +144,23 @@ namespace StayAlive
         private MatchPhase phase;
         private float phaseTimer;
         private float symbolSwapTimer;
+        private float matchTimerRemaining;
         private Sprite fallbackCellSprite;
         private bool explosionResolved;
         private int completedSpinCount;
         private int completedSpinShiftCount;
         private int targetSpinShiftCount;
         private StayAliveGameSettings sourceSettings;
+        private bool localSimulationEnabled = true;
+        private bool isPaused;
+        private StayAliveStateSnapshotPayload deferredSnapshotWhilePaused;
+        private bool startupHandled;
+        private AudioSource musicSource;
+        private AudioSource sfxSource;
+        private AudioSource spinLoopSource;
+        private AudioSource explosionSfxSource;
+        private float lastCollisionSfxTime = float.NegativeInfinity;
+        private int lastCountdownDisplayNumber = int.MinValue;
 
         private int Columns => settings != null ? settings.Columns : columns;
         private int Rows => settings != null ? settings.Rows : rows;
@@ -159,6 +198,9 @@ namespace StayAlive
         public bool IsExplosionActive => phase == MatchPhase.Explosion;
         public bool IsMatchOver => phase == MatchPhase.GameOver;
         public bool IsSpinning => phase == MatchPhase.Spinning;
+        public bool IsPaused => isPaused;
+        public bool LocalSimulationEnabled => localSimulationEnabled;
+        public IReadOnlyList<StayAlivePlayer> Players => allPlayers;
         public bool AreBotsAllowedToMove =>
             phase == MatchPhase.Warning
             || phase == MatchPhase.Explosion
@@ -168,13 +210,16 @@ namespace StayAlive
         public float Difficulty01 => settings != null ? settings.Difficulty01 : difficulty01;
         public int BombCellsPerRound => EvaluateBombCellsPerRound();
         public int CompletedSpinCount => completedSpinCount;
-        public event Action<int> GameEnded;
+        public float MatchTimeRemaining => Mathf.Max(0f, matchTimerRemaining);
+        public event Action<int[]> GameEnded;
 
         private void Awake()
         {
             sourceSettings = settings;
             EnsureFallbackSprite();
             CacheBoardCells();
+            EnsureTimerLabelReference();
+            EnsureAudioSources();
 #if UNITY_EDITOR
             if (explosionEffectController == null)
             {
@@ -185,6 +230,16 @@ namespace StayAlive
 
         private void Start()
         {
+            if (startupHandled || !autoStartLocalGame)
+            {
+                return;
+            }
+
+            if (FindFirstObjectByType<StayAlive.Lobby.StayAliveLobbyManager>(FindObjectsInactive.Include) != null)
+            {
+                return;
+            }
+
             if (ResolveSettingsSource() != null)
             {
                 StartGameLocal();
@@ -194,30 +249,31 @@ namespace StayAlive
             StartMatch();
         }
 
-        private void OnGUI()
+        private void Update()
         {
-            if (phase != MatchPhase.Countdown)
+            if (isPaused)
             {
+                UpdateTimerLabel();
                 return;
             }
 
-            GUIStyle style = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 56,
-                fontStyle = FontStyle.Bold,
-                normal = { textColor = Color.white }
-            };
-
-            Rect rect = new Rect(0f, 0f, Screen.width, Screen.height);
-            int displayNumber = Mathf.Max(1, Mathf.CeilToInt(phaseTimer));
-            GUI.Label(rect, displayNumber.ToString(), style);
-        }
-
-        private void Update()
-        {
             if (phase == MatchPhase.GameOver || phase == MatchPhase.None)
             {
+                UpdateTimerLabel();
+                return;
+            }
+
+            if (!localSimulationEnabled)
+            {
+                UpdateTimerLabel();
+                return;
+            }
+
+            matchTimerRemaining = Mathf.Max(0f, matchTimerRemaining - Time.deltaTime);
+            UpdateTimerLabel();
+            if (matchTimerRemaining <= 0f)
+            {
+                FinishMatch();
                 return;
             }
 
@@ -230,6 +286,7 @@ namespace StayAlive
                     break;
 
                 case MatchPhase.Countdown:
+                    UpdateCountdownAudio();
                     if (phaseTimer <= 0f)
                     {
                         BeginSpinPhase();
@@ -263,6 +320,10 @@ namespace StayAlive
 
         public void StartMatch()
         {
+            startupHandled = true;
+            isPaused = false;
+            deferredSnapshotWhilePaused = null;
+            localSimulationEnabled = true;
             if (!ValidateSceneSetup())
             {
                 phase = MatchPhase.GameOver;
@@ -275,14 +336,17 @@ namespace StayAlive
                 SpawnPlayers();
             }
 
+            StartBackgroundMusic();
+            StopSpinLoop();
             ClearExplosionEffects();
-            completedSpinCount = 0;
+            ResetMatchRuntimeState();
             InitializeIdleBoardState();
-            BeginCountdownPhase();
+            BeginSpinPhase();
         }
 
         public void StartGameLocal()
         {
+            startupHandled = true;
             StayAliveGameSettings baseSettings = ResolveSettingsSource();
             if (baseSettings != null)
             {
@@ -294,6 +358,7 @@ namespace StayAlive
 
         public void StartGameLocal(int totalPlayers, int humanPlayers)
         {
+            startupHandled = true;
             totalPlayers = Mathf.Max(1, totalPlayers);
             humanPlayers = Mathf.Clamp(humanPlayers, 1, totalPlayers);
 
@@ -309,6 +374,70 @@ namespace StayAlive
             }
 
             StartMatch();
+        }
+
+        public void StartOnlineGame(StayAliveRosterEntry[] roster, string localUserId, bool simulationAuthority, float countdownSeconds = 3f)
+        {
+            startupHandled = true;
+            isPaused = false;
+            deferredSnapshotWhilePaused = null;
+            if (roster == null || roster.Length == 0)
+            {
+                Debug.LogError("StayAliveGameManager: Cannot start online game without a roster.");
+                return;
+            }
+
+            StayAlive.Networking.StayAliveLobbyNetworkClient networkClient =
+                FindFirstObjectByType<StayAlive.Networking.StayAliveLobbyNetworkClient>(FindObjectsInactive.Include);
+            if (networkClient == null || !networkClient.IsConnected || !networkClient.IsInRoom || string.IsNullOrEmpty(localUserId))
+            {
+                Debug.LogError("StayAliveGameManager: Refusing to start online game without an active backend room connection.");
+                return;
+            }
+
+            StayAliveGameSettings baseSettings = ResolveSettingsSource();
+            if (baseSettings != null)
+            {
+                settings = baseSettings.CreateRuntimeCopy(roster.Length, CountHumanParticipants(roster));
+            }
+            else
+            {
+                totalPlayers = Mathf.Max(1, roster.Length);
+                humanPlayers = Mathf.Clamp(CountHumanParticipants(roster), 1, totalPlayers);
+            }
+
+            localSimulationEnabled = simulationAuthority;
+            if (!ValidateSceneSetup())
+            {
+                phase = MatchPhase.GameOver;
+                return;
+            }
+
+            if (SpawnPlayersEnabled)
+            {
+                ClearPlayers();
+                SpawnPlayers(roster, localUserId, simulationAuthority);
+            }
+
+            StartBackgroundMusic();
+            StopSpinLoop();
+            ClearExplosionEffects();
+            ResetMatchRuntimeState();
+            InitializeIdleBoardState();
+            if (localSimulationEnabled)
+            {
+                BeginSpinPhase();
+            }
+            else
+            {
+                phase = MatchPhase.None;
+                phaseTimer = 0f;
+                symbolSwapTimer = 0f;
+                explosionResolved = false;
+                RefreshBoardVisualsForIdle();
+            }
+
+            UpdateTimerLabel();
         }
 
         public void StartSpinButton()
@@ -566,6 +695,7 @@ namespace StayAlive
             phase = MatchPhase.Countdown;
             phaseTimer = Mathf.Max(0f, startCountdownSeconds);
             symbolSwapTimer = 0f;
+            lastCountdownDisplayNumber = int.MinValue;
             if (phaseTimer <= 0f)
             {
                 BeginSpinPhase();
@@ -584,10 +714,14 @@ namespace StayAlive
             activeBombCellIndices.Clear();
             FillSymbolsRandomly(GetSpinningBombChance());
             RefreshBoardVisualsForSpin();
+            PlayStartWhistle();
+            StartSpinLoop();
         }
 
         private void StopSpinPhase()
         {
+            StopSpinLoop();
+            PlaySpinStopSfx();
             ApplyPreparedStoppedBoardState();
             symbolSwapTimer = 0f;
             RefreshBoardVisualsForIdle();
@@ -614,6 +748,8 @@ namespace StayAlive
             phase = MatchPhase.Explosion;
             phaseTimer = Mathf.Max(0.1f, ExplosionDurationSeconds);
             explosionResolved = false;
+            StopSpinLoop();
+            PlayExplosionSfx();
             RefreshBoardVisualsForExplosion();
             SpawnExplosionEffects();
         }
@@ -643,10 +779,14 @@ namespace StayAlive
 
         private void FinishMatch()
         {
+            int[] winningChairIds = FindWinningChairIds();
             phase = MatchPhase.GameOver;
+            StopSpinLoop();
             ClearExplosionEffects();
             RefreshBoardVisualsForSpin();
-            GameEnded?.Invoke(FindWinningChairId());
+            UpdateTimerLabel();
+            LogMatchResult(winningChairIds);
+            GameEnded?.Invoke(winningChairIds);
         }
 
         private bool CacheBoardCells()
@@ -719,6 +859,51 @@ namespace StayAlive
 
                 allPlayers.Add(stayAlivePlayer);
                 alivePlayers.Add(stayAlivePlayer);
+                playersByChair[i] = stayAlivePlayer;
+            }
+        }
+
+        private void SpawnPlayers(StayAliveRosterEntry[] roster, string localUserId, bool simulationAuthority)
+        {
+            if (basePlayerPrefab == null)
+            {
+                Debug.LogError("StayAliveGameManager: Base player prefab is not assigned.");
+                phase = MatchPhase.GameOver;
+                return;
+            }
+
+            for (int i = 0; i < roster.Length; i++)
+            {
+                StayAliveRosterEntry entry = roster[i];
+                if (entry == null)
+                {
+                    continue;
+                }
+
+                Vector2 spawnPosition = GetSpawnPosition(entry.chairId);
+                GameObject playerObject = Instantiate(
+                    basePlayerPrefab,
+                    new Vector3(spawnPosition.x, spawnPosition.y, 0f),
+                    Quaternion.identity,
+                    playerParent != null ? playerParent : transform);
+
+                StayAlivePlayer stayAlivePlayer = playerObject.GetComponent<StayAlivePlayer>();
+                if (stayAlivePlayer == null)
+                {
+                    stayAlivePlayer = playerObject.AddComponent<StayAlivePlayer>();
+                }
+
+                StayAlivePlayerControlMode controlMode = ResolveControlMode(entry, localUserId, simulationAuthority);
+                stayAlivePlayer.SetAppearanceIndex(entry.appearanceIndex);
+                stayAlivePlayer.Initialize(this, controlMode, entry.userId, entry.chairId, entry.isBot);
+
+                allPlayers.Add(stayAlivePlayer);
+                if (stayAlivePlayer.IsAlive)
+                {
+                    alivePlayers.Add(stayAlivePlayer);
+                }
+
+                playersByChair[entry.chairId] = stayAlivePlayer;
             }
         }
 
@@ -734,6 +919,7 @@ namespace StayAlive
 
             allPlayers.Clear();
             alivePlayers.Clear();
+            playersByChair.Clear();
         }
 
         private void ResolveExplosionHits()
@@ -760,6 +946,23 @@ namespace StayAlive
                 player.Eliminate();
                 alivePlayers.RemoveAt(i);
             }
+        }
+
+        public void NotifyPlayerCollision()
+        {
+            if (playerCollisionClip == null || Time.unscaledTime < lastCollisionSfxTime + CollisionSfxCooldownSeconds)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            lastCollisionSfxTime = Time.unscaledTime;
+            sfxSource.PlayOneShot(playerCollisionClip, playerCollisionVolume);
         }
 
         private bool IsPlayerTouchingBombCell(StayAlivePlayer player)
@@ -938,7 +1141,37 @@ namespace StayAlive
             }
 
             float hardT = Mathf.InverseLerp(0.5f, 1f, Difficulty01);
-            return Mathf.RoundToInt(Mathf.Lerp(normal, hard, hardT));
+            int configuredIncrease = Mathf.RoundToInt(Mathf.Lerp(normal, hard, hardT));
+            int timeMatchedIncrease = EvaluateTimeMatchedBombIncreasePerSpin();
+            if (timeMatchedIncrease <= 0)
+            {
+                return configuredIncrease;
+            }
+
+            return Mathf.Min(configuredIncrease, timeMatchedIncrease);
+        }
+
+        private int EvaluateTimeMatchedBombIncreasePerSpin()
+        {
+            int totalCellCount = Mathf.Max(1, Columns * Rows);
+            int targetSafeCells = Mathf.Clamp(targetSafeCellsAtTimeUp, 1, totalCellCount);
+            int targetBombCells = Mathf.Clamp(totalCellCount - targetSafeCells, 1, Mathf.Max(1, totalCellCount - 1));
+            float roundDurationSeconds =
+                Mathf.Max(0.1f, SpinDurationSeconds)
+                + Mathf.Max(0.1f, WarningDurationSeconds)
+                + Mathf.Max(0.1f, ExplosionDurationSeconds)
+                + Mathf.Max(0.1f, CollapseDurationSeconds)
+                + Mathf.Max(0f, RefillDelaySeconds)
+                + Mathf.Max(0.1f, RefillDurationSeconds);
+            int expectedRounds = Mathf.Max(1, Mathf.CeilToInt(Mathf.Max(1f, matchDurationSeconds) / Mathf.Max(0.1f, roundDurationSeconds)));
+            if (expectedRounds <= 1)
+            {
+                return 0;
+            }
+
+            int baseBombCells = EvaluateBaseBombCellsPerRound();
+            float requiredIncrease = (targetBombCells - baseBombCells) / (float)(expectedRounds - 1);
+            return Mathf.Max(0, Mathf.RoundToInt(requiredIncrease));
         }
 
         private float GetDefaultBombChance()
@@ -1182,18 +1415,401 @@ namespace StayAlive
             }
         }
 
-        private int FindWinningChairId()
+        private int[] FindWinningChairIds()
         {
+            List<int> winningChairIds = new List<int>();
             for (int i = 0; i < alivePlayers.Count; i++)
             {
                 StayAlivePlayer player = alivePlayers[i];
                 if (player != null && player.IsAlive)
                 {
-                    return player.ChairId;
+                    winningChairIds.Add(player.ChairId);
                 }
             }
 
-            return -1;
+            return winningChairIds.ToArray();
+        }
+
+        private void LogMatchResult(int[] winningChairIds)
+        {
+            if (winningChairIds == null || winningChairIds.Length == 0)
+            {
+                Debug.Log("StayAlive: Match ended with no surviving winner.");
+                return;
+            }
+
+            List<string> winners = new List<string>(winningChairIds.Length);
+            for (int i = 0; i < winningChairIds.Length; i++)
+            {
+                winners.Add(DescribePlayer(GetPlayerByChair(winningChairIds[i])));
+            }
+
+            Debug.Log($"StayAlive: Winners {string.Join(", ", winners)}");
+        }
+
+        private static string DescribePlayer(StayAlivePlayer player)
+        {
+            if (player == null)
+            {
+                return "Unknown player";
+            }
+
+            string colorName = GetAppearanceColorName(player.AppearanceIndex);
+            string chairText = player.ChairId >= 0 ? $"chair {player.ChairId}" : "chair ?";
+            if (!string.IsNullOrEmpty(player.UserId))
+            {
+                return $"{colorName} ({chairText}, user {player.UserId})";
+            }
+
+            return $"{colorName} ({chairText})";
+        }
+
+        public StayAlivePlayer GetPlayerByChair(int chairId)
+        {
+            playersByChair.TryGetValue(chairId, out StayAlivePlayer player);
+            return player;
+        }
+
+        public int GetWinningAppearanceIndex()
+        {
+            int[] winningChairIds = FindWinningChairIds();
+            StayAlivePlayer winningPlayer = winningChairIds.Length > 0 ? GetPlayerByChair(winningChairIds[0]) : null;
+            return winningPlayer != null ? Mathf.Max(0, winningPlayer.AppearanceIndex) : -1;
+        }
+
+        public void NotifyPlayerEliminated(StayAlivePlayer player)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            Debug.Log($"StayAlive: Eliminated {DescribePlayer(player)}");
+        }
+
+        public static string GetAppearanceColorName(int appearanceIndex)
+        {
+            switch (Mathf.Abs(appearanceIndex) % 4)
+            {
+                case 0:
+                    return "Red";
+
+                case 1:
+                    return "Blue";
+
+                case 2:
+                    return "Green";
+
+                case 3:
+                    return "Yellow";
+
+                default:
+                    return "Unknown";
+            }
+        }
+
+        public void SetNetworkMoveInput(int chairId, Vector2 moveInput)
+        {
+            if (!playersByChair.TryGetValue(chairId, out StayAlivePlayer player) || player == null)
+            {
+                return;
+            }
+
+            player.SetNetworkMoveInput(moveInput);
+        }
+
+        public StayAliveStateSnapshotPayload BuildStateSnapshot(string hostUserId, int tick)
+        {
+            StayAlivePlayerStateSnapshot[] playerSnapshots = new StayAlivePlayerStateSnapshot[allPlayers.Count];
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                StayAlivePlayer player = allPlayers[i];
+                playerSnapshots[i] = new StayAlivePlayerStateSnapshot
+                {
+                    chairId = player != null ? player.ChairId : -1,
+                    x = player != null ? player.Position.x : 0f,
+                    y = player != null ? player.Position.y : 0f,
+                    facingAngle = player != null ? player.FacingAngle : 0f,
+                    velocityX = player != null ? player.EstimatedVelocity.x : 0f,
+                    velocityY = player != null ? player.EstimatedVelocity.y : 0f,
+                    isAlive = player != null && player.IsAlive,
+                    isBot = player != null && player.IsBotParticipant,
+                    appearanceIndex = player != null ? player.AppearanceIndex : 0
+                };
+            }
+
+            return new StayAliveStateSnapshotPayload
+            {
+                roomId = string.Empty,
+                hostUserId = hostUserId,
+                tick = tick,
+                phase = (int)phase,
+                phaseTimeRemaining = Mathf.Max(0f, phaseTimer),
+                matchTimeRemaining = Mathf.Max(0f, matchTimerRemaining),
+                completedSpinCount = completedSpinCount,
+                symbolIndices = CloneIntArray(symbolIndices),
+                activeBombCellIndices = GetSortedIndices(activeBombCellIndices),
+                players = playerSnapshots
+            };
+        }
+
+        public void ApplyStateSnapshot(StayAliveStateSnapshotPayload snapshot)
+        {
+            if (snapshot == null)
+            {
+                return;
+            }
+
+            if (isPaused)
+            {
+                deferredSnapshotWhilePaused = snapshot;
+                return;
+            }
+
+            deferredSnapshotWhilePaused = null;
+
+            MatchPhase previousPhase = phase;
+            int[] previousSymbols = CloneIntArray(symbolIndices);
+            int[] previousBombCells = GetSortedIndices(activeBombCellIndices);
+
+            phase = Enum.IsDefined(typeof(MatchPhase), snapshot.phase)
+                ? (MatchPhase)snapshot.phase
+                : MatchPhase.None;
+            phaseTimer = Mathf.Max(0f, snapshot.phaseTimeRemaining);
+            matchTimerRemaining = Mathf.Max(0f, snapshot.matchTimeRemaining);
+            completedSpinCount = Mathf.Max(0, snapshot.completedSpinCount);
+            symbolSwapTimer = 0f;
+            explosionResolved = phase != MatchPhase.Explosion;
+
+            CopyInto(symbolIndices, snapshot.symbolIndices);
+            SetIndices(activeBombCellIndices, snapshot.activeBombCellIndices);
+
+            if (snapshot.players != null)
+            {
+                for (int i = 0; i < snapshot.players.Length; i++)
+                {
+                    StayAlivePlayerStateSnapshot playerSnapshot = snapshot.players[i];
+                    if (playerSnapshot == null)
+                    {
+                        continue;
+                    }
+
+                    StayAlivePlayer player = GetPlayerByChair(playerSnapshot.chairId);
+                    if (player == null)
+                    {
+                        continue;
+                    }
+
+                    player.ApplyStateSnapshot(playerSnapshot);
+                }
+            }
+
+            RebuildAlivePlayersList();
+
+            bool symbolsChanged = !AreArraysEqual(previousSymbols, symbolIndices);
+            bool bombCellsChanged = !AreArraysEqual(previousBombCells, GetSortedIndices(activeBombCellIndices));
+            RefreshBoardVisualsFromSnapshot(previousPhase, symbolsChanged, bombCellsChanged);
+
+            if (!localSimulationEnabled)
+            {
+                StartBackgroundMusic();
+                SyncSnapshotAudio(previousPhase);
+            }
+
+            UpdateTimerLabel();
+        }
+
+        public void SetPaused(bool paused)
+        {
+            if (isPaused == paused)
+            {
+                return;
+            }
+
+            isPaused = paused;
+            if (!isPaused && deferredSnapshotWhilePaused != null && !localSimulationEnabled)
+            {
+                StayAliveStateSnapshotPayload snapshot = deferredSnapshotWhilePaused;
+                deferredSnapshotWhilePaused = null;
+                ApplyStateSnapshot(snapshot);
+            }
+        }
+
+        private void RefreshBoardVisualsFromSnapshot(MatchPhase previousPhase, bool symbolsChanged, bool bombCellsChanged)
+        {
+            bool phaseChanged = previousPhase != phase;
+            bool shouldRefresh = phaseChanged || symbolsChanged || bombCellsChanged;
+            switch (phase)
+            {
+                case MatchPhase.Countdown:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForIdle();
+                    }
+                    break;
+
+                case MatchPhase.Spinning:
+                    if (phaseChanged || symbolsChanged)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForSpin();
+                    }
+                    break;
+
+                case MatchPhase.Warning:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForWarning();
+                    }
+                    break;
+
+                case MatchPhase.Explosion:
+                    if (shouldRefresh)
+                    {
+                        RefreshBoardVisualsForExplosion();
+                        SpawnExplosionEffects();
+                    }
+                    break;
+
+                case MatchPhase.Collapse:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForCollapse();
+                    }
+                    break;
+
+                case MatchPhase.RefillDelay:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForHiddenRefill();
+                    }
+                    break;
+
+                case MatchPhase.Refill:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForRefill();
+                    }
+                    break;
+
+                case MatchPhase.GameOver:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForSpin();
+                    }
+                    break;
+
+                default:
+                    if (shouldRefresh)
+                    {
+                        ClearExplosionEffects();
+                        RefreshBoardVisualsForIdle();
+                    }
+                    break;
+            }
+        }
+
+        private void RebuildAlivePlayersList()
+        {
+            alivePlayers.Clear();
+            for (int i = 0; i < allPlayers.Count; i++)
+            {
+                StayAlivePlayer player = allPlayers[i];
+                if (player != null && player.IsAlive)
+                {
+                    alivePlayers.Add(player);
+                }
+            }
+        }
+
+        private static void CopyInto(int[] target, int[] source)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            Array.Clear(target, 0, target.Length);
+            if (source == null)
+            {
+                return;
+            }
+
+            int count = Mathf.Min(target.Length, source.Length);
+            Array.Copy(source, target, count);
+        }
+
+        private static void SetIndices(HashSet<int> target, int[] source)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            target.Clear();
+            if (source == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                target.Add(source[i]);
+            }
+        }
+
+        private static int[] CloneIntArray(int[] source)
+        {
+            if (source == null)
+            {
+                return Array.Empty<int>();
+            }
+
+            int[] clone = new int[source.Length];
+            Array.Copy(source, clone, source.Length);
+            return clone;
+        }
+
+        private static int[] GetSortedIndices(HashSet<int> source)
+        {
+            if (source == null || source.Count == 0)
+            {
+                return Array.Empty<int>();
+            }
+
+            int[] values = new int[source.Count];
+            source.CopyTo(values);
+            Array.Sort(values);
+            return values;
+        }
+
+        private static bool AreArraysEqual(int[] left, int[] right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left == null || right == null || left.Length != right.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] != right[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void InitializeIdleBoardState()
@@ -1202,8 +1818,101 @@ namespace StayAlive
             queuedBombCellIndices.Clear();
             completedSpinShiftCount = 0;
             targetSpinShiftCount = 0;
+            lastCountdownDisplayNumber = int.MinValue;
             FillSymbolsRandomly();
             RefreshBoardVisualsForIdle();
+            UpdateTimerLabel();
+        }
+
+        private void ResetMatchRuntimeState()
+        {
+            completedSpinCount = 0;
+            completedSpinShiftCount = 0;
+            targetSpinShiftCount = 0;
+            phaseTimer = 0f;
+            symbolSwapTimer = 0f;
+            explosionResolved = false;
+            matchTimerRemaining = Mathf.Max(1f, matchDurationSeconds);
+            lastCountdownDisplayNumber = int.MinValue;
+        }
+
+        private void EnsureTimerLabelReference()
+        {
+            if (timerLabel == null)
+            {
+                Debug.LogWarning("StayAliveGameManager: Assign 'timerLabel' in the inspector.", this);
+            }
+        }
+
+        private void UpdateTimerLabel()
+        {
+            EnsureTimerLabelReference();
+            SetTextComponentText(timerLabel, FormatMatchTime(matchTimerRemaining));
+        }
+
+        private static string FormatMatchTime(float secondsRemaining)
+        {
+            int totalSeconds = Mathf.Max(0, Mathf.CeilToInt(Mathf.Max(0f, secondsRemaining)));
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            return string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+
+        private void UpdateCountdownAudio()
+        {
+            int displayNumber = Mathf.Max(1, Mathf.CeilToInt(phaseTimer));
+            if (displayNumber == lastCountdownDisplayNumber)
+            {
+                return;
+            }
+
+            lastCountdownDisplayNumber = displayNumber;
+            if (displayNumber >= 1 && displayNumber <= 3)
+            {
+                PlayCountdownTick();
+            }
+        }
+
+        private void SyncSnapshotAudio(MatchPhase previousPhase)
+        {
+            if (phase == MatchPhase.Countdown)
+            {
+                UpdateCountdownAudio();
+            }
+            else
+            {
+                lastCountdownDisplayNumber = int.MinValue;
+            }
+
+            if (previousPhase == phase)
+            {
+                if (phase == MatchPhase.Spinning)
+                {
+                    StartSpinLoop();
+                }
+                return;
+            }
+
+            if (phase == MatchPhase.Spinning)
+            {
+                PlayStartWhistle();
+                StartSpinLoop();
+                return;
+            }
+
+            if (previousPhase == MatchPhase.Spinning)
+            {
+                StopSpinLoop();
+                if (phase == MatchPhase.Warning)
+                {
+                    PlaySpinStopSfx();
+                }
+            }
+
+            if (phase == MatchPhase.Explosion)
+            {
+                PlayExplosionSfx();
+            }
         }
 
         private void RefillCollapsedBombCells()
@@ -1478,6 +2187,163 @@ namespace StayAlive
             fallbackCellSprite = Sprite.Create(texture, new Rect(0f, 0f, 2f, 2f), new Vector2(0.5f, 0.5f), 2f);
         }
 
+        private void EnsureAudioSources()
+        {
+            if (musicSource == null)
+            {
+                musicSource = CreateAudioSource(loop: true);
+            }
+
+            if (sfxSource == null)
+            {
+                sfxSource = CreateAudioSource(loop: false);
+            }
+
+            if (spinLoopSource == null)
+            {
+                spinLoopSource = CreateAudioSource(loop: true);
+            }
+
+            if (explosionSfxSource == null)
+            {
+                explosionSfxSource = CreateAudioSource(loop: false);
+            }
+        }
+
+        private AudioSource CreateAudioSource(bool loop)
+        {
+            AudioSource source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            source.spatialBlend = 0f;
+            source.volume = 1f;
+            return source;
+        }
+
+        private void StartBackgroundMusic()
+        {
+            if (backgroundMusic == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (musicSource == null || (musicSource.isPlaying && musicSource.clip == backgroundMusic))
+            {
+                return;
+            }
+
+            musicSource.clip = backgroundMusic;
+            musicSource.volume = backgroundMusicVolume;
+            musicSource.Play();
+        }
+
+        private void PlayCountdownTick()
+        {
+            if (countdownTickClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(countdownTickClip, countdownTickVolume);
+        }
+
+        private void PlayStartWhistle()
+        {
+            if (startWhistleClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(startWhistleClip, startWhistleVolume);
+        }
+
+        private void PlaySpinStopSfx()
+        {
+            if (spinStopClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (sfxSource == null)
+            {
+                return;
+            }
+
+            sfxSource.PlayOneShot(spinStopClip, spinStopVolume);
+        }
+
+        private void PlayExplosionSfx()
+        {
+            if (explosionClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (explosionSfxSource == null)
+            {
+                return;
+            }
+
+            if (explosionSfxSource.isPlaying)
+            {
+                explosionSfxSource.Stop();
+            }
+
+            explosionSfxSource.clip = explosionClip;
+            explosionSfxSource.volume = explosionVolume;
+            explosionSfxSource.Play();
+        }
+
+        private void StartSpinLoop()
+        {
+            if (spinLoopClip == null)
+            {
+                return;
+            }
+
+            EnsureAudioSources();
+            if (spinLoopSource == null)
+            {
+                return;
+            }
+
+            if (spinLoopSource.clip != spinLoopClip)
+            {
+                spinLoopSource.clip = spinLoopClip;
+            }
+
+            spinLoopSource.volume = spinLoopVolume;
+            if (!spinLoopSource.isPlaying)
+            {
+                spinLoopSource.Play();
+            }
+        }
+
+        private void StopSpinLoop()
+        {
+            if (spinLoopSource == null || !spinLoopSource.isPlaying)
+            {
+                return;
+            }
+
+            spinLoopSource.Stop();
+        }
+
         private StayAliveGameSettings ResolveSettingsSource()
         {
             if (sourceSettings == null)
@@ -1486,6 +2352,38 @@ namespace StayAlive
             }
 
             return sourceSettings;
+        }
+
+        private static void SetTextComponentText(Component component, string value)
+        {
+            if (component == null)
+            {
+                return;
+            }
+
+            PropertyInfo property = GetTextProperty(component.GetType());
+            if (property == null || !property.CanWrite)
+            {
+                return;
+            }
+
+            property.SetValue(component, value ?? string.Empty, null);
+        }
+
+        private static PropertyInfo GetTextProperty(Type type)
+        {
+            if (type == null)
+            {
+                return null;
+            }
+
+            PropertyInfo property = type.GetProperty("text", BindingFlags.Instance | BindingFlags.Public);
+            if (property == null || property.PropertyType != typeof(string) || !property.CanRead)
+            {
+                return null;
+            }
+
+            return property;
         }
 
         private bool ValidateSceneSetup()
@@ -1565,6 +2463,42 @@ namespace StayAlive
             {
                 DestroyImmediate(target);
             }
+        }
+
+        private static int CountHumanParticipants(StayAliveRosterEntry[] roster)
+        {
+            int humans = 0;
+            for (int i = 0; i < roster.Length; i++)
+            {
+                if (roster[i] != null && !roster[i].isBot)
+                {
+                    humans++;
+                }
+            }
+
+            return Mathf.Max(1, humans);
+        }
+
+        private static StayAlivePlayerControlMode ResolveControlMode(
+            StayAliveRosterEntry entry,
+            string localUserId,
+            bool simulationAuthority)
+        {
+            if (simulationAuthority)
+            {
+                if (entry.isBot)
+                {
+                    return StayAlivePlayerControlMode.Bot;
+                }
+
+                return entry.userId == localUserId
+                    ? StayAlivePlayerControlMode.LocalHuman
+                    : StayAlivePlayerControlMode.NetworkDriven;
+            }
+
+            return entry.userId == localUserId
+                ? StayAlivePlayerControlMode.LocalHuman
+                : StayAlivePlayerControlMode.SnapshotOnly;
         }
 
         private void OnDrawGizmosSelected()
@@ -1685,6 +2619,14 @@ namespace StayAlive
             {
                 explosionEffectController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(DefaultExplosionControllerPath);
             }
+
+            backgroundMusic = backgroundMusic != null ? backgroundMusic : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultBackgroundMusicPath);
+            countdownTickClip = countdownTickClip != null ? countdownTickClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultCountdownTickPath);
+            playerCollisionClip = playerCollisionClip != null ? playerCollisionClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultPlayerCollisionPath);
+            explosionClip = explosionClip != null ? explosionClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultExplosionSfxPath);
+            spinLoopClip = spinLoopClip != null ? spinLoopClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultSpinLoopPath);
+            startWhistleClip = startWhistleClip != null ? startWhistleClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultStartWhistlePath);
+            spinStopClip = spinStopClip != null ? spinStopClip : AssetDatabase.LoadAssetAtPath<AudioClip>(DefaultSpinStopPath);
 
             RefreshEditorFromSettings();
         }
