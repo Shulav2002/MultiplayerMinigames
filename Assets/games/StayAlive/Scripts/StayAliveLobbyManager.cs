@@ -21,9 +21,8 @@ namespace StayAlive.Lobby
         {
             Hidden = 0,
             JoinEntry = 1,
-            CreateEntry = 2,
-            PrivateWaitingHost = 3,
-            PrivateWaitingGuest = 4
+            PrivateWaitingHost = 2,
+            PrivateWaitingGuest = 3
         }
 
         [Header("UI & Game References")]
@@ -32,38 +31,15 @@ namespace StayAlive.Lobby
         [SerializeField] private StayAlivePopupManager popupManager;
 
         [Header("Join Popup")]
-        [SerializeField] private GameObject joinRoomPopupPanel;
         [SerializeField] private Component roomIdInputField;
-        [SerializeField] private Component roomPopupActionLabel;
-        [SerializeField] private Button roomPopupPrimaryButton;
-
-        [Header("Create Popup")]
-        [SerializeField] private GameObject createRoomPopupPanel;
-        [SerializeField] private Component createRoomIdLabel;
-        [SerializeField] private Component createRoomOccupancyLabel;
-        [SerializeField] private Button createRoomStartButton;
 
         [Header("Game End")]
         [SerializeField] private GameObject lobbyRoot;
         [SerializeField] private GameObject gameEndPanel;
-        [SerializeField] private GameObject waitingForPlayersPanel;
-        [SerializeField] private GameObject networkIssueRoot;
-        [SerializeField] private Component networkIssueTitleLabel;
-        [SerializeField] private Component networkIssueMessageLabel;
-        [SerializeField] private Button networkIssueCloseButton;
-        [SerializeField] private GameObject blueWinnerPanel;
-        [SerializeField] private GameObject greenWinnerPanel;
-        [SerializeField] private GameObject redWinnerPanel;
-        [SerializeField] private GameObject yellowWinnerPanel;
         [SerializeField] private GameObject winnerAnimationRoot;
         [SerializeField] private Animator winnerAnimator;
-        [SerializeField] private GameObject tieResultRoot;
-        [SerializeField] private Button playAgainButton;
-        [SerializeField] private Button backToHomeButton;
 
         [Header("Labels")]
-        [SerializeField] private string joinRoomConfirmLabel = "Join";
-        [SerializeField] private string networkIssueTitle = "Network Error";
         [SerializeField] private string networkIssueConnectMessage = "Unable to connect to the server. Please check your internet connection and try again.";
         [SerializeField] private string networkIssueDisconnectMessage = "Connection to the server was lost. Please check your internet connection and try again.";
 
@@ -83,7 +59,6 @@ namespace StayAlive.Lobby
         [SerializeField, Min(0f)] private float gameEndDelaySeconds = 0.5f;
 
         [Header("Pause Overlay")]
-        [SerializeField] private Button pauseHomeButton;
         [SerializeField] private Button pauseRestartButton;
         [SerializeField] private Slider pauseVolumeSlider;
 
@@ -146,7 +121,6 @@ namespace StayAlive.Lobby
             }
 
             SubscribeToPopupEvents();
-            RegisterButtons();
             SubscribeToGameEvents();
             ShowLobbyHome();
         }
@@ -155,7 +129,6 @@ namespace StayAlive.Lobby
         {
             if (IsPrimaryLobbyManager)
             {
-                UnregisterButtons();
                 UnsubscribeFromGameEvents();
                 UnsubscribeFromPopupEvents();
             }
@@ -658,53 +631,24 @@ namespace StayAlive.Lobby
             HideNetworkIssue();
             ShowLobbyVisualState();
             StartRandomWaitingProgress();
-
-            if (waitingForPlayersPanel != null)
-            {
-                waitingForPlayersPanel.SetActive(true);
-                return;
-            }
-
-            if (popupManager != null)
-            {
-                popupManager.ShowWaitingForPlayersPopup(displayedRandomWaitingSeats, GetRandomWaitingCapacity());
-            }
+            popupManager?.ShowWaitingForPlayersPopup(displayedRandomWaitingSeats, GetRandomWaitingCapacity());
         }
 
         private void ShowJoinEntryPanel()
         {
             roomPanelMode = RoomPanelMode.JoinEntry;
             ShowLobbyVisualState();
-            SetPopup(createRoomPopupPanel, false);
             SetRoomIdReadOnly(false);
             SetRoomIdText(string.Empty);
             popupManager?.ClearLobbyJoinError();
-
-            if (popupManager != null)
-            {
-                popupManager.ShowJoinPopup();
-            }
-            else
-            {
-                SetPopup(joinRoomPopupPanel, true);
-                SetComponentText(roomPopupActionLabel, joinRoomConfirmLabel);
-            }
-
+            popupManager?.ShowJoinPopup();
             RefreshJoinEntryUi();
         }
 
         private void RefreshJoinEntryUi()
         {
             bool canJoin = !string.IsNullOrWhiteSpace(GetRoomIdText()) && !joinRequestInFlight;
-            if (popupManager != null)
-            {
-                popupManager.SetLobbyPrimaryButtonInteractable(canJoin);
-            }
-
-            if (roomPopupPrimaryButton != null)
-            {
-                roomPopupPrimaryButton.interactable = canJoin;
-            }
+            popupManager?.SetLobbyPrimaryButtonInteractable(canJoin);
         }
 
         private void ShowPrivateWaitingPanel(bool isHost, string roomId, int occupiedSeats, int capacity)
@@ -715,21 +659,12 @@ namespace StayAlive.Lobby
             currentCapacity = capacity;
             currentRoomId = roomId ?? string.Empty;
             ShowLobbyVisualState();
-
-            if (popupManager != null)
-            {
-                popupManager.ShowPrivateRoomWaitingPopup(
-                    isHost,
-                    currentRoomId,
-                    currentOccupiedSeats,
-                    currentCapacity,
-                    CanHostStartPrivateMatch());
-                return;
-            }
-
-            SetPopup(joinRoomPopupPanel, false);
-            SetPopup(createRoomPopupPanel, true);
-            SetComponentText(createRoomIdLabel, roomId ?? string.Empty);
+            popupManager?.ShowPrivateRoomWaitingPopup(
+                isHost,
+                currentRoomId,
+                currentOccupiedSeats,
+                currentCapacity,
+                CanHostStartPrivateMatch());
             RefreshPrivateWaitingUi();
         }
 
@@ -745,15 +680,6 @@ namespace StayAlive.Lobby
                     currentCapacity,
                     CanHostStartPrivateMatch());
             }
-
-            SetComponentText(createRoomOccupancyLabel, $"{currentOccupiedSeats}/{Mathf.Max(1, currentCapacity)} joined");
-
-            if (createRoomStartButton == null)
-            {
-                return;
-            }
-
-            createRoomStartButton.interactable = CanHostStartPrivateMatch();
         }
 
         private bool CanHostStartPrivateMatch()
@@ -792,9 +718,6 @@ namespace StayAlive.Lobby
             {
                 popupManager.HideLobbyPopup();
             }
-
-            SetPopup(joinRoomPopupPanel, false);
-            SetPopup(createRoomPopupPanel, false);
         }
 
         private void ShowGameEnd(int[] winningChairIds)
@@ -854,19 +777,12 @@ namespace StayAlive.Lobby
                 gameEndPanel.SetActive(false);
             }
 
-            SetWinnerPanels(false, false, false, false);
-            ShowTieResult(false);
             ShowWinnerAnimation(false, null);
         }
 
         private void HideWaiting()
         {
             StopRandomWaitingProgress();
-
-            if (waitingForPlayersPanel != null)
-            {
-                waitingForPlayersPanel.SetActive(false);
-            }
 
             if (popupManager != null)
             {
@@ -895,14 +811,6 @@ namespace StayAlive.Lobby
             {
                 popupManager.ShowNetworkErrorPopup(resolvedMessage, preferOverlay: !showOnLobbyCanvas);
             }
-
-            if (networkIssueRoot != null)
-            {
-                networkIssueRoot.SetActive(true);
-            }
-
-            SetComponentText(networkIssueTitleLabel, networkIssueTitle);
-            SetComponentText(networkIssueMessageLabel, resolvedMessage);
         }
 
         private bool ShouldShowNetworkIssueOnLobbyCanvas()
@@ -964,68 +872,24 @@ namespace StayAlive.Lobby
 
         private void HideNetworkIssue()
         {
-            if (popupManager != null)
-            {
-                popupManager.HidePopupByIntent(StayAlivePopupIntent.NetworkError);
-            }
-
-            if (networkIssueRoot != null)
-            {
-                networkIssueRoot.SetActive(false);
-            }
+            popupManager?.HidePopupByIntent(StayAlivePopupIntent.NetworkError);
         }
 
         private void SetWinnerPanelsForWinningChairs(int[] winningChairIds)
         {
             int[] appearanceIndices = ResolveWinningAppearanceIndices(winningChairIds);
-            bool blue = false;
-            bool green = false;
-            bool red = false;
-            bool yellow = false;
-
-            for (int i = 0; i < appearanceIndices.Length; i++)
-            {
-                switch (appearanceIndices[i])
-                {
-                    case 0:
-                        red = true;
-                        break;
-
-                    case 1:
-                        blue = true;
-                        break;
-
-                    case 2:
-                        green = true;
-                        break;
-
-                    case 3:
-                        yellow = true;
-                        break;
-                }
-            }
-
-            SetWinnerPanels(
-                blue: blue,
-                green: green,
-                red: red,
-                yellow: yellow);
-
             if (appearanceIndices.Length == 0)
             {
-                ShowTieResult(false);
                 ShowWinnerAnimation(false, null);
                 return;
             }
 
             if (appearanceIndices.Length > 1)
             {
-                ShowTieResult(true);
                 ShowWinnerAnimation(false, null);
                 return;
             }
 
-            ShowTieResult(false);
             ShowWinnerAnimation(true, ResolveWinnerAnimationStateName(appearanceIndices[0]));
         }
 
@@ -1054,22 +918,6 @@ namespace StayAlive.Lobby
             }
 
             return appearanceIndices.ToArray();
-        }
-
-        private void SetWinnerPanels(bool blue, bool green, bool red, bool yellow)
-        {
-            if (blueWinnerPanel != null) blueWinnerPanel.SetActive(blue);
-            if (greenWinnerPanel != null) greenWinnerPanel.SetActive(green);
-            if (redWinnerPanel != null) redWinnerPanel.SetActive(red);
-            if (yellowWinnerPanel != null) yellowWinnerPanel.SetActive(yellow);
-        }
-
-        private void ShowTieResult(bool visible)
-        {
-            if (tieResultRoot != null)
-            {
-                tieResultRoot.SetActive(visible);
-            }
         }
 
         private void ShowWinnerAnimation(bool visible, string stateName)
@@ -1186,10 +1034,7 @@ namespace StayAlive.Lobby
             LogMissingReference(roomIdInputField == null, "roomIdInputField");
             LogMissingReference(lobbyRoot == null, "lobbyRoot");
             LogMissingReference(gameEndPanel == null, "gameEndPanel");
-            LogMissingReference(playAgainButton == null, "playAgainButton");
-            LogMissingReference(backToHomeButton == null, "backToHomeButton");
             LogMissingReference(gameManager == null, "gameManager");
-            LogMissingReference(pauseHomeButton == null, "pauseHomeButton");
             LogMissingReference(pauseRestartButton == null, "pauseRestartButton");
             LogMissingReference(pauseVolumeSlider == null, "pauseVolumeSlider");
 
@@ -1482,20 +1327,6 @@ namespace StayAlive.Lobby
             }
         }
 
-        private void RegisterButtons()
-        {
-            if (playAgainButton != null) playAgainButton.onClick.AddListener(OnPlayAgainButtonClicked);
-            if (backToHomeButton != null) backToHomeButton.onClick.AddListener(OnBackToHomeButtonClicked);
-            if (networkIssueCloseButton != null) networkIssueCloseButton.onClick.AddListener(OnCloseNetworkIssueButtonClicked);
-        }
-
-        private void UnregisterButtons()
-        {
-            if (playAgainButton != null) playAgainButton.onClick.RemoveListener(OnPlayAgainButtonClicked);
-            if (backToHomeButton != null) backToHomeButton.onClick.RemoveListener(OnBackToHomeButtonClicked);
-            if (networkIssueCloseButton != null) networkIssueCloseButton.onClick.RemoveListener(OnCloseNetworkIssueButtonClicked);
-        }
-
         private void ClosePauseMenu()
         {
             popupManager?.HideOverlayPopup();
@@ -1621,14 +1452,6 @@ namespace StayAlive.Lobby
             }
 
             return 4;
-        }
-
-        private static void SetPopup(GameObject target, bool isVisible)
-        {
-            if (target != null)
-            {
-                target.SetActive(isVisible);
-            }
         }
 
         private string GetRoomIdText()

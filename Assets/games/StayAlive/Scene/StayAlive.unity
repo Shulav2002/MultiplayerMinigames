@@ -15002,32 +15002,11 @@ MonoBehaviour:
   lobbyCanvas: {fileID: 553628812}
   gameContainer: {fileID: 2000000000}
   popupManager: {fileID: 3000000105}
-  joinRoomPopupPanel: {fileID: 0}
   roomIdInputField: {fileID: 1935436434}
-  roomPopupActionLabel: {fileID: 0}
-  roomPopupPrimaryButton: {fileID: 0}
-  createRoomPopupPanel: {fileID: 0}
-  createRoomIdLabel: {fileID: 0}
-  createRoomOccupancyLabel: {fileID: 0}
-  createRoomStartButton: {fileID: 0}
   lobbyRoot: {fileID: 2109309779}
   gameEndPanel: {fileID: 654623416}
-  waitingForPlayersPanel: {fileID: 0}
-  networkIssueRoot: {fileID: 0}
-  networkIssueTitleLabel: {fileID: 0}
-  networkIssueMessageLabel: {fileID: 0}
-  networkIssueCloseButton: {fileID: 0}
-  blueWinnerPanel: {fileID: 0}
-  greenWinnerPanel: {fileID: 0}
-  redWinnerPanel: {fileID: 0}
-  yellowWinnerPanel: {fileID: 0}
   winnerAnimationRoot: {fileID: 497133159}
   winnerAnimator: {fileID: 497133163}
-  tieResultRoot: {fileID: 0}
-  playAgainButton: {fileID: 159543289}
-  backToHomeButton: {fileID: 1770876795}
-  joinRoomConfirmLabel: Join
-  networkIssueTitle: Network Error
   networkIssueConnectMessage: Unable to connect to the server. Please check your
     internet connection and try again.
   networkIssueDisconnectMessage: Connection to the server was lost. Please check
@@ -15041,7 +15020,6 @@ MonoBehaviour:
   offlineTotalPlayers: 4
   offlineHumanPlayers: 1
   gameEndDelaySeconds: 0.5
-  pauseHomeButton: {fileID: 1525832374}
   pauseRestartButton: {fileID: 416930197}
   pauseVolumeSlider: {fileID: 1530691012}
 --- !u!114 &3000000102

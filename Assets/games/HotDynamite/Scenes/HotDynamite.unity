@@ -1869,8 +1869,6 @@ MonoBehaviour:
   playAgainButton: {fileID: 972337200}
   backToHomeButton: {fileID: 1335074681}
   joinRoomConfirmLabel: Join
-  hostStartLabel: Start
-  guestWaitingLabel: Waiting...
   networkIssueTitle: Network Error
   networkIssueConnectMessage: Unable to connect to the server. Please check your
     internet connection and try again.
