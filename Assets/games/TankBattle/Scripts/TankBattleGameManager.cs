@@ -165,6 +165,31 @@ namespace TankBattle
             }
         }
 
+        public void SetNetworkReportedState(int chairId, Vector2 position, float facingAngle, Vector2 velocity)
+        {
+            if (!playersByChair.TryGetValue(chairId, out TankBattlePlayer player) || player == null)
+            {
+                return;
+            }
+
+            player.ApplyNetworkReportedState(position, facingAngle, velocity);
+        }
+
+        public void ApplyNetworkBulletHit(int shooterChairId, int victimChairId)
+        {
+            if (!playersByChair.TryGetValue(victimChairId, out TankBattlePlayer victim) || victim == null)
+            {
+                return;
+            }
+
+            if (gameUI != null)
+            {
+                gameUI.ApplyNetworkHitByChair(victimChairId);
+            }
+
+            ResolveBulletAfterHit(shooterChairId, victim.Position);
+        }
+
         public bool TryGetLocalInputForNetwork(out int chairId, out Vector2 moveInput, out bool shootPressed)
         {
             chairId = -1;
@@ -240,7 +265,7 @@ namespace TankBattle
             IsMatchStarting = snapshot.isMatchStarting;
             MatchStartDelayRemaining = Mathf.Max(0f, snapshot.matchStartDelayRemaining);
 
-            if (snapshot.players != null)
+            if (HasSimulationAuthority && snapshot.players != null)
             {
                 for (int i = 0; i < snapshot.players.Length; i++)
                 {
@@ -257,7 +282,10 @@ namespace TankBattle
                 }
             }
 
-            SyncSnapshotBullets(snapshot.bullets);
+            if (HasSimulationAuthority)
+            {
+                SyncSnapshotBullets(snapshot.bullets);
+            }
 
             if (snapshot.ui != null && gameUI != null)
             {
@@ -458,6 +486,10 @@ namespace TankBattle
                 LogNetworkDiagnostic(
                     $"Spawn chair={entry.chairId}, user={entry.userId}, isBot={entry.isBot}, isHost={entry.isHost}, isLocal={isLocal}, mode={controlMode}, capture={captureInputForNetworking}");
 
+                bool playerSimulatesLocally = !IsOnlineMatch
+                    || isLocal
+                    || (HasSimulationAuthority && entry.isBot);
+
                 player.Initialize(
                     bulletPrefab,
                     bulletSettings,
@@ -465,7 +497,7 @@ namespace TankBattle
                     entry.userId,
                     entry.chairId,
                     entry.isBot,
-                    HasSimulationAuthority,
+                    playerSimulatesLocally,
                     captureInputForNetworking);
 
                 if (controlMode == TankBattlePlayerControlMode.Bot)
@@ -587,17 +619,19 @@ namespace TankBattle
                 return isLocal ? TankBattlePlayerControlMode.LocalHuman : TankBattlePlayerControlMode.Bot;
             }
 
-            if (HasSimulationAuthority)
+            if (isLocal)
             {
-                if (entry.isBot && !isLocal)
-                {
-                    return TankBattlePlayerControlMode.Bot;
-                }
-
-                return isLocal ? TankBattlePlayerControlMode.LocalHuman : TankBattlePlayerControlMode.NetworkDriven;
+                return TankBattlePlayerControlMode.LocalHuman;
             }
 
-            return isLocal ? TankBattlePlayerControlMode.LocalHuman : TankBattlePlayerControlMode.SnapshotOnly;
+            if (entry != null && entry.isBot)
+            {
+                return HasSimulationAuthority
+                    ? TankBattlePlayerControlMode.Bot
+                    : TankBattlePlayerControlMode.SnapshotOnly;
+            }
+
+            return TankBattlePlayerControlMode.SnapshotOnly;
         }
 
         private void PromoteSeatToNetworkDriven(TankBattlePlayer player, int chairId)
@@ -810,6 +844,35 @@ namespace TankBattle
             for (int i = 0; i < toRemove.Count; i++)
             {
                 snapshotBullets.Remove(toRemove[i]);
+            }
+        }
+
+        private void ResolveBulletAfterHit(int shooterChairId, Vector2 victimPosition)
+        {
+            TankBattleBullet[] bullets = FindObjectsByType<TankBattleBullet>(FindObjectsSortMode.None);
+            TankBattleBullet selected = null;
+            const float maxResolveDistance = 1.75f;
+            float bestDistanceSqr = maxResolveDistance * maxResolveDistance;
+
+            for (int i = 0; i < bullets.Length; i++)
+            {
+                TankBattleBullet bullet = bullets[i];
+                if (bullet == null || bullet.IsSnapshotProxy || bullet.OwnerChairId != shooterChairId)
+                {
+                    continue;
+                }
+
+                float distanceSqr = ((Vector2)bullet.transform.position - victimPosition).sqrMagnitude;
+                if (distanceSqr < bestDistanceSqr)
+                {
+                    bestDistanceSqr = distanceSqr;
+                    selected = bullet;
+                }
+            }
+
+            if (selected != null)
+            {
+                Destroy(selected.gameObject);
             }
         }
 

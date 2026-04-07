@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TankBattle.Networking;
 
 namespace TankBattle
 {
@@ -25,6 +26,7 @@ namespace TankBattle
         private bool snapshotProxy;
         private int ownerChairId = -1;
         private int networkBulletId;
+        private bool returnShotOnDestroy;
 
         public GameObject OwnerPlayer { get; private set; }
         public bool IsSnapshotProxy => snapshotProxy;
@@ -43,6 +45,7 @@ namespace TankBattle
             OwnerPlayer = owner;
             this.ownerChairId = ownerChairId;
             snapshotProxy = false;
+            returnShotOnDestroy = true;
             if (networkBulletId <= 0)
             {
                 networkBulletId = nextNetworkBulletId++;
@@ -78,6 +81,7 @@ namespace TankBattle
             OwnerPlayer = null;
             currentVelocity = velocity;
             destroyTime = float.PositiveInfinity;
+            returnShotOnDestroy = false;
 
             CacheComponents();
             ApplySortingOrderIfNeeded();
@@ -193,9 +197,10 @@ namespace TankBattle
                 return;
             }
 
-            if (collision.collider.GetComponent("TankBattlePlayer") != null)
+            TankBattlePlayer hitPlayer = collision.collider.GetComponentInParent<TankBattlePlayer>();
+            if (hitPlayer != null)
             {
-                HandlePlayerHit(collision.gameObject);
+                HandlePlayerHit(hitPlayer);
                 return;
             }
 
@@ -222,24 +227,54 @@ namespace TankBattle
             }
         }
 
-        private void HandlePlayerHit(GameObject hitPlayerObj)
+        private void HandlePlayerHit(TankBattlePlayer hitPlayer)
         {
-            TankBattleUI ui = FindObjectsByType<TankBattleUI>(FindObjectsSortMode.None).Length > 0
-                ? FindObjectsByType<TankBattleUI>(FindObjectsSortMode.None)[0]
-                : null;
-
-            if (ui != null && hitPlayerObj != null && OwnerPlayer != null)
+            if (hitPlayer != null && OwnerPlayer != null)
             {
-                TankBattlePlayer hitPlayer = hitPlayerObj.GetComponent<TankBattlePlayer>();
                 TankBattlePlayer shooter = OwnerPlayer.GetComponent<TankBattlePlayer>();
+                TankBattleGameManager gameManager = FindAnyObjectByType<TankBattleGameManager>();
+                TankBattleUI ui = gameManager != null ? gameManager.gameUI : FindAnyObjectByType<TankBattleUI>();
+                bool shouldProcessHitHere = ShouldProcessHitLocally(gameManager, shooter);
 
-                if (hitPlayer != null && shooter != null)
+                if (hitPlayer != null && shooter != null && shouldProcessHitHere)
                 {
-                    ui.OnPlayerHit(hitPlayer, shooter);
+                    if (ui != null)
+                    {
+                        ui.OnPlayerHit(hitPlayer, shooter);
+                    }
+
+                    if (gameManager != null && gameManager.IsOnlineMatch)
+                    {
+                        TankBattleOnlineMatchController onlineController = FindAnyObjectByType<TankBattleOnlineMatchController>();
+                        if (onlineController != null)
+                        {
+                            onlineController.BroadcastLocalBulletHit(shooter.ChairId, hitPlayer.ChairId);
+                        }
+                    }
                 }
             }
 
             Destroy(gameObject);
+        }
+
+        private static bool ShouldProcessHitLocally(TankBattleGameManager gameManager, TankBattlePlayer shooter)
+        {
+            if (shooter == null)
+            {
+                return false;
+            }
+
+            if (gameManager == null || !gameManager.IsOnlineMatch)
+            {
+                return true;
+            }
+
+            if (shooter.ControlMode == TankBattlePlayerControlMode.LocalHuman)
+            {
+                return true;
+            }
+
+            return gameManager.HasSimulationAuthority && shooter.IsBotParticipant;
         }
 
         private void ReflectOffWall(Collision2D collision)
@@ -304,6 +339,20 @@ namespace TankBattle
             }
 
             return globalConfig;
+        }
+
+        private void OnDestroy()
+        {
+            if (!returnShotOnDestroy || OwnerPlayer == null)
+            {
+                return;
+            }
+
+            TankBattlePlayer ownerPlayer = OwnerPlayer.GetComponent<TankBattlePlayer>();
+            if (ownerPlayer != null)
+            {
+                ownerPlayer.ReturnShot(1);
+            }
         }
     }
 }

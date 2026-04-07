@@ -28,6 +28,7 @@ namespace TankBattle.Networking
         public const string MatchPrepare = "match_prepare";
         public const string MatchStart = "match_start";
         public const string PlayerInput = "player_input";
+        public const string BulletHit = "bullet_hit";
         public const string StateSnapshot = "state_snapshot";
         public const string MatchEnd = "match_end";
     }
@@ -155,6 +156,11 @@ namespace TankBattle.Networking
         public int sequence;
         public float moveX;
         public float moveY;
+        public float x;
+        public float y;
+        public float facingAngle;
+        public float velocityX;
+        public float velocityY;
         public bool shootPressed;
     }
 
@@ -171,6 +177,17 @@ namespace TankBattle.Networking
         public bool isAlive;
         public bool isBot;
         public int remainingShots;
+    }
+
+    [Serializable]
+    public class TankBattleBulletHitPayload
+    {
+        public string kind = TankBattlePayloadKinds.BulletHit;
+        public string roomId;
+        public string playerId;
+        public int sequence;
+        public int shooterChairId;
+        public int victimChairId;
     }
 
     [Serializable]

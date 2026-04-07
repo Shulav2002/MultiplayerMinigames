@@ -31,9 +31,14 @@ namespace TankBattle.Networking
         private float nextInputSendAt;
         private float nextSnapshotSendAt;
         private int snapshotTick;
+        private int latestAppliedSnapshotTick = -1;
         private int localInputSequence;
+        private int localBulletHitSequence;
         private float nextInputSendDiagnosticAt;
         private float nextInputReceiveDiagnosticAt;
+        private readonly HashSet<string> receivedBulletHitKeys = new HashSet<string>();
+        private readonly Queue<string> receivedBulletHitOrder = new Queue<string>();
+        private const int MaxBulletHitDeduplicationEntries = 256;
 
         public event Action<int> MatchEnded;
 
@@ -96,6 +101,12 @@ namespace TankBattle.Networking
                 {
                     nextSnapshotSendAt = Time.time + snapshotSendIntervalSeconds;
                     BroadcastSnapshot();
+                }
+
+                if (Time.time >= nextInputSendAt)
+                {
+                    nextInputSendAt = Time.time + inputSendIntervalSeconds;
+                    SendLocalInput();
                 }
 
                 if (gameManager.IsGameOver && !matchEndSent)
@@ -218,6 +229,7 @@ namespace TankBattle.Networking
                 payload.countdownSeconds);
             matchRunning = true;
             nextInputSendAt = Time.time;
+            latestAppliedSnapshotTick = -1;
             LogDiagnostic($"Client match_prepare applied. localUser={networkClient.LocalUserId}, localChair={localChairId}.");
             LogDiagnostic($"Client roster from host: {DescribeRoster(payload.roster)}");
             LogDiagnostic("Client started match from host match_prepare payload.");
@@ -230,6 +242,12 @@ namespace TankBattle.Networking
                 return;
             }
 
+            if (payload.tick <= latestAppliedSnapshotTick)
+            {
+                return;
+            }
+
+            latestAppliedSnapshotTick = payload.tick;
             gameManager.ApplyStateSnapshot(payload);
         }
 
@@ -249,13 +267,31 @@ namespace TankBattle.Networking
 
         private void HandleRoomMessageReceived(string fromUserId, string payloadJson)
         {
-            if (!networkClient.IsHost || !matchRunning || string.IsNullOrWhiteSpace(payloadJson) || payloadJson == "null")
+            if (!matchRunning || string.IsNullOrWhiteSpace(payloadJson) || payloadJson == "null")
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(fromUserId)
+                && !string.IsNullOrEmpty(networkClient.LocalUserId)
+                && string.Equals(fromUserId, networkClient.LocalUserId, StringComparison.Ordinal))
             {
                 return;
             }
 
             TankBattleRoomPayloadEnvelope envelope = JsonUtility.FromJson<TankBattleRoomPayloadEnvelope>(payloadJson);
-            if (envelope == null || envelope.kind != TankBattlePayloadKinds.PlayerInput)
+            if (envelope == null)
+            {
+                return;
+            }
+
+            if (envelope.kind == TankBattlePayloadKinds.BulletHit)
+            {
+                HandleBulletHitMessage(fromUserId, payloadJson);
+                return;
+            }
+
+            if (envelope.kind != TankBattlePayloadKinds.PlayerInput)
             {
                 return;
             }
@@ -284,10 +320,63 @@ namespace TankBattle.Networking
             }
 
             gameManager.SetNetworkInput(resolvedChairId, new Vector2(payload.moveX, payload.moveY), payload.shootPressed);
+            gameManager.SetNetworkReportedState(
+                resolvedChairId,
+                new Vector2(payload.x, payload.y),
+                payload.facingAngle,
+                new Vector2(payload.velocityX, payload.velocityY));
             if (ShouldLogInputReceiveDiagnostic())
             {
                 LogDiagnostic(
-                    $"Host received input from={fromUserId}, payloadChair={payload.chairId}, resolvedChair={resolvedChairId}, playerId={payload.playerId}, seq={payload.sequence}, move=({payload.moveX:0.00},{payload.moveY:0.00}), shoot={payload.shootPressed}");
+                    $"Received input from={fromUserId}, payloadChair={payload.chairId}, resolvedChair={resolvedChairId}, playerId={payload.playerId}, seq={payload.sequence}, move=({payload.moveX:0.00},{payload.moveY:0.00}), pos=({payload.x:0.00},{payload.y:0.00}), facing={payload.facingAngle:0.0}, shoot={payload.shootPressed}");
+            }
+        }
+
+        private void HandleBulletHitMessage(string fromUserId, string payloadJson)
+        {
+            TankBattleBulletHitPayload payload = JsonUtility.FromJson<TankBattleBulletHitPayload>(payloadJson);
+            if (payload == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(payload.roomId) && payload.roomId != networkClient.CurrentRoomId)
+            {
+                return;
+            }
+
+            string dedupeKey = $"{fromUserId}:{payload.sequence}";
+            if (!RegisterBulletHitDeduplication(dedupeKey))
+            {
+                return;
+            }
+
+            gameManager.ApplyNetworkBulletHit(payload.shooterChairId, payload.victimChairId);
+        }
+
+        public async void BroadcastLocalBulletHit(int shooterChairId, int victimChairId)
+        {
+            if (!isInitialized || networkClient == null || !networkClient.IsInRoom || !matchRunning)
+            {
+                return;
+            }
+
+            TankBattleBulletHitPayload payload = new TankBattleBulletHitPayload
+            {
+                roomId = networkClient.CurrentRoomId,
+                playerId = networkClient.LocalUserId,
+                sequence = localBulletHitSequence++,
+                shooterChairId = shooterChairId,
+                victimChairId = victimChairId
+            };
+
+            try
+            {
+                await networkClient.BroadcastToOthersAsync(JsonUtility.ToJson(payload));
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"TankBattleOnlineMatchController: Failed to broadcast bullet_hit. {exception.Message}");
             }
         }
 
@@ -440,6 +529,11 @@ namespace TankBattle.Networking
                 return;
             }
 
+            TankBattlePlayer localPlayer = gameManager.GetPlayerByChair(chairId);
+            Vector2 localPosition = localPlayer != null ? localPlayer.Position : Vector2.zero;
+            Vector2 localVelocity = localPlayer != null ? localPlayer.EstimatedVelocity : Vector2.zero;
+            float localFacing = localPlayer != null ? localPlayer.FacingAngle : 0f;
+
             TankBattlePlayerInputPayload payload = new TankBattlePlayerInputPayload
             {
                 playerId = networkClient.LocalUserId,
@@ -447,6 +541,11 @@ namespace TankBattle.Networking
                 sequence = localInputSequence++,
                 moveX = move.x,
                 moveY = move.y,
+                x = localPosition.x,
+                y = localPosition.y,
+                facingAngle = localFacing,
+                velocityX = localVelocity.x,
+                velocityY = localVelocity.y,
                 shootPressed = shootPressed
             };
 
@@ -487,7 +586,11 @@ namespace TankBattle.Networking
             nextInputSendAt = 0f;
             nextSnapshotSendAt = 0f;
             snapshotTick = 0;
+            latestAppliedSnapshotTick = -1;
             localInputSequence = 0;
+            localBulletHitSequence = 0;
+            receivedBulletHitKeys.Clear();
+            receivedBulletHitOrder.Clear();
         }
 
         private bool IsTrustedHostMessage(string senderUserId, string roomId, string hostUserId)
@@ -633,6 +736,28 @@ namespace TankBattle.Networking
             }
 
             nextInputReceiveDiagnosticAt = now + Mathf.Max(0.1f, diagnosticsIntervalSeconds);
+            return true;
+        }
+
+        private bool RegisterBulletHitDeduplication(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return true;
+            }
+
+            if (!receivedBulletHitKeys.Add(key))
+            {
+                return false;
+            }
+
+            receivedBulletHitOrder.Enqueue(key);
+            while (receivedBulletHitOrder.Count > MaxBulletHitDeduplicationEntries)
+            {
+                string oldKey = receivedBulletHitOrder.Dequeue();
+                receivedBulletHitKeys.Remove(oldKey);
+            }
+
             return true;
         }
 

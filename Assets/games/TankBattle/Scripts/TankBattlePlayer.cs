@@ -40,10 +40,10 @@ namespace TankBattle
 
         [Header("Networking")]
         [SerializeField, Min(0.01f)] private float networkPositionSmoothness = 14f;
+        [SerializeField, Min(0.01f)] private float networkFacingSmoothness = 18f;
         [SerializeField, Min(0f)] private float networkSnapDistance = 0.65f;
         [SerializeField, Min(0f)] private float localAuthorityCorrectionMultiplier = 0.35f;
         [SerializeField, Min(0f)] private float localAuthoritySnapDistance = 1.25f;
-        [SerializeField, Min(0.01f)] private float networkInputHoldSeconds = 0.2f;
 
         [Header("Diagnostics")]
         [SerializeField] private bool enableInputDiagnostics;
@@ -63,6 +63,7 @@ namespace TankBattle
         private Vector2 estimatedVelocity;
         private float nextShootTime;
         private int remainingShots = 5;
+        private bool pendingShootForNetwork;
 
         private float currentRotationAngle;
         private float targetRotationAngle;
@@ -73,7 +74,6 @@ namespace TankBattle
         private float lastInputActiveTime;
 
         private Vector2 networkMoveVector;
-        private float lastNetworkInputTime = -999f;
         private bool networkShootRequested;
         private bool hasAuthoritativeState;
         private Vector2 authoritativePosition;
@@ -88,10 +88,11 @@ namespace TankBattle
         public string UserId => userId;
         public int ChairId => chairId;
         public TankBattlePlayerControlMode ControlMode => controlMode;
-        public Vector2 Position => body != null ? body.position : (Vector2)transform.position;
+        public Vector2 Position => GetCurrentPosition();
         public Vector2 EstimatedVelocity => estimatedVelocity;
         public float FacingAngle => facingTransform != null ? facingTransform.localEulerAngles.z : transform.localEulerAngles.z;
         public int RemainingShots => remainingShots;
+        private int MaxShotsPerPlayer => bulletSettings != null ? Mathf.Max(1, bulletSettings.maxShotsPerPlayer) : 5;
 
         public void Initialize(GameObject bulletPrefabToUse, TankBattleBulletSettings bulletSettingsToUse, bool enableInput)
         {
@@ -129,8 +130,8 @@ namespace TankBattle
             remainingShots = bulletSettings != null ? bulletSettings.maxShotsPerPlayer : 5;
             authoritativeRemainingShots = remainingShots;
             networkMoveVector = Vector2.zero;
-            lastNetworkInputTime = -999f;
             networkShootRequested = false;
+            pendingShootForNetwork = false;
             hasAuthoritativeState = false;
 
             EnsureComponentsAttached();
@@ -138,6 +139,7 @@ namespace TankBattle
             ConfigureRigidbodyForTopDown();
             ApplySortingOrderIfNeeded();
             RefreshInputEnabledState();
+            RefreshPhysicsSimulationState();
             LogInputDiagnostic(
                 $"Initialize user={this.userId}, chair={this.chairId}, mode={controlMode}, simAuthority={this.simulationAuthority}, capture={this.captureInputForNetwork}, inputEnabled={inputEnabled}, isBot={this.isBotParticipant}");
         }
@@ -157,6 +159,7 @@ namespace TankBattle
             this.captureInputForNetwork = captureInputForNetwork;
             this.isBotParticipant = isBotParticipant;
             RefreshInputEnabledState();
+            RefreshPhysicsSimulationState();
             LogInputDiagnostic(
                 $"SetRuntimeControlMode user={userId}, chair={chairId}, mode={controlMode}, capture={this.captureInputForNetwork}, inputEnabled={inputEnabled}, isBot={this.isBotParticipant}");
         }
@@ -164,11 +167,36 @@ namespace TankBattle
         public void SetNetworkInput(Vector2 moveInput, bool shootPressed)
         {
             networkMoveVector = Vector2.ClampMagnitude(moveInput, 1f);
-            lastNetworkInputTime = Time.time;
             if (shootPressed)
             {
                 networkShootRequested = true;
             }
+        }
+
+        public void ApplyNetworkReportedState(Vector2 position, float facingAngle, Vector2 velocity)
+        {
+            authoritativePosition = position;
+            authoritativeFacingAngle = facingAngle;
+            authoritativeVelocity = velocity;
+
+            bool hadAuthoritativeState = hasAuthoritativeState;
+            hasAuthoritativeState = true;
+
+            if (UsesAuthoritativeTransform() && !hadAuthoritativeState)
+            {
+                ApplyAuthoritativeTransformImmediate();
+            }
+        }
+
+        public void ReturnShot(int amount = 1)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            remainingShots = Mathf.Clamp(remainingShots + amount, 0, MaxShotsPerPlayer);
+            authoritativeRemainingShots = Mathf.Max(authoritativeRemainingShots, remainingShots);
         }
 
         public bool TryCaptureInputForNetwork(out Vector2 moveInput, out bool shootPressed)
@@ -187,7 +215,11 @@ namespace TankBattle
             }
 
             moveInput = Vector2.ClampMagnitude(playerInput.MoveVector, 1f);
-            shootPressed = playerInput.ShootPressed;
+            shootPressed = playerInput.ShootPressed || pendingShootForNetwork;
+            if (shootPressed)
+            {
+                pendingShootForNetwork = false;
+            }
             if ((moveInput.sqrMagnitude > 0.001f || shootPressed) && ShouldLogInputDiagnostic(ref nextCaptureSuccessLogAt))
             {
                 LogInputDiagnostic(
@@ -209,12 +241,19 @@ namespace TankBattle
             authoritativeFacingAngle = snapshot.facingAngle;
             authoritativeVelocity = new Vector2(snapshot.velocityX, snapshot.velocityY);
             authoritativeRemainingShots = Mathf.Max(0, snapshot.remainingShots);
+            bool hadAuthoritativeState = hasAuthoritativeState;
             hasAuthoritativeState = true;
 
-            if (controlMode == TankBattlePlayerControlMode.SnapshotOnly)
+            if (UsesAuthoritativeTransform())
             {
-                ApplyAuthoritativeState(Time.fixedDeltaTime, forceImmediate: false);
+                estimatedVelocity = authoritativeVelocity;
+                if (!hadAuthoritativeState)
+                {
+                    ApplyAuthoritativeTransformImmediate();
+                }
             }
+
+            ResetPhysicsVelocity();
 
             if (!isAlive)
             {
@@ -231,20 +270,25 @@ namespace TankBattle
 
             CacheRequiredComponents();
             ConfigureRigidbodyForTopDown();
+            RefreshPhysicsSimulationState();
             IgnoreOtherPlayers();
         }
 
         private void FixedUpdate()
         {
-            if (controlMode == TankBattlePlayerControlMode.SnapshotOnly)
+            if (UsesAuthoritativeTransform())
             {
-                ApplyAuthoritativeState(Time.fixedDeltaTime, forceImmediate: false);
+                estimatedVelocity = hasAuthoritativeState ? authoritativeVelocity : Vector2.zero;
+                ResetPhysicsVelocity();
                 return;
             }
 
             if (!CanSimulateMovement())
             {
-                estimatedVelocity = Vector2.zero;
+                if (!UsesAuthoritativeTransform())
+                {
+                    estimatedVelocity = Vector2.zero;
+                }
                 return;
             }
 
@@ -257,6 +301,8 @@ namespace TankBattle
 
         private void Update()
         {
+            UpdateSnapshotPresentation(Time.deltaTime);
+
             if (!isAlive)
             {
                 return;
@@ -264,13 +310,16 @@ namespace TankBattle
 
             bool shootRequested = false;
             if ((controlMode == TankBattlePlayerControlMode.LocalHuman || controlMode == TankBattlePlayerControlMode.Bot)
-                && simulationAuthority
                 && inputEnabled
                 && playerInput != null)
             {
                 shootRequested = playerInput.ShootPressed;
+                if (controlMode == TankBattlePlayerControlMode.LocalHuman && playerInput.ShootPressed)
+                {
+                    pendingShootForNetwork = true;
+                }
             }
-            else if (controlMode == TankBattlePlayerControlMode.NetworkDriven && simulationAuthority)
+            else if (controlMode == TankBattlePlayerControlMode.NetworkDriven || controlMode == TankBattlePlayerControlMode.SnapshotOnly)
             {
                 shootRequested = networkShootRequested;
             }
@@ -285,7 +334,8 @@ namespace TankBattle
 
         private void Shoot()
         {
-            if (bulletPrefab == null || remainingShots <= 0)
+            bool enforceAmmo = controlMode == TankBattlePlayerControlMode.LocalHuman || controlMode == TankBattlePlayerControlMode.Bot;
+            if (bulletPrefab == null || (enforceAmmo && remainingShots <= 0))
             {
                 return;
             }
@@ -307,7 +357,7 @@ namespace TankBattle
                 bullet.Initialize(bulletSettings, shootDirection, gameObject, chairId);
             }
 
-            remainingShots--;
+            remainingShots = Mathf.Max(0, remainingShots - 1);
             nextShootTime = Time.time + shootCooldown;
 
             PlayShootAnimation();
@@ -323,45 +373,15 @@ namespace TankBattle
             }
         }
 
-        private void ApplyAuthoritativeState(float deltaTime, bool forceImmediate)
-        {
-            if (!hasAuthoritativeState)
-            {
-                return;
-            }
-
-            Vector2 currentPosition = Position;
-            float error = Vector2.Distance(currentPosition, authoritativePosition);
-            if (forceImmediate || error > networkSnapDistance)
-            {
-                SetCurrentPosition(authoritativePosition);
-            }
-            else
-            {
-                float t = 1f - Mathf.Exp(-networkPositionSmoothness * Mathf.Max(0.001f, deltaTime));
-                SetCurrentPosition(Vector2.Lerp(currentPosition, authoritativePosition, t));
-            }
-
-            if (facingTransform != null)
-            {
-                facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
-            }
-
-            estimatedVelocity = authoritativeVelocity;
-            remainingShots = authoritativeRemainingShots;
-
-            if (body != null)
-            {
-                body.linearVelocity = Vector2.zero;
-            }
-        }
-
         private void SetCurrentPosition(Vector2 position)
         {
             if (body != null)
             {
                 body.position = position;
-                return;
+                if (body.simulated)
+                {
+                    return;
+                }
             }
 
             transform.position = new Vector3(position.x, position.y, transform.position.z);
@@ -480,14 +500,14 @@ namespace TankBattle
             else
             {
                 float smoothness = networkPositionSmoothness * Mathf.Max(0f, localAuthorityCorrectionMultiplier);
-                float t = 1f - Mathf.Exp(-smoothness * Mathf.Max(0.001f, deltaTime));
+                float t = GetInterpolationFactor(smoothness, deltaTime);
                 SetCurrentPosition(Vector2.Lerp(currentPosition, authoritativePosition, t));
             }
 
             if (facingTransform != null)
             {
-                float smoothness = networkPositionSmoothness * Mathf.Max(0f, localAuthorityCorrectionMultiplier);
-                float t = 1f - Mathf.Exp(-smoothness * Mathf.Max(0.001f, deltaTime));
+                float smoothness = networkFacingSmoothness * Mathf.Max(0f, localAuthorityCorrectionMultiplier);
+                float t = GetInterpolationFactor(smoothness, deltaTime);
                 float correctedAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, t);
                 facingTransform.localRotation = Quaternion.Euler(0f, 0f, correctedAngle);
             }
@@ -520,11 +540,6 @@ namespace TankBattle
 
             if (controlMode == TankBattlePlayerControlMode.NetworkDriven)
             {
-                if (Time.time - lastNetworkInputTime > Mathf.Max(0.01f, networkInputHoldSeconds))
-                {
-                    return Vector2.zero;
-                }
-
                 return networkMoveVector;
             }
 
@@ -569,6 +584,37 @@ namespace TankBattle
             }
 
             facingTransform.localRotation = Quaternion.Euler(0f, 0f, currentRotationAngle);
+        }
+
+        private void UpdateSnapshotPresentation(float deltaTime)
+        {
+            if (!UsesAuthoritativeTransform() || !hasAuthoritativeState)
+            {
+                return;
+            }
+
+            float snapDistance = Mathf.Max(1.5f, networkSnapDistance);
+            float error = Vector2.Distance(GetCurrentPosition(), authoritativePosition);
+            if (error > snapDistance)
+            {
+                SetCurrentPosition(authoritativePosition);
+            }
+            else
+            {
+                float t = GetInterpolationFactor(networkPositionSmoothness, deltaTime);
+                SetCurrentPosition(Vector2.Lerp(GetCurrentPosition(), authoritativePosition, t));
+            }
+
+            if (facingTransform != null)
+            {
+                float t = GetInterpolationFactor(networkFacingSmoothness, deltaTime);
+                float nextAngle = Mathf.LerpAngle(FacingAngle, authoritativeFacingAngle, t);
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, nextAngle);
+            }
+
+            estimatedVelocity = authoritativeVelocity;
+            remainingShots = authoritativeRemainingShots;
+            ResetPhysicsVelocity();
         }
 
         private Vector2 ProcessInputWithDualTolerance(Vector2 currentInput)
@@ -722,6 +768,104 @@ namespace TankBattle
             {
                 playerInput = GetComponent<TankBattlePlayerInput>();
             }
+        }
+
+        private bool UsesAuthoritativeTransform()
+        {
+            return controlMode == TankBattlePlayerControlMode.SnapshotOnly;
+        }
+
+        private void ApplyAuthoritativeTransformImmediate()
+        {
+            SetCurrentPosition(authoritativePosition);
+            if (facingTransform != null)
+            {
+                facingTransform.localRotation = Quaternion.Euler(0f, 0f, authoritativeFacingAngle);
+            }
+
+            remainingShots = authoritativeRemainingShots;
+        }
+
+        private Vector2 GetCurrentPosition()
+        {
+            if (body != null && body.simulated)
+            {
+                return body.position;
+            }
+
+            return transform.position;
+        }
+
+        private void ResetPhysicsVelocity()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+
+        private static float GetInterpolationFactor(float smoothness, float deltaTime)
+        {
+            if (smoothness <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f - Mathf.Exp(-smoothness * Mathf.Max(0f, deltaTime));
+        }
+
+        private bool ShouldSimulateLocally()
+        {
+            if (controlMode == TankBattlePlayerControlMode.LocalHuman)
+            {
+                return true;
+            }
+
+            if (controlMode == TankBattlePlayerControlMode.SnapshotOnly)
+            {
+                return false;
+            }
+
+            return simulationAuthority;
+        }
+
+        private void RefreshPhysicsSimulationState()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            bool localSimulation = ShouldSimulateLocally();
+
+            // Keep snapshot-driven players collision-active for bullet hits while
+            // preventing local physics simulation from driving their movement.
+            if (!body.simulated)
+            {
+                body.simulated = true;
+            }
+
+            RigidbodyType2D targetBodyType = localSimulation
+                ? RigidbodyType2D.Dynamic
+                : RigidbodyType2D.Kinematic;
+            if (body.bodyType != targetBodyType)
+            {
+                body.bodyType = targetBodyType;
+            }
+
+            body.gravityScale = 0f;
+            body.constraints = RigidbodyConstraints2D.FreezeRotation;
+            body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+            if (!localSimulation)
+            {
+                body.position = (Vector2)transform.position;
+            }
+
+            ResetPhysicsVelocity();
         }
 
         private void ApplySortingOrderIfNeeded()

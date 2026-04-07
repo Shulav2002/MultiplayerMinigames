@@ -80,9 +80,34 @@ namespace TankBattle
 
             if (gameManager != null && gameManager.IsOnlineMatch && !gameManager.HasSimulationAuthority)
             {
+                bool shooterIsLocalHuman = shooter != null && shooter.ControlMode == TankBattlePlayerControlMode.LocalHuman;
+                if (!shooterIsLocalHuman)
+                {
+                    return;
+                }
+            }
+
+            ApplyHitOutcome(hitPlayer);
+        }
+
+        public void ApplyNetworkHitByChair(int victimChairId)
+        {
+            if (gameIsOver)
+            {
                 return;
             }
 
+            TankBattlePlayer victim = victimChairId == 0 ? player1 : victimChairId == 1 ? player2 : null;
+            if (victim == null)
+            {
+                return;
+            }
+
+            ApplyHitOutcome(victim);
+        }
+
+        private void ApplyHitOutcome(TankBattlePlayer hitPlayer)
+        {
             if (hitPlayer == player1)
             {
                 player1Health--;
