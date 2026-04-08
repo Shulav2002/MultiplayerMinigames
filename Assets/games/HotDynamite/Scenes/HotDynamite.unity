@@ -5097,7 +5097,7 @@ MonoBehaviour:
   countdownStartScale: {x: 1.45, y: 1.45, z: 1}
   countdownEndScale: {x: 1, y: 1, z: 1}
   howToPlayLabel: {fileID: 1581326293}
-  howToPlayMessage: Tap and drag anywhere on the screen to move.
+  howToPlayMessage: "Controls:\nUse WASD or the arrow keys to move.\nOn touch devices, tap and drag anywhere on the screen."
   howToPlayDisplaySeconds: 4
   howToPlayTweenSpeed: 2.25
 --- !u!4 &1475341651

@@ -145,9 +145,11 @@ MonoBehaviour:
   useMobileJoystick: 1
   showJoystick: 1
   limitToLeftHalf: 0
-  joystickRadiusPixels: 120
+  joystickRadiusPixels: 100
   deadZone: 0.1
   forceMobileJoystickInEditor: 1
+  keyboardAcceleration: 7.5
+  keyboardDeceleration: 10
 --- !u!212 &1177248033119752847
 SpriteRenderer:
   serializedVersion: 2
