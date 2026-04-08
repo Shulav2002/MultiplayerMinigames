@@ -4759,8 +4759,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 975997868}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5337902, y: 0.37542}
-  m_AnchorMax: {x: 0.98642796, y: 0.91438556}
+  m_AnchorMin: {x: 0.5337901, y: 0.4420867}
+  m_AnchorMax: {x: 0.98642796, y: 0.9810523}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4936,9 +4936,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.00007456541
     y: 0
-    width: 1
+    width: 0.99985087
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -5097,7 +5097,12 @@ MonoBehaviour:
   countdownStartScale: {x: 1.45, y: 1.45, z: 1}
   countdownEndScale: {x: 1, y: 1, z: 1}
   howToPlayLabel: {fileID: 1581326293}
-  howToPlayMessage: "Controls:\nUse WASD or the arrow keys to move.\nOn touch devices, tap and drag anywhere on the screen."
+  howToPlayMessage: 'Controls:
+
+    Use WASD or the arrow keys to move.
+
+    On touch
+    devices, tap and drag anywhere on the screen.'
   howToPlayDisplaySeconds: 4
   howToPlayTweenSpeed: 2.25
 --- !u!4 &1475341651
