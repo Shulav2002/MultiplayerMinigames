@@ -21,12 +21,14 @@ import json
 import math
 from pathlib import Path
 from typing import Iterable
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Convert GeoJSON into simplified WorldConqueror map JSON.")
-    parser.add_argument("--input", required=True, help="Path to a GeoJSON FeatureCollection.")
-    parser.add_argument("--output", required=True, help="Output JSON path.")
+    parser.add_argument("--input", help="Path to a GeoJSON FeatureCollection.")
+    parser.add_argument("--output", help="Output JSON path.")
     parser.add_argument("--name-property", default="NAME", help="GeoJSON property used for displayName.")
     parser.add_argument("--id-property", default="STUSPS", help="GeoJSON property used for id.")
     parser.add_argument("--exclude", nargs="*", default=[], help="State ids to exclude.")
@@ -34,13 +36,42 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target-height", type=float, default=12.0, help="Final map height in Unity units.")
     parser.add_argument("--tolerance", type=float, default=0.08, help="RDP simplification tolerance in source units.")
     parser.add_argument("--min-points", type=int, default=6, help="Minimum points to keep per state polygon.")
-    parser.add_argument("--keep-territories", action="store_true", help="Keep multipolygon islands instead of only largest landmass.")
+    parser.add_argument("--keep-territories", action="store_true", help="Keep more secondary landmasses instead of only major ones.")
+    parser.add_argument("--secondary-area-ratio", type=float, default=0.12, help="Minimum area ratio relative to the largest polygon to keep secondary landmasses.")
+    parser.add_argument("--gui", action="store_true", help="Open file pickers and prompts instead of relying on command-line paths.")
     return parser.parse_args()
 
 
 def load_geojson(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def choose_with_gui(args: argparse.Namespace) -> argparse.Namespace:
+    root = tk.Tk()
+    root.withdraw()
+
+    input_path = args.input or filedialog.askopenfilename(
+        title="Select GeoJSON file",
+        filetypes=[("GeoJSON files", "*.json *.geojson"), ("All files", "*.*")],
+    )
+    if not input_path:
+        raise SystemExit("No input file selected.")
+
+    output_path = args.output or filedialog.asksaveasfilename(
+        title="Save simplified map JSON",
+        defaultextension=".json",
+        initialfile=f"{Path(input_path).stem}_simplified.json",
+        filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+    )
+    if not output_path:
+        raise SystemExit("No output file selected.")
+
+    args.input = input_path
+    args.output = output_path
+
+    root.destroy()
+    return args
 
 
 def sq_distance(a: tuple[float, float], b: tuple[float, float]) -> float:
@@ -114,12 +145,13 @@ def ensure_minimum_points(points: list[tuple[float, float]], minimum: int) -> li
     return points
 
 
-def pick_polygon_coordinates(geometry: dict, keep_territories: bool) -> list[tuple[float, float]]:
+def pick_polygon_coordinates(geometry: dict) -> list[list[tuple[float, float]]]:
     geometry_type = geometry.get("type")
     coordinates = geometry.get("coordinates", [])
 
     if geometry_type == "Polygon":
-        return close_ring([(point[0], point[1]) for point in coordinates[0]])
+        polygon = close_ring([(point[0], point[1]) for point in coordinates[0]])
+        return [polygon] if polygon else []
 
     if geometry_type != "MultiPolygon":
         return []
@@ -130,16 +162,7 @@ def pick_polygon_coordinates(geometry: dict, keep_territories: bool) -> list[tup
         if outer_ring:
             polygons.append(outer_ring)
 
-    if not polygons:
-        return []
-
-    if keep_territories:
-        merged: list[tuple[float, float]] = []
-        for polygon in polygons:
-            merged.extend(polygon)
-        return merged
-
-    return max(polygons, key=polygon_area)
+    return polygons
 
 
 def bounds_of_all(polygons: list[list[tuple[float, float]]]) -> tuple[float, float, float, float]:
@@ -188,12 +211,15 @@ def normalize_point(
     target_height: float,
 ) -> tuple[float, float]:
     normalized_x = (point[0] - min_x) * scale - target_width * 0.5
-    normalized_y = target_height * 0.5 - (point[1] - min_y) * scale
+    normalized_y = (point[1] - min_y) * scale - target_height * 0.5
     return normalized_x, normalized_y
 
 
 def main() -> None:
     args = parse_args()
+    if args.gui or not args.input or not args.output:
+        args = choose_with_gui(args)
+
     geojson = load_geojson(Path(args.input))
     features = geojson.get("features", [])
     excluded = {value.upper() for value in args.exclude}
@@ -208,21 +234,41 @@ def main() -> None:
         if not state_id or state_id.upper() in excluded:
             continue
 
-        polygon = pick_polygon_coordinates(feature.get("geometry", {}), args.keep_territories)
-        if len(polygon) < 3:
+        source_polygons = pick_polygon_coordinates(feature.get("geometry", {}))
+        if not source_polygons:
             continue
 
-        simplified = rdp(polygon, args.tolerance)
-        simplified = ensure_minimum_points(simplified, args.min_points)
-        if len(simplified) < 3:
+        source_areas = [polygon_area(polygon) for polygon in source_polygons]
+        largest_area = max(source_areas)
+        simplified_polygons = []
+
+        for polygon, area in zip(source_polygons, source_areas):
+            if area <= 0.0:
+                continue
+
+            keep_polygon = area >= largest_area * args.secondary_area_ratio
+            if args.keep_territories:
+                keep_polygon = area >= largest_area * 0.01
+
+            if not keep_polygon and len(source_polygons) > 1:
+                continue
+
+            simplified = rdp(polygon, args.tolerance)
+            simplified = ensure_minimum_points(simplified, args.min_points)
+            if len(simplified) < 3:
+                continue
+
+            simplified_polygons.append(simplified)
+            polygons.append(simplified)
+
+        if not simplified_polygons:
             continue
 
-        polygons.append(simplified)
         raw_regions.append(
             {
                 "id": state_id,
                 "displayName": display_name,
-                "points": simplified,
+                "polygons": simplified_polygons,
             }
         )
 
@@ -236,18 +282,24 @@ def main() -> None:
 
     result = {"regions": []}
     for region in raw_regions:
-        normalized_points = [
-            normalize_point(point, min_x, min_y, scale, args.target_width, args.target_height)
-            for point in region["points"]
+        normalized_polygons = [
+            [normalize_point(point, min_x, min_y, scale, args.target_width, args.target_height) for point in polygon]
+            for polygon in region["polygons"]
         ]
-        label_x, label_y = centroid(normalized_points)
+        label_polygon = max(normalized_polygons, key=polygon_area)
+        label_x, label_y = centroid(label_polygon)
         result["regions"].append(
             {
                 "id": region["id"],
                 "displayName": region["displayName"],
                 "hasLabelPosition": True,
                 "labelPosition": {"x": round(label_x, 4), "y": round(label_y, 4)},
-                "points": [{"x": round(x, 4), "y": round(y, 4)} for x, y in normalized_points],
+                "polygons": [
+                    {
+                        "points": [{"x": round(x, 4), "y": round(y, 4)} for x, y in polygon]
+                    }
+                    for polygon in normalized_polygons
+                ],
             }
         )
 
@@ -255,6 +307,16 @@ def main() -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:
         json.dump(result, handle, ensure_ascii=True, indent=2)
+
+    if args.gui:
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showinfo(
+            "Conversion Complete",
+            f"Created simplified map JSON:\n{output_path}",
+            parent=root,
+        )
+        root.destroy()
 
 
 if __name__ == "__main__":

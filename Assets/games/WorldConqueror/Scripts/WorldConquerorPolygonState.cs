@@ -8,15 +8,14 @@ namespace WorldConqueror
     public class WorldConquerorPolygonState : MonoBehaviour
     {
         [SerializeField] private string stateName = "State";
-        [SerializeField] private Color fillColor = new(0.58f, 0.68f, 0.75f, 1f);
-        [SerializeField] private Color borderColor = new(0.14f, 0.19f, 0.25f, 1f);
+        [SerializeField] private Color fillColor = new(0.86f, 0.86f, 0.86f, 1f);
+        [SerializeField] private Color hoverColor = new(0.74f, 0.74f, 0.74f, 1f);
+        [SerializeField] private Color pressedColor = new(0.62f, 0.62f, 0.62f, 1f);
+        [SerializeField] private Color borderColor = new(0.28f, 0.28f, 0.28f, 1f);
         [SerializeField] private Vector2[] points = new Vector2[0];
-
-        private const float BorderWidth = 0.16f;
+        [SerializeField] private float borderWidth = 0.08f;
         private const int SortingOrderFill = 0;
         private const int SortingOrderBorder = 1;
-        private const int SortingOrderLabel = 2;
-
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
         private PolygonCollider2D polygonCollider;
@@ -24,16 +23,27 @@ namespace WorldConqueror
         private TextMesh labelMesh;
         private bool hasManualLabelPosition;
         private Vector2 manualLabelPosition;
+        private bool isHovered;
+        private bool isPressed;
 
         public void Configure(
             string newStateName,
             Color newFillColor,
+            Color newHoverColor,
+            Color newPressedColor,
+            Color newBorderColor,
             IReadOnlyList<Vector2> newPoints,
+            float newBorderWidth,
             bool useLabelOverride = false,
-            Vector2 labelOverride = default)
+            Vector2 labelOverride = default,
+            bool shouldShowLabel = false)
         {
             stateName = newStateName;
             fillColor = newFillColor;
+            hoverColor = newHoverColor;
+            pressedColor = newPressedColor;
+            borderColor = newBorderColor;
+            borderWidth = Mathf.Max(0.01f, newBorderWidth);
             hasManualLabelPosition = useLabelOverride;
             manualLabelPosition = labelOverride;
             points = new Vector2[newPoints.Count];
@@ -68,6 +78,7 @@ namespace WorldConqueror
             ApplyCollider();
             ApplyBorder();
             ApplyLabel();
+            RefreshVisualState();
         }
 
         private void EnsureComponents()
@@ -144,7 +155,7 @@ namespace WorldConqueror
         {
             lineRenderer.loop = true;
             lineRenderer.useWorldSpace = false;
-            lineRenderer.widthMultiplier = BorderWidth;
+            lineRenderer.widthMultiplier = borderWidth;
             lineRenderer.positionCount = points.Length;
             lineRenderer.numCornerVertices = 2;
             lineRenderer.numCapVertices = 2;
@@ -162,16 +173,83 @@ namespace WorldConqueror
 
         private void ApplyLabel()
         {
-            labelMesh.text = stateName;
-            labelMesh.fontSize = 44;
-            labelMesh.characterSize = 0.12f;
-            labelMesh.anchor = TextAnchor.MiddleCenter;
-            labelMesh.alignment = TextAlignment.Center;
-            labelMesh.color = new Color(0.06f, 0.08f, 0.11f, 1f);
-            labelMesh.GetComponent<MeshRenderer>().sortingOrder = SortingOrderLabel;
+            labelMesh.gameObject.SetActive(false);
+        }
 
-            Vector2 centroid = hasManualLabelPosition ? manualLabelPosition : ComputeCentroid(points);
-            labelMesh.transform.localPosition = new Vector3(centroid.x, centroid.y, -0.1f);
+        private void OnMouseEnter()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            isHovered = true;
+            RefreshVisualState();
+        }
+
+        private void OnMouseExit()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            isHovered = false;
+            isPressed = false;
+            RefreshVisualState();
+        }
+
+        private void OnMouseDown()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            isPressed = true;
+            RefreshVisualState();
+        }
+
+        private void OnMouseUpAsButton()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            isPressed = false;
+            RefreshVisualState();
+        }
+
+        private void OnMouseUp()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            isPressed = false;
+            RefreshVisualState();
+        }
+
+        private void RefreshVisualState()
+        {
+            if (meshRenderer == null || meshRenderer.sharedMaterial == null)
+            {
+                return;
+            }
+
+            Color targetColor = fillColor;
+            if (isPressed)
+            {
+                targetColor = pressedColor;
+            }
+            else if (isHovered)
+            {
+                targetColor = hoverColor;
+            }
+
+            meshRenderer.sharedMaterial.color = targetColor;
         }
 
         private static Shader ResolveShader()

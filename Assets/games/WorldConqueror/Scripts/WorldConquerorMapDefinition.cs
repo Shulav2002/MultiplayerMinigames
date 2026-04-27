@@ -15,10 +15,17 @@ namespace WorldConqueror
         public string id;
         public string displayName;
         public SerializableVector2[] points = Array.Empty<SerializableVector2>();
+        public SerializablePolygon[] polygons = Array.Empty<SerializablePolygon>();
         public SerializableVector2 labelPosition;
         public bool hasLabelPosition;
 
         public string NameOrId => string.IsNullOrWhiteSpace(displayName) ? id : displayName;
+    }
+
+    [Serializable]
+    public class SerializablePolygon
+    {
+        public SerializableVector2[] points = Array.Empty<SerializableVector2>();
     }
 
     [Serializable]

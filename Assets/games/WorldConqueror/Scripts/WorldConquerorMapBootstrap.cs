@@ -12,19 +12,19 @@ namespace WorldConqueror
     public class WorldConquerorMapBootstrap : MonoBehaviour
     {
         [SerializeField] private TextAsset mapDefinitionJson;
+        [SerializeField] private float mapScale = 1.18f;
+        [SerializeField] [Range(0.02f, 0.25f)] private float borderThickness = 0.08f;
+        [SerializeField] private Color territoryColor = new(0.86f, 0.86f, 0.86f, 1f);
+        [SerializeField] private Color hoverColor = new(0.74f, 0.74f, 0.74f, 1f);
+        [SerializeField] private Color pressedColor = new(0.62f, 0.62f, 0.62f, 1f);
+        [SerializeField] private Color borderColor = new(0.28f, 0.28f, 0.28f, 1f);
         [SerializeField] private bool regenerate;
 
-        private const string RootName = "GeneratedMap";
+        private const string GeneratedRootPrefix = "GeneratedMap_";
 
-        private readonly Color[] palette =
-        {
-            new(0.73f, 0.84f, 0.92f, 1f),
-            new(0.84f, 0.89f, 0.67f, 1f),
-            new(0.95f, 0.80f, 0.62f, 1f),
-            new(0.90f, 0.69f, 0.69f, 1f),
-            new(0.70f, 0.83f, 0.76f, 1f),
-            new(0.79f, 0.74f, 0.92f, 1f)
-        };
+#if UNITY_EDITOR
+        private bool editorRebuildQueued;
+#endif
 
         private void OnEnable()
         {
@@ -39,7 +39,7 @@ namespace WorldConqueror
             if (regenerate)
             {
                 regenerate = false;
-                EnsureScene();
+                QueueEditorRebuild();
             }
         }
 
@@ -65,7 +65,7 @@ namespace WorldConqueror
             camera.orthographic = true;
             camera.orthographicSize = 7.6f;
             camera.transform.position = new Vector3(0f, 0f, -10f);
-            camera.backgroundColor = new Color(0.92f, 0.95f, 0.98f, 1f);
+            camera.backgroundColor = new Color(0.93f, 0.93f, 0.93f, 1f);
             camera.clearFlags = CameraClearFlags.SolidColor;
         }
 
@@ -84,69 +84,25 @@ namespace WorldConqueror
             renderer.sprite = CreateQuadSprite();
             renderer.drawMode = SpriteDrawMode.Sliced;
             renderer.size = new Vector2(24f, 16f);
-            renderer.color = new Color(0.88f, 0.92f, 0.97f, 1f);
+            renderer.color = new Color(0.90f, 0.90f, 0.90f, 1f);
             renderer.sortingOrder = -10;
         }
 
         private void GenerateStates()
         {
+            ClearGeneratedRoots();
             Transform root = GetOrCreateRoot();
 
             List<StateDefinition> states = BuildStateDefinitions();
-            Dictionary<string, Transform> existingChildren = new();
-            for (int i = 0; i < root.childCount; i++)
-            {
-                Transform child = root.GetChild(i);
-                existingChildren[child.name] = child;
-            }
-
             HashSet<string> usedNames = new();
             for (int i = 0; i < states.Count; i++)
             {
                 StateDefinition state = states[i];
-                string uniqueName = BuildUniqueName(state.Name, usedNames);
-                usedNames.Add(uniqueName);
+                GameObject stateObject = new(BuildUniqueName(state.Name, usedNames));
+                stateObject.transform.SetParent(root, false);
+                Transform stateTransform = stateObject.transform;
 
-                Transform stateTransform;
-                if (existingChildren.TryGetValue(uniqueName, out Transform existingChild))
-                {
-                    stateTransform = existingChild;
-                }
-                else
-                {
-                    GameObject stateObject = new(uniqueName);
-                    stateObject.transform.SetParent(root, false);
-                    stateTransform = stateObject.transform;
-                }
-
-                stateTransform.name = uniqueName;
-
-                if (!stateTransform.TryGetComponent(out WorldConquerorPolygonState polygonState))
-                {
-                    polygonState = stateTransform.gameObject.AddComponent<WorldConquerorPolygonState>();
-                }
-
-                polygonState.Configure(
-                    state.Name,
-                    palette[i % palette.Length],
-                    state.Points,
-                    state.HasManualLabelPosition,
-                    state.LabelPosition);
-            }
-
-            List<Transform> toRemove = new();
-            for (int i = 0; i < root.childCount; i++)
-            {
-                Transform child = root.GetChild(i);
-                if (!usedNames.Contains(child.name))
-                {
-                    toRemove.Add(child);
-                }
-            }
-
-            foreach (Transform child in toRemove)
-            {
-                DestroySafely(child.gameObject);
+                ConfigureStateFragments(stateTransform, state);
             }
         }
 
@@ -159,67 +115,43 @@ namespace WorldConqueror
 
             return new List<StateDefinition>
             {
-                new("Northwatch", new[]
-                {
+                new("Northwatch", SinglePolygon(
                     new Vector2(-8.6f, 3.6f), new Vector2(-6.9f, 5.7f), new Vector2(-3.9f, 5.2f),
-                    new Vector2(-3.0f, 3.4f), new Vector2(-4.7f, 2.1f), new Vector2(-7.3f, 2.2f)
-                }),
-                new("Ironvale", new[]
-                {
+                    new Vector2(-3.0f, 3.4f), new Vector2(-4.7f, 2.1f), new Vector2(-7.3f, 2.2f))),
+                new("Ironvale", SinglePolygon(
                     new Vector2(-3.9f, 5.2f), new Vector2(-0.8f, 5.8f), new Vector2(1.0f, 4.7f),
-                    new Vector2(0.3f, 2.9f), new Vector2(-2.1f, 2.5f), new Vector2(-3.0f, 3.4f)
-                }),
-                new("Sunreach", new[]
-                {
+                    new Vector2(0.3f, 2.9f), new Vector2(-2.1f, 2.5f), new Vector2(-3.0f, 3.4f))),
+                new("Sunreach", SinglePolygon(
                     new Vector2(1.0f, 4.7f), new Vector2(4.3f, 5.4f), new Vector2(6.3f, 3.8f),
-                    new Vector2(4.9f, 2.2f), new Vector2(2.0f, 2.4f), new Vector2(0.3f, 2.9f)
-                }),
-                new("Frostford", new[]
-                {
+                    new Vector2(4.9f, 2.2f), new Vector2(2.0f, 2.4f), new Vector2(0.3f, 2.9f))),
+                new("Frostford", SinglePolygon(
                     new Vector2(-7.3f, 2.2f), new Vector2(-4.7f, 2.1f), new Vector2(-4.0f, 0.1f),
-                    new Vector2(-5.9f, -1.3f), new Vector2(-8.2f, -0.6f), new Vector2(-8.9f, 1.0f)
-                }),
-                new("Cinder Steppe", new[]
-                {
+                    new Vector2(-5.9f, -1.3f), new Vector2(-8.2f, -0.6f), new Vector2(-8.9f, 1.0f))),
+                new("Cinder Steppe", SinglePolygon(
                     new Vector2(-4.7f, 2.1f), new Vector2(-2.1f, 2.5f), new Vector2(-0.5f, 1.4f),
-                    new Vector2(-1.2f, -0.8f), new Vector2(-4.0f, 0.1f)
-                }),
-                new("Highgarden", new[]
-                {
+                    new Vector2(-1.2f, -0.8f), new Vector2(-4.0f, 0.1f))),
+                new("Highgarden", SinglePolygon(
                     new Vector2(-0.5f, 1.4f), new Vector2(2.0f, 2.4f), new Vector2(4.9f, 2.2f),
-                    new Vector2(4.0f, 0.1f), new Vector2(1.4f, -0.9f), new Vector2(-1.2f, -0.8f)
-                }),
-                new("Storm Coast", new[]
-                {
+                    new Vector2(4.0f, 0.1f), new Vector2(1.4f, -0.9f), new Vector2(-1.2f, -0.8f))),
+                new("Storm Coast", SinglePolygon(
                     new Vector2(4.9f, 2.2f), new Vector2(6.3f, 3.8f), new Vector2(8.8f, 2.1f),
-                    new Vector2(8.2f, 0.1f), new Vector2(6.1f, -0.6f), new Vector2(4.0f, 0.1f)
-                }),
-                new("Ashen Bay", new[]
-                {
+                    new Vector2(8.2f, 0.1f), new Vector2(6.1f, -0.6f), new Vector2(4.0f, 0.1f))),
+                new("Ashen Bay", SinglePolygon(
                     new Vector2(-8.2f, -0.6f), new Vector2(-5.9f, -1.3f), new Vector2(-5.2f, -3.8f),
-                    new Vector2(-7.0f, -5.1f), new Vector2(-8.9f, -3.6f)
-                }),
-                new("Goldcrest", new[]
-                {
+                    new Vector2(-7.0f, -5.1f), new Vector2(-8.9f, -3.6f))),
+                new("Goldcrest", SinglePolygon(
                     new Vector2(-5.9f, -1.3f), new Vector2(-4.0f, 0.1f), new Vector2(-1.2f, -0.8f),
-                    new Vector2(-1.4f, -3.0f), new Vector2(-3.6f, -4.4f), new Vector2(-5.2f, -3.8f)
-                }),
-                new("Heartland", new[]
-                {
+                    new Vector2(-1.4f, -3.0f), new Vector2(-3.6f, -4.4f), new Vector2(-5.2f, -3.8f))),
+                new("Heartland", SinglePolygon(
                     new Vector2(-1.2f, -0.8f), new Vector2(1.4f, -0.9f), new Vector2(3.7f, -1.2f),
-                    new Vector2(3.2f, -3.8f), new Vector2(0.0f, -4.5f), new Vector2(-1.4f, -3.0f)
-                }),
-                new("Red Mesa", new[]
-                {
+                    new Vector2(3.2f, -3.8f), new Vector2(0.0f, -4.5f), new Vector2(-1.4f, -3.0f))),
+                new("Red Mesa", SinglePolygon(
                     new Vector2(3.7f, -1.2f), new Vector2(6.1f, -0.6f), new Vector2(8.2f, 0.1f),
-                    new Vector2(8.6f, -2.8f), new Vector2(6.4f, -4.6f), new Vector2(3.2f, -3.8f)
-                }),
-                new("Southport", new[]
-                {
+                    new Vector2(8.6f, -2.8f), new Vector2(6.4f, -4.6f), new Vector2(3.2f, -3.8f))),
+                new("Southport", SinglePolygon(
                     new Vector2(-3.6f, -4.4f), new Vector2(0.0f, -4.5f), new Vector2(3.2f, -3.8f),
                     new Vector2(6.4f, -4.6f), new Vector2(4.5f, -6.3f), new Vector2(-1.0f, -6.5f),
-                    new Vector2(-4.2f, -5.9f)
-                })
+                    new Vector2(-4.2f, -5.9f)))
             };
         }
 
@@ -238,15 +170,40 @@ namespace WorldConqueror
             }
 
             states = definition.regions
-                .Where(region => region != null && region.points != null && region.points.Length >= 3)
-                .Select(region => new StateDefinition(
-                    region.NameOrId,
-                    region.points.Select(point => point.ToVector2()).ToArray(),
-                    region.hasLabelPosition,
-                    region.labelPosition.ToVector2()))
+                .Where(region => region != null)
+                .Select(BuildImportedStateDefinition)
+                .Where(state => state.Polygons.Length > 0)
                 .ToList();
 
             return states.Count > 0;
+        }
+
+        private StateDefinition BuildImportedStateDefinition(WorldConquerorStateDefinition region)
+        {
+            List<Vector2[]> polygons = new();
+
+            if (region.polygons != null && region.polygons.Length > 0)
+            {
+                foreach (SerializablePolygon polygon in region.polygons)
+                {
+                    if (polygon?.points == null || polygon.points.Length < 3)
+                    {
+                        continue;
+                    }
+
+                    polygons.Add(polygon.points.Select(point => point.ToVector2()).ToArray());
+                }
+            }
+            else if (region.points != null && region.points.Length >= 3)
+            {
+                polygons.Add(region.points.Select(point => point.ToVector2()).ToArray());
+            }
+
+            return new StateDefinition(
+                region.NameOrId,
+                polygons.ToArray(),
+                region.hasLabelPosition,
+                region.labelPosition.ToVector2());
         }
 
         private static Sprite CreateQuadSprite()
@@ -257,20 +214,31 @@ namespace WorldConqueror
 
         private bool HasGeneratedMap()
         {
-            Transform root = transform.Find(RootName);
-            return root != null && root.childCount > 0;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform child = transform.GetChild(i);
+                if (IsGeneratedRoot(child) && child.childCount > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private Transform GetOrCreateRoot()
         {
-            Transform root = transform.Find(RootName);
+            string rootName = GetGeneratedRootName();
+            Transform root = transform.Find(rootName);
             if (root != null)
             {
+                root.localScale = Vector3.one * Mathf.Max(0.1f, mapScale);
                 return root;
             }
 
-            GameObject rootObject = new(RootName);
+            GameObject rootObject = new(rootName);
             rootObject.transform.SetParent(transform, false);
+            rootObject.transform.localScale = Vector3.one * Mathf.Max(0.1f, mapScale);
             return rootObject.transform;
         }
 
@@ -317,18 +285,185 @@ namespace WorldConqueror
             Destroy(target);
         }
 
+        private void ClearGeneratedRoots()
+        {
+            List<GameObject> rootsToRemove = new();
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform child = transform.GetChild(i);
+                if (IsGeneratedRoot(child))
+                {
+                    rootsToRemove.Add(child.gameObject);
+                }
+            }
+
+            foreach (GameObject root in rootsToRemove)
+            {
+                DestroySafely(root);
+            }
+        }
+
+        private string GetGeneratedRootName()
+        {
+            return $"{GeneratedRootPrefix}{GetCountryRootLabel()}";
+        }
+
+        private string GetCountryRootLabel()
+        {
+            if (mapDefinitionJson == null || string.IsNullOrWhiteSpace(mapDefinitionJson.name))
+            {
+                return "Default";
+            }
+
+            string label = mapDefinitionJson.name
+                .Replace("_simplified", string.Empty)
+                .Replace('-', ' ')
+                .Replace('_', ' ')
+                .Trim();
+
+            return string.IsNullOrWhiteSpace(label) ? "Default" : label;
+        }
+
+        private static bool IsGeneratedRoot(Transform candidate)
+        {
+            return candidate != null && candidate.name.StartsWith(GeneratedRootPrefix);
+        }
+
+#if UNITY_EDITOR
+        private void QueueEditorRebuild()
+        {
+            if (Application.isPlaying || editorRebuildQueued)
+            {
+                return;
+            }
+
+            editorRebuildQueued = true;
+            EditorApplication.delayCall += RunQueuedEditorRebuild;
+        }
+
+        private void RunQueuedEditorRebuild()
+        {
+            editorRebuildQueued = false;
+            if (this == null)
+            {
+                return;
+            }
+
+            EnsureScene();
+        }
+#endif
+
+        private void ConfigureStateFragments(Transform stateTransform, StateDefinition state)
+        {
+            Dictionary<string, Transform> existingFragments = new();
+            for (int i = 0; i < stateTransform.childCount; i++)
+            {
+                Transform child = stateTransform.GetChild(i);
+                existingFragments[child.name] = child;
+            }
+
+            HashSet<string> usedFragments = new();
+            int labelFragmentIndex = FindLargestPolygonIndex(state.Polygons);
+
+            for (int i = 0; i < state.Polygons.Length; i++)
+            {
+                string fragmentName = state.Polygons.Length == 1 ? "Shape" : $"Shape_{i + 1}";
+                usedFragments.Add(fragmentName);
+
+                Transform fragmentTransform;
+                if (existingFragments.TryGetValue(fragmentName, out Transform existingFragment))
+                {
+                    fragmentTransform = existingFragment;
+                }
+                else
+                {
+                    GameObject fragmentObject = new(fragmentName);
+                    fragmentObject.transform.SetParent(stateTransform, false);
+                    fragmentTransform = fragmentObject.transform;
+                }
+
+                if (!fragmentTransform.TryGetComponent(out WorldConquerorPolygonState polygonState))
+                {
+                    polygonState = fragmentTransform.gameObject.AddComponent<WorldConquerorPolygonState>();
+                }
+
+                polygonState.Configure(
+                    state.Name,
+                    territoryColor,
+                    hoverColor,
+                    pressedColor,
+                    borderColor,
+                    state.Polygons[i],
+                    borderThickness,
+                    state.HasManualLabelPosition,
+                    state.LabelPosition,
+                    i == labelFragmentIndex);
+            }
+
+            List<Transform> fragmentsToRemove = new();
+            for (int i = 0; i < stateTransform.childCount; i++)
+            {
+                Transform child = stateTransform.GetChild(i);
+                if (!usedFragments.Contains(child.name))
+                {
+                    fragmentsToRemove.Add(child);
+                }
+            }
+
+            foreach (Transform fragment in fragmentsToRemove)
+            {
+                DestroySafely(fragment.gameObject);
+            }
+        }
+
+        private static int FindLargestPolygonIndex(IReadOnlyList<Vector2[]> polygons)
+        {
+            int largestIndex = 0;
+            float largestArea = float.MinValue;
+
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                float area = Mathf.Abs(ComputePolygonArea(polygons[i]));
+                if (area > largestArea)
+                {
+                    largestArea = area;
+                    largestIndex = i;
+                }
+            }
+
+            return largestIndex;
+        }
+
+        private static float ComputePolygonArea(IReadOnlyList<Vector2> points)
+        {
+            float area = 0f;
+            for (int i = 0; i < points.Count; i++)
+            {
+                Vector2 current = points[i];
+                Vector2 next = points[(i + 1) % points.Count];
+                area += current.x * next.y - next.x * current.y;
+            }
+
+            return area * 0.5f;
+        }
+
+        private static Vector2[][] SinglePolygon(params Vector2[] points)
+        {
+            return new[] { points };
+        }
+
         private readonly struct StateDefinition
         {
-            public StateDefinition(string name, Vector2[] points, bool hasManualLabelPosition = false, Vector2 labelPosition = default)
+            public StateDefinition(string name, Vector2[][] polygons, bool hasManualLabelPosition = false, Vector2 labelPosition = default)
             {
                 Name = name;
-                Points = points;
+                Polygons = polygons;
                 HasManualLabelPosition = hasManualLabelPosition;
                 LabelPosition = labelPosition;
             }
 
             public string Name { get; }
-            public Vector2[] Points { get; }
+            public Vector2[][] Polygons { get; }
             public bool HasManualLabelPosition { get; }
             public Vector2 LabelPosition { get; }
         }
