@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -1920,7 +1920,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.440918, y: 40.75763}
+  m_AnchoredPosition: {x: 1.440918, y: 40.75769}
   m_SizeDelta: {x: -752.7367, y: -236.5446}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &813461279
@@ -3634,6 +3634,8 @@ MonoBehaviour:
   lobbyCanvas: {fileID: 1747735243}
   globalConfig: {fileID: 1475341656}
   autoCreateGlobalConfigIfMissing: 1
+  enableNetworkDiagnostics: 0
+  networkDiagnosticIntervalSeconds: 0.5
 --- !u!114 &1475341653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3678,6 +3680,8 @@ MonoBehaviour:
   inputSendIntervalSeconds: 0.02
   snapshotSendIntervalSeconds: 0.033
   verboseMatchDiagnostics: 0
+  forceDetailedDiagnostics: 0
+  diagnosticsIntervalSeconds: 0.5
 --- !u!114 &1475341655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3695,6 +3699,8 @@ MonoBehaviour:
   roomCapacity: 2
   connectOnStart: 0
   roomMode: random
+  forceNetworkTrafficDiagnostics: 0
+  networkTrafficDiagnosticsIntervalSeconds: 0.5
 --- !u!114 &1475341656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3708,6 +3714,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankBattle.TankBattleGlobalConfig
   applyGlobalSorting: 1
+  forceRunInBackground: 1
   floorSortingLayerName: Default
   wallSortingLayerName: Default
   playerSortingLayerName: Default
@@ -5561,4 +5568,3 @@ SceneRoots:
   - {fileID: 368035263}
   - {fileID: 438489107}
   - {fileID: 1747735247}
-
