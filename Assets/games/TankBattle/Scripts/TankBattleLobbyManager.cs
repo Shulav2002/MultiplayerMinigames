@@ -213,6 +213,15 @@ namespace TankBattle.Lobby
             ShowLobbyHome();
         }
 
+        public void ReturnToMainMenu()
+        {
+            dismissPrivateRoomRequested = false;
+            joinRequestInFlight = false;
+            privateRoomDismissInFlight = false;
+            ShowLobbyHome();
+            _ = LeaveCurrentRoomIfNeededAsync();
+        }
+
         private async void SubmitJoinRoomRequest()
         {
             string roomId = roomIdInputField != null ? roomIdInputField.text.Trim() : string.Empty;

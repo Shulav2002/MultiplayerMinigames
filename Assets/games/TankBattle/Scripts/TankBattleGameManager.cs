@@ -402,6 +402,23 @@ namespace TankBattle
             StartGameLocal(lastOfflineTotalPlayers, lastOfflineHumanPlayers);
         }
 
+        public void OnBackToLobby()
+        {
+            TankBattleLobbyManager lobbyManager = GetComponent<TankBattleLobbyManager>();
+            if (lobbyManager != null)
+            {
+                lobbyManager.ReturnToMainMenu();
+                return;
+            }
+
+            ShowLobbyState();
+            EnsureLobbyReferences();
+            if (lobbyCanvas != null)
+            {
+                lobbyCanvas.SetActive(true);
+            }
+        }
+
         private void StartMatch(
             TankBattleRosterEntry[] roster,
             string localUserId,

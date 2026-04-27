@@ -245,7 +245,7 @@ namespace TankBattle
         {
             if (gameManager != null)
             {
-                gameManager.RestartGame();
+                gameManager.OnBackToLobby();
             }
         }
 
