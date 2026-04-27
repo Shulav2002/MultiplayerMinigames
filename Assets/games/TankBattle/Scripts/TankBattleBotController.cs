@@ -124,6 +124,16 @@ namespace TankBattle
             CheckIfStuck();
 
             bool hasLineOfSight = CanShootAtTarget();
+            float minimumSafeDistance = GetMinimumSafeDistance();
+            float preferredCombatDistance = GetPreferredCombatDistance();
+
+            if (dist < minimumSafeDistance)
+            {
+                BackOffFromTarget(hasLineOfSight);
+                AvoidMovingTowardOwnBullets();
+                AvoidMovingIntoBullets();
+                return;
+            }
 
             if (isInShootCooldown)
             {
@@ -133,7 +143,7 @@ namespace TankBattle
                 return;
             }
 
-            if (hasLineOfSight && dist < cellSize * 1.5f)
+            if (hasLineOfSight && dist <= preferredCombatDistance)
             {
                 HandleCloseRangeEngagement();
             }
@@ -217,6 +227,7 @@ namespace TankBattle
             bool hasLineOfSight = CanShootAtTarget();
             Vector2 toTarget = GetAimedDirectionToEnemy();
             Vector2 away = -toTarget;
+            float minimumSafeDistance = GetMinimumSafeDistance();
 
             if (!hasLineOfSight)
             {
@@ -224,7 +235,7 @@ namespace TankBattle
                 return;
             }
             
-            if (dist < cellSize * 0.4f)
+            if (dist < minimumSafeDistance)
             {
                 Vector2 escapeDir = away;
                 if (IsWallInDirection(away))
@@ -257,7 +268,7 @@ namespace TankBattle
                     Vector2 facingDir = nozzle.right;
                     float angle = Vector2.Angle(facingDir, toTarget);
                     
-                    if (angle < 25f && Time.time - lastShootTime > 1.2f)
+                    if (angle < 25f && Time.time - lastShootTime > 0.9f)
                     {
                         if (ShouldHesitateBeforeShooting())
                         {
@@ -267,28 +278,28 @@ namespace TankBattle
                                 strafe = -strafe;
                             }
 
-                            desiredMoveVector = (toTarget * 0.2f + strafe * 0.8f).normalized;
+                            desiredMoveVector = (away * 0.35f + strafe * 0.65f).normalized;
                         }
                         else
                         {
                             QueueShootTap();
-                            desiredMoveVector = toTarget * 0.15f;
+                            desiredMoveVector = away * 0.2f;
                         }
                     }
                     else if (angle < 60f)
                     {
-                        desiredMoveVector = toTarget * 0.3f;
+                        desiredMoveVector = away * 0.2f;
                     }
                     else
                     {
                         Vector2 strafeDir = Vector2.Perpendicular(toTarget);
                         if (Random.value > 0.5f) strafeDir = -strafeDir;
-                        desiredMoveVector = (toTarget * 0.4f + strafeDir * 0.6f).normalized;
+                        desiredMoveVector = (away * 0.3f + strafeDir * 0.7f).normalized;
                     }
                 }
                 else
                 {
-                    desiredMoveVector = toTarget * 0.4f;
+                    desiredMoveVector = away * 0.3f;
                 }
             }
             else
@@ -874,9 +885,19 @@ namespace TankBattle
                 return;
             }
 
-            if (dist > cellSize * 3f)
+            float minimumSafeDistance = GetMinimumSafeDistance();
+            float preferredCombatDistance = GetPreferredCombatDistance();
+            Vector2 away = -toEnemy;
+
+            if (dist < minimumSafeDistance)
             {
-                desiredMoveVector = toEnemy;
+                desiredMoveVector = GetBestRetreatDirection(away);
+                return;
+            }
+
+            if (dist > preferredCombatDistance * 1.2f)
+            {
+                desiredMoveVector = toEnemy * 0.35f;
                 return;
             }
 
@@ -891,7 +912,92 @@ namespace TankBattle
                 strafe = -strafe;
             }
 
-            desiredMoveVector = (toEnemy * 0.45f + strafe * 0.55f).normalized;
+            desiredMoveVector = (away * 0.35f + strafe * 0.65f).normalized;
+        }
+
+        private void BackOffFromTarget(bool hasLineOfSight)
+        {
+            if (targetEnemy == null)
+            {
+                desiredMoveVector = Vector2.zero;
+                return;
+            }
+
+            Vector2 toEnemy = (targetEnemy.Position - owner.Position).normalized;
+            if (toEnemy.sqrMagnitude <= 0.0001f)
+            {
+                desiredMoveVector = FindOpenDirection();
+                return;
+            }
+
+            Vector2 away = -toEnemy;
+            desiredMoveVector = GetBestRetreatDirection(away);
+
+            if (hasLineOfSight && owner.RemainingShots > 0 && Time.time - lastShootTime > 0.8f)
+            {
+                Transform nozzle = owner.transform.Find("Nozzle");
+                if (nozzle != null)
+                {
+                    float angle = Vector2.Angle(nozzle.right, toEnemy);
+                    if (angle < 20f && !ShouldHesitateBeforeShooting())
+                    {
+                        QueueShootTap();
+                    }
+                }
+            }
+        }
+
+        private Vector2 GetBestRetreatDirection(Vector2 away)
+        {
+            if (!IsWallInDirection(away))
+            {
+                return away;
+            }
+
+            Vector2 sideA = Vector2.Perpendicular(away).normalized;
+            Vector2 sideB = -sideA;
+
+            bool blockedA = IsWallInDirection(sideA);
+            bool blockedB = IsWallInDirection(sideB);
+
+            if (!blockedA && blockedB)
+            {
+                return sideA;
+            }
+
+            if (blockedA && !blockedB)
+            {
+                return sideB;
+            }
+
+            if (!blockedA && !blockedB && targetEnemy != null)
+            {
+                float distA = Vector2.Distance(owner.Position + sideA * cellSize, targetEnemy.Position);
+                float distB = Vector2.Distance(owner.Position + sideB * cellSize, targetEnemy.Position);
+                return distA >= distB ? sideA : sideB;
+            }
+
+            return FindOpenDirection();
+        }
+
+        private float GetMinimumSafeDistance()
+        {
+            if (settings != null && settings.minimumSafeDistance > 0f)
+            {
+                return settings.minimumSafeDistance;
+            }
+
+            return cellSize * 1.8f;
+        }
+
+        private float GetPreferredCombatDistance()
+        {
+            if (settings != null && settings.preferredCombatDistance > 0f)
+            {
+                return Mathf.Max(GetMinimumSafeDistance() + 0.15f, settings.preferredCombatDistance);
+            }
+
+            return cellSize * 3f;
         }
 
         private static Vector2 GetBulletVelocity(TankBattleBullet bullet)
