@@ -59,7 +59,7 @@ namespace HotDynamite
         [SerializeField] private Vector3 countdownEndScale = Vector3.one;
         [Header("How To Play")]
         [SerializeField] private Component howToPlayLabel;
-        [SerializeField, TextArea(2, 4)] private string howToPlayMessage = "Controls:\nUse the joystick at the bottom of the screen to move your player.";
+        [SerializeField, TextArea(2, 4)] private string howToPlayMessage = "Controls:\nUse WASD or the arrow keys to move.\nOn touch devices, tap and drag anywhere on the screen.";
         [SerializeField, Min(0f)] private float howToPlayDisplaySeconds = 4f;
         [SerializeField, Min(0f)] private float howToPlayTweenSpeed = 2.25f;
 

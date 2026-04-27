@@ -14,20 +14,35 @@ namespace StayAlive
         [SerializeField] private float joystickRadiusPixels = 120f;
         [SerializeField] private float deadZone = 0.1f;
         [SerializeField] private bool forceMobileJoystickInEditor = false;
+        [SerializeField] private Vector2 joystickIdleScreenPadding = new Vector2(140f, 140f);
+
+        [Header("Keyboard")]
+        [SerializeField, Min(0.1f)] private float keyboardAcceleration = 7.5f;
+        [SerializeField, Min(0.1f)] private float keyboardDeceleration = 10f;
 
         private int activeFingerId = -1;
         private Vector2 joystickOrigin;
         private Vector2 joystickDelta;
         private Texture2D joystickBaseTexture;
         private Texture2D joystickKnobTexture;
+        private Vector2 smoothedKeyboardInput;
 
         public Vector2 MoveVector { get; private set; }
 
+        private void OnEnable()
+        {
+            ResetJoystick();
+        }
+
         private void Update()
         {
-            Vector2 input = UseMobileInput()
-                ? ReadMobileJoystickInput()
-                : ReadLegacyAxisInput();
+            Vector2 keyboardInput = GetKeyboardInput();
+            Vector2 input = keyboardInput.sqrMagnitude > 0.0001f
+                ? keyboardInput
+                : UseMobileInput()
+                    ? ReadMobileJoystickInput()
+                    : ReadLegacyAxisInput();
+
             MoveVector = NormalizeInput(input);
         }
 
@@ -68,9 +83,56 @@ namespace StayAlive
             return forceMobileJoystickInEditor;
         }
 
+        private Vector2 GetKeyboardInput()
+        {
+            Vector2 targetInput = NormalizeInput(ReadKeyboardInput());
+            float response = targetInput.sqrMagnitude > 0f ? keyboardAcceleration : keyboardDeceleration;
+            smoothedKeyboardInput = Vector2.MoveTowards(
+                smoothedKeyboardInput,
+                targetInput,
+                Mathf.Max(0.1f, response) * Time.deltaTime);
+
+            if (smoothedKeyboardInput.sqrMagnitude < 0.0001f)
+            {
+                smoothedKeyboardInput = Vector2.zero;
+            }
+
+            return smoothedKeyboardInput;
+        }
+
         private static Vector2 ReadLegacyAxisInput()
         {
-            return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            Vector2 axisInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            return axisInput.sqrMagnitude > 0f
+                ? axisInput
+                : ReadKeyboardInput();
+        }
+
+        private static Vector2 ReadKeyboardInput()
+        {
+            float horizontal = 0f;
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                horizontal -= 1f;
+            }
+
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                horizontal += 1f;
+            }
+
+            float vertical = 0f;
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+            {
+                vertical -= 1f;
+            }
+
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+            {
+                vertical += 1f;
+            }
+
+            return new Vector2(horizontal, vertical);
         }
 
         private Vector2 ReadMobileJoystickInput()
@@ -208,12 +270,13 @@ namespace StayAlive
         private void ResetJoystick()
         {
             activeFingerId = -1;
+            joystickOrigin = GetIdleJoystickOrigin();
             joystickDelta = Vector2.zero;
         }
 
         private void OnGUI()
         {
-            if (!showJoystick || !UseMobileInput() || activeFingerId == -1)
+            if (!showJoystick || !UseMobileInput())
             {
                 return;
             }
@@ -224,6 +287,11 @@ namespace StayAlive
         private void DrawJoystick()
         {
             EnsureJoystickTextures();
+
+            if (activeFingerId < 0)
+            {
+                joystickOrigin = GetIdleJoystickOrigin();
+            }
 
             float baseSize = joystickRadiusPixels * 2f;
             float knobSize = joystickRadiusPixels;
@@ -242,6 +310,14 @@ namespace StayAlive
             GUI.color = new Color(1f, 1f, 1f, 0.45f);
             GUI.DrawTexture(knobRect, joystickKnobTexture);
             GUI.color = previousColor;
+        }
+
+        private Vector2 GetIdleJoystickOrigin()
+        {
+            float radius = Mathf.Max(1f, joystickRadiusPixels);
+            float x = Mathf.Max(radius, joystickIdleScreenPadding.x);
+            float y = Mathf.Max(radius, joystickIdleScreenPadding.y);
+            return new Vector2(x, y);
         }
 
         private void EnsureJoystickTextures()
