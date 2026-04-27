@@ -152,9 +152,14 @@ namespace TankBattle
                 return;
             }
 
-            if (HasSimulationAuthority && IsOnlineMatch && player.ControlMode == TankBattlePlayerControlMode.Bot)
+            if (player.IsBotParticipant)
             {
-                PromoteSeatToNetworkDriven(player, chairId);
+                if (ShouldLogNow(ref nextNetworkInputAppliedLogAt))
+                {
+                    LogNetworkDiagnostic(
+                        $"SetNetworkInput ignored for bot seat: chair={chairId}, user={player.UserId}, move=({moveInput.x:0.00},{moveInput.y:0.00}), shoot={shootPressed}");
+                }
+                return;
             }
 
             player.SetNetworkInput(moveInput, shootPressed);
@@ -168,6 +173,11 @@ namespace TankBattle
         public void SetNetworkReportedState(int chairId, Vector2 position, float facingAngle, Vector2 velocity)
         {
             if (!playersByChair.TryGetValue(chairId, out TankBattlePlayer player) || player == null)
+            {
+                return;
+            }
+
+            if (player.IsBotParticipant)
             {
                 return;
             }
@@ -632,29 +642,6 @@ namespace TankBattle
             }
 
             return TankBattlePlayerControlMode.SnapshotOnly;
-        }
-
-        private void PromoteSeatToNetworkDriven(TankBattlePlayer player, int chairId)
-        {
-            if (player == null)
-            {
-                return;
-            }
-
-            TankBattleBotController bot = player.GetComponent<TankBattleBotController>();
-            if (bot != null)
-            {
-                bot.enabled = false;
-            }
-
-            bool isLocal = (localChairId >= 0 && chairId == localChairId)
-                || (!string.IsNullOrEmpty(localUserId) && string.Equals(player.UserId, localUserId, StringComparison.Ordinal));
-            TankBattlePlayerControlMode mode = isLocal
-                ? TankBattlePlayerControlMode.LocalHuman
-                : TankBattlePlayerControlMode.NetworkDriven;
-            bool captureInputForNetworking = isLocal && IsOnlineMatch && !HasSimulationAuthority;
-            player.SetRuntimeControlMode(mode, captureInputForNetworking, isBotParticipant: false);
-            Debug.Log($"TankBattleGameManager: Promoted chair {chairId} from Bot to {mode} after receiving network input.");
         }
 
         private bool ShouldLogNow(ref float nextLogAt)

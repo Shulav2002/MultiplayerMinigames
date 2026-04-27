@@ -12,7 +12,7 @@ namespace TankBattle.Networking
 
         [Header("Networking")]
         [SerializeField, Min(0.02f)] private float inputSendIntervalSeconds = 0.05f;
-        [SerializeField, Min(0.02f)] private float snapshotSendIntervalSeconds = 0.066f;
+        [SerializeField, Min(0.02f)] private float snapshotSendIntervalSeconds = 0.05f;
         [SerializeField] private bool verboseMatchDiagnostics;
         [SerializeField] private bool forceDetailedDiagnostics;
         [SerializeField, Min(0.1f)] private float diagnosticsIntervalSeconds = 0.5f;
@@ -303,10 +303,15 @@ namespace TankBattle.Networking
             }
 
             int resolvedChairId = ResolveChairIdForSender(fromUserId, payload);
+            if (resolvedChairId >= 0 && !IsRemoteHumanChair(resolvedChairId))
+            {
+                resolvedChairId = -1;
+            }
+
             if (resolvedChairId < 0)
             {
                 int fallbackChair = ResolveFallbackOpponentChair();
-                if (fallbackChair >= 0)
+                if (fallbackChair >= 0 && IsRemoteHumanChair(fallbackChair))
                 {
                     resolvedChairId = fallbackChair;
                     LogDiagnostic($"Resolved player_input via fallback chair={resolvedChairId} from sender={fromUserId}.");
@@ -700,6 +705,34 @@ namespace TankBattle.Networking
             }
 
             return -1;
+        }
+
+        private bool IsRemoteHumanChair(int chairId)
+        {
+            if (networkClient == null || chairId < 0)
+            {
+                return false;
+            }
+
+            string[] chairs = networkClient.CurrentChairs;
+            if (chairs == null || chairId >= chairs.Length)
+            {
+                return false;
+            }
+
+            string userId = chairs[chairId];
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(networkClient.LocalUserId)
+                && string.Equals(userId, networkClient.LocalUserId, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void LogDiagnostic(string message)
