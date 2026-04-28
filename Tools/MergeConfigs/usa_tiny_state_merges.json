@@ -1,0 +1,19 @@
+{
+  "merges": [
+    {
+      "targetId": "25",
+      "targetDisplayName": "Massachusetts Region",
+      "sourceIds": ["44", "09"]
+    },
+    {
+      "targetId": "24",
+      "targetDisplayName": "Mid-Atlantic Capital Region",
+      "sourceIds": ["10", "11"]
+    },
+    {
+      "targetId": "36",
+      "targetDisplayName": "New York Region",
+      "sourceIds": ["34"]
+    }
+  ]
+}

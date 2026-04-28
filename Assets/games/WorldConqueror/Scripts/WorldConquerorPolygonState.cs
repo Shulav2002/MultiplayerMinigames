@@ -12,19 +12,26 @@ namespace WorldConqueror
         [SerializeField] private Color hoverColor = new(0.74f, 0.74f, 0.74f, 1f);
         [SerializeField] private Color pressedColor = new(0.62f, 0.62f, 0.62f, 1f);
         [SerializeField] private Color borderColor = new(0.28f, 0.28f, 0.28f, 1f);
+        [SerializeField] private Color targetPointColor = new(0.18f, 0.18f, 0.18f, 1f);
         [SerializeField] private Vector2[] points = new Vector2[0];
         [SerializeField] private float borderWidth = 0.08f;
         private const int SortingOrderFill = 0;
         private const int SortingOrderBorder = 1;
+        private const int SortingOrderTargetPoint = 2;
+        private const float TargetPointRadius = 0.18f;
+        private const int TargetPointSegments = 18;
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
         private PolygonCollider2D polygonCollider;
         private LineRenderer lineRenderer;
-        private TextMesh labelMesh;
+        private MeshFilter targetPointMeshFilter;
+        private MeshRenderer targetPointMeshRenderer;
         private bool hasManualLabelPosition;
         private Vector2 manualLabelPosition;
         private bool isHovered;
         private bool isPressed;
+
+        public Vector3 TargetWorldPosition => transform.TransformPoint(GetTargetLocalPosition());
 
         public void Configure(
             string newStateName,
@@ -43,7 +50,7 @@ namespace WorldConqueror
             hoverColor = newHoverColor;
             pressedColor = newPressedColor;
             borderColor = newBorderColor;
-            borderWidth = Mathf.Max(0.01f, newBorderWidth);
+            borderWidth = Mathf.Max(0.035f, newBorderWidth);
             hasManualLabelPosition = useLabelOverride;
             manualLabelPosition = labelOverride;
             points = new Vector2[newPoints.Count];
@@ -77,7 +84,7 @@ namespace WorldConqueror
             ApplyMesh();
             ApplyCollider();
             ApplyBorder();
-            ApplyLabel();
+            ApplyTargetPoint();
             RefreshVisualState();
         }
 
@@ -103,17 +110,28 @@ namespace WorldConqueror
                 lineRenderer = gameObject.AddComponent<LineRenderer>();
             }
 
-            Transform labelTransform = transform.Find("Label");
-            if (labelTransform == null)
+            Transform targetPointTransform = transform.Find("TargetPoint");
+            if (targetPointTransform == null)
             {
-                GameObject labelObject = new("Label");
-                labelObject.transform.SetParent(transform, false);
-                labelTransform = labelObject.transform;
+                GameObject targetPointObject = new("TargetPoint");
+                targetPointObject.transform.SetParent(transform, false);
+                targetPointTransform = targetPointObject.transform;
             }
 
-            if (!labelTransform.TryGetComponent(out labelMesh))
+            Transform legacyLabelTransform = transform.Find("Label");
+            if (legacyLabelTransform != null)
             {
-                labelMesh = labelTransform.gameObject.AddComponent<TextMesh>();
+                legacyLabelTransform.gameObject.SetActive(false);
+            }
+
+            if (!targetPointTransform.TryGetComponent(out targetPointMeshFilter))
+            {
+                targetPointMeshFilter = targetPointTransform.gameObject.AddComponent<MeshFilter>();
+            }
+
+            if (!targetPointTransform.TryGetComponent(out targetPointMeshRenderer))
+            {
+                targetPointMeshRenderer = targetPointTransform.gameObject.AddComponent<MeshRenderer>();
             }
         }
 
@@ -171,9 +189,23 @@ namespace WorldConqueror
             }
         }
 
-        private void ApplyLabel()
+        private void ApplyTargetPoint()
         {
-            labelMesh.gameObject.SetActive(false);
+            Transform targetPointTransform = targetPointMeshFilter.transform;
+            targetPointTransform.localPosition = GetTargetLocalPosition();
+            targetPointTransform.localRotation = Quaternion.identity;
+            targetPointTransform.localScale = Vector3.one;
+
+            Mesh targetMesh = BuildTargetPointMesh();
+            targetPointMeshFilter.sharedMesh = targetMesh;
+
+            Material material = new(ResolveShader())
+            {
+                color = targetPointColor
+            };
+
+            targetPointMeshRenderer.sharedMaterial = material;
+            targetPointMeshRenderer.sortingOrder = SortingOrderTargetPoint;
         }
 
         private void OnMouseEnter()
@@ -250,6 +282,44 @@ namespace WorldConqueror
             }
 
             meshRenderer.sharedMaterial.color = targetColor;
+        }
+
+        private Vector3 GetTargetLocalPosition()
+        {
+            Vector2 center = hasManualLabelPosition ? manualLabelPosition : ComputeCentroid(points);
+            return new Vector3(center.x, center.y, -0.05f);
+        }
+
+        private static Mesh BuildTargetPointMesh()
+        {
+            Mesh mesh = new()
+            {
+                name = "TargetPointMesh"
+            };
+
+            Vector3[] vertices = new Vector3[TargetPointSegments + 1];
+            int[] triangles = new int[TargetPointSegments * 3];
+            vertices[0] = Vector3.zero;
+
+            for (int i = 0; i < TargetPointSegments; i++)
+            {
+                float angle = (Mathf.PI * 2f * i) / TargetPointSegments;
+                vertices[i + 1] = new Vector3(
+                    Mathf.Cos(angle) * TargetPointRadius,
+                    Mathf.Sin(angle) * TargetPointRadius,
+                    0f);
+
+                int triangleIndex = i * 3;
+                triangles[triangleIndex] = 0;
+                triangles[triangleIndex + 1] = i + 1;
+                triangles[triangleIndex + 2] = i == TargetPointSegments - 1 ? 1 : i + 2;
+            }
+
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.RecalculateBounds();
+            mesh.RecalculateNormals();
+            return mesh;
         }
 
         private static Shader ResolveShader()

@@ -50,4 +50,5 @@ namespace WorldConqueror
             return new SerializableVector2(value.x, value.y);
         }
     }
+
 }

@@ -13,11 +13,12 @@ namespace WorldConqueror
     {
         [SerializeField] private TextAsset mapDefinitionJson;
         [SerializeField] private float mapScale = 1.18f;
-        [SerializeField] [Range(0.02f, 0.25f)] private float borderThickness = 0.08f;
+        [SerializeField] [Range(0.035f, 0.25f)] private float borderThickness = 0.08f;
         [SerializeField] private Color territoryColor = new(0.86f, 0.86f, 0.86f, 1f);
         [SerializeField] private Color hoverColor = new(0.74f, 0.74f, 0.74f, 1f);
         [SerializeField] private Color pressedColor = new(0.62f, 0.62f, 0.62f, 1f);
         [SerializeField] private Color borderColor = new(0.28f, 0.28f, 0.28f, 1f);
+        [SerializeField] private WorldConquerorMergeProfile mergeProfile;
         [SerializeField] private bool regenerate;
 
         private const string GeneratedRootPrefix = "GeneratedMap_";
@@ -94,6 +95,7 @@ namespace WorldConqueror
             Transform root = GetOrCreateRoot();
 
             List<StateDefinition> states = BuildStateDefinitions();
+            Vector2 mapCenter = ComputeMapCenter(states);
             HashSet<string> usedNames = new();
             for (int i = 0; i < states.Count; i++)
             {
@@ -104,6 +106,11 @@ namespace WorldConqueror
 
                 ConfigureStateFragments(stateTransform, state);
             }
+
+            root.localPosition = new Vector3(
+                -mapCenter.x * root.localScale.x,
+                -mapCenter.y * root.localScale.y,
+                0f);
         }
 
         private List<StateDefinition> BuildStateDefinitions()
@@ -169,7 +176,7 @@ namespace WorldConqueror
                 return false;
             }
 
-            states = definition.regions
+            states = ApplyMergeRules(definition.regions)
                 .Where(region => region != null)
                 .Select(BuildImportedStateDefinition)
                 .Where(state => state.Polygons.Length > 0)
@@ -178,32 +185,13 @@ namespace WorldConqueror
             return states.Count > 0;
         }
 
-        private StateDefinition BuildImportedStateDefinition(WorldConquerorStateDefinition region)
+        private StateDefinition BuildImportedStateDefinition(ImportedRegion region)
         {
-            List<Vector2[]> polygons = new();
-
-            if (region.polygons != null && region.polygons.Length > 0)
-            {
-                foreach (SerializablePolygon polygon in region.polygons)
-                {
-                    if (polygon?.points == null || polygon.points.Length < 3)
-                    {
-                        continue;
-                    }
-
-                    polygons.Add(polygon.points.Select(point => point.ToVector2()).ToArray());
-                }
-            }
-            else if (region.points != null && region.points.Length >= 3)
-            {
-                polygons.Add(region.points.Select(point => point.ToVector2()).ToArray());
-            }
-
             return new StateDefinition(
                 region.NameOrId,
-                polygons.ToArray(),
+                region.Polygons.ToArray(),
                 region.hasLabelPosition,
-                region.labelPosition.ToVector2());
+                region.labelPosition);
         }
 
         private static Sprite CreateQuadSprite()
@@ -447,9 +435,180 @@ namespace WorldConqueror
             return area * 0.5f;
         }
 
+        private static Vector2 ComputeMapCenter(IReadOnlyList<StateDefinition> states)
+        {
+            if (states == null || states.Count == 0)
+            {
+                return Vector2.zero;
+            }
+
+            float minX = float.PositiveInfinity;
+            float minY = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float maxY = float.NegativeInfinity;
+
+            for (int stateIndex = 0; stateIndex < states.Count; stateIndex++)
+            {
+                Vector2[][] polygons = states[stateIndex].Polygons;
+                for (int polygonIndex = 0; polygonIndex < polygons.Length; polygonIndex++)
+                {
+                    IReadOnlyList<Vector2> polygon = polygons[polygonIndex];
+                    for (int pointIndex = 0; pointIndex < polygon.Count; pointIndex++)
+                    {
+                        Vector2 point = polygon[pointIndex];
+                        minX = Mathf.Min(minX, point.x);
+                        minY = Mathf.Min(minY, point.y);
+                        maxX = Mathf.Max(maxX, point.x);
+                        maxY = Mathf.Max(maxY, point.y);
+                    }
+                }
+            }
+
+            if (float.IsInfinity(minX) || float.IsInfinity(minY))
+            {
+                return Vector2.zero;
+            }
+
+            return new Vector2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+        }
+
         private static Vector2[][] SinglePolygon(params Vector2[] points)
         {
             return new[] { points };
+        }
+
+        private IEnumerable<ImportedRegion> ApplyMergeRules(WorldConquerorStateDefinition[] sourceRegions)
+        {
+            List<ImportedRegion> importedRegions = sourceRegions
+                .Where(region => region != null)
+                .Select(CreateImportedRegion)
+                .Where(region => region != null && region.Polygons.Count > 0)
+                .ToList();
+
+            MergeRule[] mergeRules = mergeProfile != null ? mergeProfile.MergeRules : System.Array.Empty<MergeRule>();
+            if (mergeRules == null || mergeRules.Length == 0)
+            {
+                return importedRegions;
+            }
+
+            Dictionary<string, ImportedRegion> regionById = importedRegions
+                .Where(region => !string.IsNullOrWhiteSpace(region.id))
+                .GroupBy(region => region.id)
+                .ToDictionary(group => group.Key, group => group.First());
+
+            HashSet<string> mergedIds = new();
+            List<ImportedRegion> mergedRegions = new();
+
+            for (int i = 0; i < mergeRules.Length; i++)
+            {
+                MergeRule rule = mergeRules[i];
+                if (rule == null || rule.sourceRegionIds == null || rule.sourceRegionIds.Length == 0)
+                {
+                    continue;
+                }
+
+                List<ImportedRegion> matchedRegions = new();
+                for (int idIndex = 0; idIndex < rule.sourceRegionIds.Length; idIndex++)
+                {
+                    string sourceId = rule.sourceRegionIds[idIndex];
+                    if (string.IsNullOrWhiteSpace(sourceId) || mergedIds.Contains(sourceId))
+                    {
+                        continue;
+                    }
+
+                    if (regionById.TryGetValue(sourceId, out ImportedRegion matchedRegion))
+                    {
+                        matchedRegions.Add(matchedRegion);
+                    }
+                }
+
+                if (matchedRegions.Count < 2)
+                {
+                    continue;
+                }
+
+                ImportedRegion mergedRegion = BuildMergedRegion(rule, matchedRegions);
+                mergedRegions.Add(mergedRegion);
+
+                for (int matchedIndex = 0; matchedIndex < matchedRegions.Count; matchedIndex++)
+                {
+                    mergedIds.Add(matchedRegions[matchedIndex].id);
+                }
+            }
+
+            List<ImportedRegion> finalRegions = importedRegions
+                .Where(region => !mergedIds.Contains(region.id))
+                .ToList();
+
+            finalRegions.AddRange(mergedRegions);
+            return finalRegions;
+        }
+
+        private static ImportedRegion CreateImportedRegion(WorldConquerorStateDefinition region)
+        {
+            List<Vector2[]> polygons = new();
+
+            if (region.polygons != null && region.polygons.Length > 0)
+            {
+                foreach (SerializablePolygon polygon in region.polygons)
+                {
+                    if (polygon?.points == null || polygon.points.Length < 3)
+                    {
+                        continue;
+                    }
+
+                    polygons.Add(polygon.points.Select(point => point.ToVector2()).ToArray());
+                }
+            }
+            else if (region.points != null && region.points.Length >= 3)
+            {
+                polygons.Add(region.points.Select(point => point.ToVector2()).ToArray());
+            }
+
+            return new ImportedRegion
+            {
+                id = region.id,
+                displayName = region.displayName,
+                Polygons = polygons,
+                hasLabelPosition = region.hasLabelPosition,
+                labelPosition = region.labelPosition.ToVector2(),
+            };
+        }
+
+        private static ImportedRegion BuildMergedRegion(MergeRule rule, List<ImportedRegion> matchedRegions)
+        {
+            List<Vector2[]> mergedPolygons = new();
+            ImportedRegion anchorRegion = matchedRegions[0];
+            Vector2 anchorLabelPosition = anchorRegion.labelPosition;
+            bool hasAnchorLabel = anchorRegion.hasLabelPosition;
+            float largestPolygonArea = -1f;
+
+            for (int i = 0; i < matchedRegions.Count; i++)
+            {
+                ImportedRegion region = matchedRegions[i];
+                mergedPolygons.AddRange(region.Polygons);
+
+                for (int polygonIndex = 0; polygonIndex < region.Polygons.Count; polygonIndex++)
+                {
+                    float area = Mathf.Abs(ComputePolygonArea(region.Polygons[polygonIndex]));
+                    if (area > largestPolygonArea)
+                    {
+                        largestPolygonArea = area;
+                        anchorRegion = region;
+                        anchorLabelPosition = region.labelPosition;
+                        hasAnchorLabel = region.hasLabelPosition;
+                    }
+                }
+            }
+
+            return new ImportedRegion
+            {
+                id = string.IsNullOrWhiteSpace(rule.mergedRegionId) ? anchorRegion.id : rule.mergedRegionId,
+                displayName = string.IsNullOrWhiteSpace(rule.mergedRegionName) ? anchorRegion.NameOrId : rule.mergedRegionName,
+                Polygons = mergedPolygons,
+                hasLabelPosition = hasAnchorLabel,
+                labelPosition = anchorLabelPosition,
+            };
         }
 
         private readonly struct StateDefinition
@@ -466,6 +625,17 @@ namespace WorldConqueror
             public Vector2[][] Polygons { get; }
             public bool HasManualLabelPosition { get; }
             public Vector2 LabelPosition { get; }
+        }
+
+        private class ImportedRegion
+        {
+            public string id;
+            public string displayName;
+            public List<Vector2[]> Polygons = new();
+            public bool hasLabelPosition;
+            public Vector2 labelPosition;
+
+            public string NameOrId => string.IsNullOrWhiteSpace(displayName) ? id : displayName;
         }
     }
 }

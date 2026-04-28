@@ -31,6 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", help="Output JSON path.")
     parser.add_argument("--name-property", default="NAME", help="GeoJSON property used for displayName.")
     parser.add_argument("--id-property", default="STUSPS", help="GeoJSON property used for id.")
+    parser.add_argument("--merge-config", help="Optional JSON file describing region ids to merge into larger gameplay regions.")
     parser.add_argument("--exclude", nargs="*", default=[], help="State ids to exclude.")
     parser.add_argument("--target-width", type=float, default=18.0, help="Final map width in Unity units.")
     parser.add_argument("--target-height", type=float, default=12.0, help="Final map height in Unity units.")
@@ -43,6 +44,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_geojson(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
@@ -215,6 +221,35 @@ def normalize_point(
     return normalized_x, normalized_y
 
 
+def apply_merge_config(raw_regions: list[dict], merge_config: dict | None) -> list[dict]:
+    if not merge_config:
+        return raw_regions
+
+    region_by_id = {region["id"]: region for region in raw_regions}
+    merged_source_ids: set[str] = set()
+
+    for merge_definition in merge_config.get("merges", []):
+        target_id = str(merge_definition.get("targetId", "")).strip()
+        if not target_id or target_id not in region_by_id:
+            continue
+
+        target_region = region_by_id[target_id]
+        target_display_name = str(merge_definition.get("targetDisplayName", "")).strip()
+        if target_display_name:
+            target_region["displayName"] = target_display_name
+
+        for source_id_value in merge_definition.get("sourceIds", []):
+            source_id = str(source_id_value).strip()
+            if not source_id or source_id == target_id or source_id not in region_by_id:
+                continue
+
+            source_region = region_by_id[source_id]
+            target_region["polygons"].extend(source_region["polygons"])
+            merged_source_ids.add(source_id)
+
+    return [region for region in raw_regions if region["id"] not in merged_source_ids]
+
+
 def main() -> None:
     args = parse_args()
     if args.gui or not args.input or not args.output:
@@ -271,6 +306,9 @@ def main() -> None:
                 "polygons": simplified_polygons,
             }
         )
+
+    merge_config = load_json(Path(args.merge_config)) if args.merge_config else None
+    raw_regions = apply_merge_config(raw_regions, merge_config)
 
     if not raw_regions:
         raise SystemExit("No valid regions found in the input file.")
