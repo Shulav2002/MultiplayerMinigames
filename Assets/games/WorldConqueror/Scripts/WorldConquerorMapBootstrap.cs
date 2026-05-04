@@ -29,6 +29,8 @@ namespace WorldConqueror
 
         private void OnEnable()
         {
+            EnsureGameManager();
+
             if (!HasGeneratedMap())
             {
                 EnsureScene();
@@ -49,6 +51,7 @@ namespace WorldConqueror
         {
             EnsureCamera();
             EnsureBackground();
+            EnsureGameManager();
             GenerateStates();
         }
 
@@ -87,6 +90,19 @@ namespace WorldConqueror
             renderer.size = new Vector2(24f, 16f);
             renderer.color = new Color(0.90f, 0.90f, 0.90f, 1f);
             renderer.sortingOrder = -10;
+        }
+
+        private void EnsureGameManager()
+        {
+            WorldConquerorGameManager manager = FindFirstObjectByType<WorldConquerorGameManager>(FindObjectsInactive.Include);
+            if (manager != null)
+            {
+                return;
+            }
+
+            GameObject managerObject = new("WorldConquerorGameManager");
+            managerObject.transform.SetParent(transform, false);
+            managerObject.AddComponent<WorldConquerorGameManager>();
         }
 
         private void GenerateStates()
@@ -235,6 +251,7 @@ namespace WorldConqueror
             string safeName = string.IsNullOrWhiteSpace(baseName) ? "State" : baseName;
             if (!usedNames.Contains(safeName))
             {
+                usedNames.Add(safeName);
                 return safeName;
             }
 
@@ -246,6 +263,7 @@ namespace WorldConqueror
                 candidate = $"{safeName} {suffix}";
             }
 
+            usedNames.Add(candidate);
             return candidate;
         }
 

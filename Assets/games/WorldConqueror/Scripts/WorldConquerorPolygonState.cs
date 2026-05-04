@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace WorldConqueror
@@ -18,6 +19,7 @@ namespace WorldConqueror
         private const int SortingOrderFill = 0;
         private const int SortingOrderBorder = 1;
         private const int SortingOrderTargetPoint = 2;
+        private const int SortingOrderLabel = 3;
         private const float TargetPointRadius = 0.18f;
         private const int TargetPointSegments = 18;
         private MeshFilter meshFilter;
@@ -28,9 +30,15 @@ namespace WorldConqueror
         private MeshRenderer targetPointMeshRenderer;
         private bool hasManualLabelPosition;
         private Vector2 manualLabelPosition;
+        private bool showTargetPoint = true;
+        private TextMesh troopLabel;
         private bool isHovered;
         private bool isPressed;
 
+        public static event Action<WorldConquerorPolygonState> Pressed;
+
+        public string StateName => stateName;
+        public bool IsGameplayAnchor => showTargetPoint;
         public Vector3 TargetWorldPosition => transform.TransformPoint(GetTargetLocalPosition());
 
         public void Configure(
@@ -53,6 +61,7 @@ namespace WorldConqueror
             borderWidth = Mathf.Max(0.035f, newBorderWidth);
             hasManualLabelPosition = useLabelOverride;
             manualLabelPosition = labelOverride;
+            showTargetPoint = shouldShowLabel;
             points = new Vector2[newPoints.Count];
 
             for (int i = 0; i < newPoints.Count; i++)
@@ -85,6 +94,7 @@ namespace WorldConqueror
             ApplyCollider();
             ApplyBorder();
             ApplyTargetPoint();
+            ApplyTroopLabel();
             RefreshVisualState();
         }
 
@@ -118,10 +128,17 @@ namespace WorldConqueror
                 targetPointTransform = targetPointObject.transform;
             }
 
-            Transform legacyLabelTransform = transform.Find("Label");
-            if (legacyLabelTransform != null)
+            Transform labelTransform = transform.Find("TroopLabel");
+            if (labelTransform == null)
             {
-                legacyLabelTransform.gameObject.SetActive(false);
+                GameObject labelObject = new("TroopLabel");
+                labelObject.transform.SetParent(transform, false);
+                labelTransform = labelObject.transform;
+            }
+
+            if (!labelTransform.TryGetComponent(out troopLabel))
+            {
+                troopLabel = labelTransform.gameObject.AddComponent<TextMesh>();
             }
 
             if (!targetPointTransform.TryGetComponent(out targetPointMeshFilter))
@@ -206,6 +223,35 @@ namespace WorldConqueror
 
             targetPointMeshRenderer.sharedMaterial = material;
             targetPointMeshRenderer.sortingOrder = SortingOrderTargetPoint;
+            targetPointTransform.gameObject.SetActive(showTargetPoint);
+        }
+
+        private void ApplyTroopLabel()
+        {
+            if (troopLabel == null)
+            {
+                return;
+            }
+
+            Transform labelTransform = troopLabel.transform;
+            labelTransform.localPosition = GetTargetLocalPosition() + new Vector3(0f, 0f, -0.03f);
+            labelTransform.localRotation = Quaternion.identity;
+            labelTransform.localScale = Vector3.one;
+
+            troopLabel.anchor = TextAnchor.MiddleCenter;
+            troopLabel.alignment = TextAlignment.Center;
+            troopLabel.characterSize = 0.34f;
+            troopLabel.fontSize = 42;
+            troopLabel.color = Color.white;
+            troopLabel.text = string.Empty;
+
+            MeshRenderer labelRenderer = troopLabel.GetComponent<MeshRenderer>();
+            if (labelRenderer != null)
+            {
+                labelRenderer.sortingOrder = SortingOrderLabel;
+            }
+
+            labelTransform.gameObject.SetActive(showTargetPoint);
         }
 
         private void OnMouseEnter()
@@ -240,6 +286,7 @@ namespace WorldConqueror
 
             isPressed = true;
             RefreshVisualState();
+            Pressed?.Invoke(this);
         }
 
         private void OnMouseUpAsButton()
@@ -282,6 +329,51 @@ namespace WorldConqueror
             }
 
             meshRenderer.sharedMaterial.color = targetColor;
+        }
+
+        public void ApplyRuntimeColors(Color normalColor, Color newHoverColor, Color newPressedColor, Color newTargetPointColor)
+        {
+            fillColor = normalColor;
+            hoverColor = newHoverColor;
+            pressedColor = newPressedColor;
+            targetPointColor = newTargetPointColor;
+
+            if (targetPointMeshRenderer != null && targetPointMeshRenderer.sharedMaterial != null)
+            {
+                targetPointMeshRenderer.sharedMaterial.color = targetPointColor;
+            }
+
+            RefreshVisualState();
+        }
+
+        public void SetTroopLabel(string value, Color color)
+        {
+            if (troopLabel == null)
+            {
+                return;
+            }
+
+            troopLabel.text = showTargetPoint ? value : string.Empty;
+            troopLabel.color = color;
+        }
+
+        public void SetRuntimeAnchorVisible(bool isVisible)
+        {
+            showTargetPoint = isVisible;
+
+            if (targetPointMeshFilter != null)
+            {
+                targetPointMeshFilter.gameObject.SetActive(showTargetPoint);
+            }
+
+            if (troopLabel != null)
+            {
+                troopLabel.gameObject.SetActive(showTargetPoint);
+                if (!showTargetPoint)
+                {
+                    troopLabel.text = string.Empty;
+                }
+            }
         }
 
         private Vector3 GetTargetLocalPosition()
