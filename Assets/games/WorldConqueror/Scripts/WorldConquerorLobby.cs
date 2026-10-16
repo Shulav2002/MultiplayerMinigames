@@ -18,6 +18,9 @@ namespace WorldConqueror
         private GameObject matchRoot;
         private TMP_Text selectionLabel;
         private Button startButton;
+        private Button difficultyButton;
+        private Button personalityButton;
+        private readonly Button[] allocationButtons = new Button[3];
         private TMP_FontAsset font;
         private int selectedIndex;
 
@@ -31,7 +34,14 @@ namespace WorldConqueror
             if (current != null && !maps.Contains(current)) maps.Insert(0, current);
             selectedIndex = Mathf.Max(0, maps.IndexOf(current));
             BuildUI();
+            manager.SendPercentChanged += UpdateAllocationButtons;
+            UpdateAllocationButtons(manager.SendPercent);
             SelectMap(selectedIndex);
+        }
+
+        private void OnDestroy()
+        {
+            if (manager != null) manager.SendPercentChanged -= UpdateAllocationButtons;
         }
 
         private void BuildUI()
@@ -89,8 +99,11 @@ namespace WorldConqueror
                 mapButtons.Add(MakeButton(maps[i].name, mapColumn.transform, 42, () => SelectMap(index)));
             }
             selectionLabel = Label("", mapColumn.transform, 16, 32, 0.72f);
+            difficultyButton = MakeButton("", mapColumn.transform, 38, CycleDifficulty);
+            personalityButton = MakeButton("", mapColumn.transform, 38, CyclePersonality);
+            UpdateBotButtons();
             startButton = MakeButton("START GAME", mapColumn.transform, 58, () => StartCoroutine(StartMatch()));
-            Label("Drag from your territory to send troops", mapColumn.transform, 13, 26, 0.52f);
+            Label("Drag one base to another to send troops", mapColumn.transform, 13, 26, 0.52f);
             matchRoot = new GameObject("MatchControls", typeof(RectTransform));
             matchRoot.transform.SetParent(canvasObject.transform, false);
             Stretch(matchRoot.GetComponent<RectTransform>());
@@ -100,7 +113,54 @@ namespace WorldConqueror
             backRect.pivot = new Vector2(0, 1);
             backRect.anchoredPosition = new Vector2(20, -20);
             backRect.sizeDelta = new Vector2(120, 44);
+            GameObject allocationBar = new("TroopAllocation", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            allocationBar.transform.SetParent(matchRoot.transform, false);
+            RectTransform barRect = allocationBar.GetComponent<RectTransform>();
+            barRect.anchorMin = barRect.anchorMax = new Vector2(0.5f, 1f);
+            barRect.pivot = new Vector2(0.5f, 1f);
+            barRect.anchoredPosition = new Vector2(0f, -20f);
+            barRect.sizeDelta = new Vector2(330f, 44f);
+            HorizontalLayoutGroup barLayout = allocationBar.GetComponent<HorizontalLayoutGroup>();
+            barLayout.spacing = 8f;
+            barLayout.childControlWidth = true;
+            barLayout.childControlHeight = true;
+            for (int i = 0; i < allocationButtons.Length; i++)
+            {
+                int percent = i == 0 ? 25 : i == 1 ? 50 : 100;
+                allocationButtons[i] = MakeButton(percent + "%", allocationBar.transform, 44, () => manager.SetSendPercent(percent));
+                allocationButtons[i].GetComponent<LayoutElement>().preferredWidth = 100f;
+            }
             matchRoot.SetActive(false);
+        }
+
+        private void UpdateAllocationButtons(int selectedPercent)
+        {
+            for (int i = 0; i < allocationButtons.Length; i++)
+            {
+                if (allocationButtons[i] == null) continue;
+                int percent = i == 0 ? 25 : i == 1 ? 50 : 100;
+                allocationButtons[i].GetComponent<Image>().color = Gray(percent == selectedPercent ? 0.55f : 0.24f);
+                allocationButtons[i].GetComponentInChildren<TMP_Text>().text =
+                    (percent == selectedPercent ? "• " : "") + percent + "%";
+            }
+        }
+
+        private void CycleDifficulty()
+        {
+            manager.SetBotDifficulty((WorldConquerorGameManager.BotDifficulty)(((int)manager.Difficulty + 1) % 3));
+            UpdateBotButtons();
+        }
+
+        private void CyclePersonality()
+        {
+            manager.SetBotPersonality((WorldConquerorGameManager.BotPersonality)(((int)manager.Personality + 1) % 4));
+            UpdateBotButtons();
+        }
+
+        private void UpdateBotButtons()
+        {
+            if (difficultyButton != null) difficultyButton.GetComponentInChildren<TMP_Text>().text = "BOT: " + manager.Difficulty;
+            if (personalityButton != null) personalityButton.GetComponentInChildren<TMP_Text>().text = "STYLE: " + manager.Personality;
         }
 
         private void SelectMap(int index)

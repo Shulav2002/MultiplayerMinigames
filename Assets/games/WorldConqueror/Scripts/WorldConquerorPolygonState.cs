@@ -32,6 +32,7 @@ namespace WorldConqueror
         private bool hasManualLabelPosition;
         private Vector2 manualLabelPosition;
         private bool showTargetPoint = true;
+        private bool configuredAnchor = true;
         private TextMesh troopLabel;
         private bool isHovered;
         private bool isPressed;
@@ -39,7 +40,7 @@ namespace WorldConqueror
         public static event Action<WorldConquerorPolygonState> Pressed;
 
         public string StateName => stateName;
-        public bool IsGameplayAnchor => showTargetPoint;
+        public bool IsGameplayAnchor => configuredAnchor;
         public Vector3 TargetWorldPosition => transform.TransformPoint(GetTargetLocalPosition());
 
         public void Configure(
@@ -63,6 +64,7 @@ namespace WorldConqueror
             hasManualLabelPosition = useLabelOverride;
             manualLabelPosition = labelOverride;
             showTargetPoint = shouldShowLabel;
+            configuredAnchor = shouldShowLabel;
             points = new Vector2[newPoints.Count];
 
             for (int i = 0; i < newPoints.Count; i++)

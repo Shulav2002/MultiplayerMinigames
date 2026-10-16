@@ -2720,13 +2720,12 @@ MonoBehaviour:
   playerId: 0
   startingTroops: 10
   neutralStartingTroops: 10
-  startingPlayerBases: 1
-  startingEnemyBases: 1
-  maxTroopsPerTerritory: 99
   troopsPerSecond: 1
   packetSpeed: 2
-  packetLaunchSpacing: 0.035
+  packetLaunchSpacing: 0.1
   botDecisionInterval: 1.35
+  botDifficulty: 1
+  botPersonality: 0
   playerColor: {r: 0.12, g: 0.54, b: 1, a: 1}
   enemyColor: {r: 0.95, g: 0.25, b: 0.22, a: 1}
   neutralColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

@@ -5,67 +5,40 @@ namespace WorldConqueror
     [DisallowMultipleComponent]
     public class WorldConquerorTroopPacket : MonoBehaviour
     {
-        private WorldConquerorGameManager manager;
-        private string targetStateName;
-        private int ownerId;
-        private int troopCount;
+        private static Sprite circleSprite;
+        private SpriteRenderer packetRenderer;
         private Vector3 startPosition;
         private Vector3 targetPosition;
-        private float travelDuration = 1f;
-        private float launchDelay;
-        private float elapsed;
+        private float departureTime;
+        private float travelDuration;
 
         public void Initialize(
-            WorldConquerorGameManager newManager,
-            string newTargetStateName,
-            int newOwnerId,
-            int newTroopCount,
             Vector3 newStartPosition,
             Vector3 newTargetPosition,
-            float speed,
-            float newLaunchDelay,
+            float newDepartureTime,
+            float newTravelDuration,
             Color color)
         {
-            manager = newManager;
-            targetStateName = newTargetStateName;
-            ownerId = newOwnerId;
-            troopCount = newTroopCount;
             startPosition = newStartPosition;
             targetPosition = newTargetPosition;
             transform.position = startPosition;
-
-            float distance = Vector3.Distance(startPosition, targetPosition);
-            travelDuration = Mathf.Max(0.12f, distance / Mathf.Max(0.1f, speed));
-            launchDelay = Mathf.Max(0f, newLaunchDelay);
-            elapsed = 0f;
-
-            SpriteRenderer renderer = gameObject.AddComponent<SpriteRenderer>();
-            renderer.sprite = CreateCircleSprite();
-            renderer.color = color;
-            renderer.sortingOrder = 12;
-            transform.localScale = Vector3.one * Mathf.Clamp(0.12f + troopCount * 0.01f, 0.18f, 0.42f);
+            departureTime = newDepartureTime;
+            travelDuration = Mathf.Max(0.001f, newTravelDuration);
+            packetRenderer = gameObject.AddComponent<SpriteRenderer>();
+            if (circleSprite == null) circleSprite = CreateCircleSprite();
+            packetRenderer.sprite = circleSprite;
+            packetRenderer.color = color;
+            packetRenderer.sortingOrder = 12;
+            packetRenderer.enabled = false;
+            transform.localScale = Vector3.one * 0.18f;
         }
 
-        private void Update()
+        public void Render(float simulationTime)
         {
-            if (launchDelay > 0f)
-            {
-                launchDelay -= Time.deltaTime;
-                return;
-            }
-
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / travelDuration);
-            float eased = t * t * (3f - 2f * t);
-            transform.position = Vector3.Lerp(startPosition, targetPosition, eased);
-
-            if (t < 1f)
-            {
-                return;
-            }
-
-            manager?.ApplyIncomingTroops(targetStateName, ownerId, troopCount);
-            Destroy(gameObject);
+            packetRenderer.enabled = simulationTime >= departureTime;
+            if (!packetRenderer.enabled) return;
+            float t = Mathf.Clamp01((simulationTime - departureTime) / travelDuration);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
         }
 
         private static Sprite CreateCircleSprite()
