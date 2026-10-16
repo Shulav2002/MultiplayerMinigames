@@ -36,6 +36,7 @@ namespace WorldConqueror
         private Territory selectedTerritory;
         private float botTimer;
         private bool initialized;
+        private bool matchRunning;
 
         private void OnEnable()
         {
@@ -47,13 +48,27 @@ namespace WorldConqueror
             WorldConquerorPolygonState.Pressed -= HandleTerritoryPressed;
         }
 
-        private void Start()
+        public void BeginMatch()
         {
             InitializeFromScene();
+            botTimer = 0f;
+            matchRunning = initialized;
+        }
+
+        public void StopMatch()
+        {
+            matchRunning = false;
+            selectedTerritory = null;
+            foreach (WorldConquerorTroopPacket packet in GetComponentsInChildren<WorldConquerorTroopPacket>())
+            {
+                packet.gameObject.SetActive(false);
+                Destroy(packet.gameObject);
+            }
         }
 
         private void Update()
         {
+            if (!matchRunning) return;
             if (!initialized)
             {
                 InitializeFromScene();
@@ -68,13 +83,15 @@ namespace WorldConqueror
         [ContextMenu("Initialize State.io Game")]
         public void InitializeFromScene()
         {
+            initialized = false;
+            selectedTerritory = null;
+            territories.Clear();
             WorldConquerorPolygonState[] fragments = FindObjectsByType<WorldConquerorPolygonState>(FindObjectsSortMode.None);
             if (fragments.Length == 0)
             {
                 return;
             }
 
-            territories.Clear();
             foreach (IGrouping<string, WorldConquerorPolygonState> group in fragments.GroupBy(fragment => fragment.StateName))
             {
                 Territory territory = new(group.Key, group.ToList());
@@ -138,7 +155,7 @@ namespace WorldConqueror
 
         private void HandleTerritoryPressed(WorldConquerorPolygonState fragment)
         {
-            if (!initialized || fragment == null || !territories.TryGetValue(fragment.StateName, out Territory clicked))
+            if (!matchRunning || !initialized || fragment == null || !territories.TryGetValue(fragment.StateName, out Territory clicked))
             {
                 return;
             }

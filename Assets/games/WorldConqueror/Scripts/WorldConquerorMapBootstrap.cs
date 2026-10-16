@@ -12,6 +12,7 @@ namespace WorldConqueror
     public class WorldConquerorMapBootstrap : MonoBehaviour
     {
         [SerializeField] private TextAsset mapDefinitionJson;
+        [SerializeField] private TextAsset[] lobbyMaps = System.Array.Empty<TextAsset>();
         [SerializeField] private float mapScale = 1.18f;
         [SerializeField] [Range(0.035f, 0.25f)] private float borderThickness = 0.08f;
         [SerializeField] private Color territoryColor = new(0.86f, 0.86f, 0.86f, 1f);
@@ -31,10 +32,21 @@ namespace WorldConqueror
         {
             EnsureGameManager();
 
+            if (Application.isPlaying && GetComponent<WorldConquerorLobby>() == null)
+            {
+                gameObject.AddComponent<WorldConquerorLobby>().Configure(this, lobbyMaps, mapDefinitionJson);
+            }
+
             if (!HasGeneratedMap())
             {
                 EnsureScene();
             }
+        }
+
+        public void LoadMap(TextAsset map)
+        {
+            mapDefinitionJson = map;
+            EnsureScene();
         }
 
         private void OnValidate()
@@ -42,7 +54,9 @@ namespace WorldConqueror
             if (regenerate)
             {
                 regenerate = false;
+#if UNITY_EDITOR
                 QueueEditorRebuild();
+#endif
             }
         }
 
@@ -108,7 +122,7 @@ namespace WorldConqueror
         private void GenerateStates()
         {
             ClearGeneratedRoots();
-            Transform root = GetOrCreateRoot();
+            Transform root = CreateGeneratedRoot();
 
             List<StateDefinition> states = BuildStateDefinitions();
             Vector2 mapCenter = ComputeMapCenter(states);
@@ -230,17 +244,11 @@ namespace WorldConqueror
             return false;
         }
 
-        private Transform GetOrCreateRoot()
+        private Transform CreateGeneratedRoot()
         {
-            string rootName = GetGeneratedRootName();
-            Transform root = transform.Find(rootName);
-            if (root != null)
-            {
-                root.localScale = Vector3.one * Mathf.Max(0.1f, mapScale);
-                return root;
-            }
-
-            GameObject rootObject = new(rootName);
+            // Destroy is deferred in Play Mode. A same-name old root may still exist
+            // this frame, so rebuilding must always use a fresh object.
+            GameObject rootObject = new(GetGeneratedRootName());
             rootObject.transform.SetParent(transform, false);
             rootObject.transform.localScale = Vector3.one * Mathf.Max(0.1f, mapScale);
             return rootObject.transform;
@@ -305,6 +313,7 @@ namespace WorldConqueror
 
             foreach (GameObject root in rootsToRemove)
             {
+                root.SetActive(false);
                 DestroySafely(root);
             }
         }

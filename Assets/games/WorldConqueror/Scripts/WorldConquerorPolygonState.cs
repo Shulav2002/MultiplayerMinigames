@@ -21,6 +21,7 @@ namespace WorldConqueror
         private const int SortingOrderTargetPoint = 2;
         private const int SortingOrderLabel = 3;
         private const float TargetPointRadius = 0.18f;
+        private const float TroopLabelCharacterSize = 0.06f;
         private const int TargetPointSegments = 18;
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
@@ -240,7 +241,9 @@ namespace WorldConqueror
 
             troopLabel.anchor = TextAnchor.MiddleCenter;
             troopLabel.alignment = TextAlignment.Center;
-            troopLabel.characterSize = 0.34f;
+            // TextMesh fontSize controls glyph resolution; characterSize controls world size.
+            // Keep two-digit troop counts compact enough to sit on the territory marker.
+            troopLabel.characterSize = TroopLabelCharacterSize;
             troopLabel.fontSize = 42;
             troopLabel.color = Color.white;
             troopLabel.text = string.Empty;
@@ -355,6 +358,11 @@ namespace WorldConqueror
 
             troopLabel.text = showTargetPoint ? value : string.Empty;
             troopLabel.color = color;
+            // Also update existing scene labels when refreshing their runtime values.
+            if (troopLabel.characterSize != TroopLabelCharacterSize)
+            {
+                troopLabel.characterSize = TroopLabelCharacterSize;
+            }
         }
 
         public void SetRuntimeAnchorVisible(bool isVisible)
